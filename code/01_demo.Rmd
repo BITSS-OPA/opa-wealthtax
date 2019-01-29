@@ -1,0 +1,56 @@
+---
+title: "Demo for Tax Plan"
+author: ""
+date: "1/28/2019"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Wealth tax computation
+
+```{r params, include=FALSE}
+hhld_gr <- 0.009
+evasion_disc <- 0.15
+
+# Research:
+ela1 <- 0.5 # eim, David. 2017. "Behavioral Responses to an Annual Wealth Tax: Evidence from Sweden", American Economic Journal: Economic Policy, 9(4), 395-421
+
+ela2 <- 0.5  #Jakobsen, Kristian, Katrine Jakobsen, Henrik Kleven and Gabriel Zucman. 2018. “Wealth Accumulation and Wealth Taxation: Theory and Evidence from Denmark” NBER working paper No. 24371
+
+ela3 <- (2 + 3)/2 #Londono-Velez, Juliana and Javier Avila. "Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia", UC Berkeley working paper, 2018 
+
+ela4 <- (23 + 34)/2 #Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016
+
+final_ela <- mean(c(ela1, ela2, ela3, ela4))
+
+
+#3 We make the classical assumption that the tail of the wealth distribution is Pareto distributed. As the average wealth of the Forbes 400 ($7.2b) is 3.4 times the threshold to belong to the Forbes 400 ($2.1b), the corresponding Pareto parameter is a=3.4/(3.4-1)=1.4. Standard calculations imply that the extra tax base between $1bn and $1.8bn (relative to the tax base above $1.8bn) is [(1.8/1)^(a-1)-1] =.27 or approximately 25%. The number of families above $1bn is estimated as 400*(1.8/1)^a=911, or about 900. The important point is that the vast majority of the billionaire surtax base (over three quarters) is in the Forbes 400, for which we have relatively good estimates of net worth.
+
+
+```
+
+
+Numbers from stata program wealthtax.do  
+
+
+We start from SCF 2016 inflated to 2019 and adding Forbes 400 2018.   
+
+We start from DINA tax data 2016 inflated to 2019.  
+
+To inflate, we assume `r paste(hhld_gr*100,"%", sep="")` # household growth per year, wealth inflated uniformly to match 2019 aggregate total of $94Tr). Uniform discount of `r paste((final_ela * 0.02 - 0.01)*100,"%", sep="")` to account for tax evasion/avoidance when wealth tax in place. 
+
+
+
+
+
+3) In 2019, there would be around 75,000 households liable to the wealth tax (72,000 households according to the SCF data and 78,000 tax filers according to the DINA data). In both cases, this would be less than .1% of the 130 million US households in 2019. The tax base above \$50 million would be \$8.2 trillion based on the SCF data and \$10.5 trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as \$9.3 trillion, i.e. approximately 10% of total household net worth of \$94 trillion population-wide. A two percent tax on this base would raise \$187 billion in 2019.
+
+
+
+## 
