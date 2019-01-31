@@ -44,4 +44,55 @@ bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m","$100m-$250m","250m-$50
   
   vis %>% bind_shiny("plot1")
   
+ output$totalTax <- renderText({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRateP <- taxRate/100 ## get to percentage
+    
+    tax <- taxBase*taxRateP
+    
+    totalTax <- sum(tax) 
+    
+   totalTax ## could round if desired
+  })
+  
+  output$totalTaxpayers <- renderText({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRateP <- taxRate/100 ## get to percentage
+    
+    tax <- taxBase*taxRateP
+    
+    householdsTaxed <- numberTaxpayers * (taxRateP>0)
+    
+    totalTaxpayers = sum(householdsTaxed)
+    
+    totalTaxpayers
+  })
+  
+  output$percentHouseAffected <- renderText({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRateP <- taxRate/100 ## get to percentage
+    
+    tax <- taxBase*taxRateP
+    
+    householdsTaxed <- numberTaxpayers * (taxRateP>0)
+    
+    householdsAffected <- sum(householdsTaxed)/129400000 ## make the denominator updateable later
+    
+    householdsAffected*100 ## get to percentage
+    ## can round if desired
+  })
+  
+  output$percentTaxUnits <- renderText({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRateP <- taxRate/100 ## get to percentage
+    
+    tax <- taxBase*taxRateP
+    
+    householdsTaxed <- numberTaxpayers * (taxRateP>0)
+    
+   taxUnits = sum(householdsTaxed)/183460000 ## make the denominator updateable later
+    
+   taxUnits*100  ## get to percentage
+   ## can round if desired
+  })
 }
