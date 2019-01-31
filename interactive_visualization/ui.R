@@ -28,7 +28,7 @@ fluidPage(
     ,
     
     column(9,
-           ggvisOutput("plot1"),
+           ggvisOutput("plot2"),
            #wellPanel(
              h4("Total Taxes ($bn)"),
              textOutput("totalTax"),
