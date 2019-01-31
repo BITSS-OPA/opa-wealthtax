@@ -7,7 +7,31 @@ taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560) ## eventaully be able to c
 
 bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m","$100m-$250m","250m-$500m","$500m-$1bn","1bn+")
 
+getMarginalTax <- function(wealth,taxLevels){
+  ## expecting taxLevels in percentage
+  taxLevels = taxLevels/100
+  first = wealth - 10e6 ## first 10 million is free
+  
+  second = first - 15e6
+  third = second - 25e6
+  fourth = third - 50e6
+  fifth = fourth - 150e6
+  sixth = fifth - 250e6
+  seventh = sixth - 500e6
+ 
 
+  firstChunk = ifelse(second>=0,taxLevels[1]*15e6,taxLevels[1]*first)
+  secondChunk = ifelse(third>=0,taxLevels[2]*25e6,taxLevels[2]*max(second,0))
+  thirdChunk = ifelse(fourth>=0, taxLevels[3]*50e6,taxLevels[3]*max(third,0))
+  fourthChunk = ifelse(fifth>=0, taxLevels[4]*150e6, taxLevels[4]*max(fourth,0))
+  fifthChunk = ifelse(sixth>=0, taxLevels[5]*250e6,taxLevels[5]*max(fifth,0))
+  sixthChunk = ifelse(seventh>=0,taxLevels[6]*500e6,taxLevels[6]*max(sixth,0))
+  seventhChunk=ifelse(seventh>=0,seventh*taxLevels[7],0)
+  
+ toReturn = firstChunk + secondChunk + thirdChunk + fourthChunk + fifthChunk + sixthChunk + seventhChunk
+ 
+ return(toReturn)
+}
 
 
   # A reactive expression with the ggvis plot
@@ -120,16 +144,30 @@ vis2 <- reactive({
   
   toPlot2 = merge(toPlot,toMatch,by.x="getGroup",by.y="group")
   
+  toPlot2$marginalInt=unlist(lapply(toPlot2$xval,getMarginalTax,taxRate))
+  toPlot2$marginalRate=(toPlot2$marginalInt/toPlot2$xval)*100
+  
+  # don't need group anymore, take out in a sec
+  
 extra0=cbind.data.frame(x=rep(10e6,2),y=c(0,taxRate[1]))
 extra1=cbind.data.frame(x = rep(25e6,2), y =c(0,taxRate[1]))
+extra1b=cbind.data.frame(x = rep(25e6,2), y =c(0,taxRate[2]))
 extra2=cbind.data.frame(x = rep(50e6,2), y =c(0,taxRate[2]))
+extra2b=cbind.data.frame(x = rep(50e6,2), y =c(0,taxRate[3]))
+
 extra3=cbind.data.frame(x = rep(100e6,2), y =c(0,taxRate[3]))
+extra3b=cbind.data.frame(x = rep(100e6,2), y =c(0,taxRate[4]))
+
 extra4=cbind.data.frame(x = rep(250e6,2), y =c(0,taxRate[4]))
+extra4b=cbind.data.frame(x = rep(250e6,2), y =c(0,taxRate[5]))
 extra5=cbind.data.frame(x = rep(500e6,2), y =c(0,taxRate[5]))
+extra5b=cbind.data.frame(x = rep(500e6,2), y =c(0,taxRate[6]))
 extra6=cbind.data.frame(x = rep(1e9,2), y =c(0,taxRate[6]))
+extra6b=cbind.data.frame(x = rep(1e9,2), y =c(0,taxRate[7]))
+
   
   toPlot2 %>%
-    ggvis(x = ~xval, y= ~tax) %>% layer_points() %>% layer_lines() %>%
+    ggvis(x = ~xval, y= ~tax) %>% layer_points() %>% layer_lines(x = ~xval, y=~marginalRate, stroke:="red") %>%
     layer_paths(data = extra1, ~x,~y) %>% 
     layer_paths(data = extra2, ~x, ~y) %>%
     layer_paths(data = extra3, ~x, ~y) %>%
@@ -137,6 +175,13 @@ extra6=cbind.data.frame(x = rep(1e9,2), y =c(0,taxRate[6]))
     layer_paths(data = extra5, ~x, ~y) %>%
     layer_paths(data = extra6, ~x, ~y) %>%
     layer_paths(data = extra0, ~x, ~y) %>%
+    layer_paths(data = extra1b, ~x, ~y) %>%
+    layer_paths(data = extra2b, ~x, ~y) %>%
+    layer_paths(data = extra3b, ~x, ~y) %>%
+    layer_paths(data = extra4b, ~x, ~y) %>%
+    layer_paths(data = extra5b, ~x, ~y) %>%
+    layer_paths(data = extra6b, ~x, ~y) %>%
+    
   add_axis("x", title = "Wealth before taxes") %>%
     add_axis("y", title = "Tax rate (%)") %>%
     #add_legend("stroke", title = "Won Oscar", values = c("Yes", "No")) %>%
