@@ -5,10 +5,12 @@ server <- function(input, output) {
 
   bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+")
 
+  
+  # Computes total tax revenue
   getMarginalTax <- function(wealth, taxLevels) {
     ## expecting taxLevels in percentage
     taxLevels <- taxLevels / 100
-    first <- wealth - 10e6 ## first 10 million is free
+    first <- wealth - 10e6 ## first bracket of taxable wealth. first 10 million is free
 
     second <- first - 15e6
     third <- second - 25e6
@@ -31,25 +33,7 @@ server <- function(input, output) {
     return(toReturn)
   }
 
-  ### old, not displayed ###
-  vis <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
-    taxRateP <- taxRate / 100 ## get to percentage
-
-    tax <- taxBase * taxRateP
-
-    toPlot <- cbind.data.frame(bracketNames, taxRate)
-    toPlot$bracketNames <- factor(toPlot$bracketNames, levels = toPlot$bracketNames)
-    toPlot %>%
-      ggvis(~bracketNames, ~taxRate) %>%
-      layer_bars() %>%
-      add_axis("x", title = "Wealth before taxes", title_offset = 75, properties = axis_props(labels = list(angle = 45, align = "left"))) %>%
-      add_axis("y", title = "Tax rate (%)") %>%
-      set_options(width = 500, height = 500)
-  })
-
-  vis %>% bind_shiny("plot1")
-
+  # need to understand difference between this and getMarginalTax()
   output$totalTax <- renderText({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
     taxRateP <- taxRate / 100 ## get to percentage
@@ -117,7 +101,8 @@ server <- function(input, output) {
     idx7 <- xval > 1e9
 
     idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
-
+    
+    # Indicator across income on tax bracke position
     getGroup <- unlist(apply(idx, 1, function(x) {
       which(x)
     }))
@@ -129,9 +114,10 @@ server <- function(input, output) {
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
     toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getMarginalTax, taxRate))
+    # Here is where the total tax payed by each individuals is transform into marginal tax rates
     toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
 
-
+    # These are mini data set that ggvis needs to create vertical lines
     extra0 <- cbind.data.frame(x = rep(10e6, 2), y = c(0, taxRate[1]))
     extra1 <- cbind.data.frame(x = rep(25e6, 2), y = c(0, taxRate[1]))
     extra1b <- cbind.data.frame(x = rep(25e6, 2), y = c(0, taxRate[2]))
@@ -150,6 +136,7 @@ server <- function(input, output) {
     toPlot2$id <- 1:nrow(toPlot2)
 
     showMargin <- function(x) {
+      # Walk through?
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
       row <- toPlot2[toPlot2$id == x$id, ]

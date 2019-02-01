@@ -53,4 +53,9 @@ To inflate, we assume `r paste(hhld_gr*100,"%", sep="")` # household growth per 
 
 
 
-## 
+```{r}
+# Ask Sara:
+ # - Zooming capabilities?
+ # - Interactive number seems off sometimes
+```
+
