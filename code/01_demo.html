@@ -189,6 +189,66 @@ window.buildTabsets = function(tocID) {
 };
 
 </script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
 <style type="text/css">.hljs-literal {
 color: #990073;
 }
@@ -296,6 +356,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -303,6 +371,14 @@ $(document).ready(function () {
 
 
 <div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
 
@@ -317,7 +393,7 @@ $(document).ready(function () {
 </div>
 <div id="policy-result" class="section level1">
 <h1>Policy Result</h1>
-<p>We write regarding your proposal to impose a progressive annual wealth tax on American households with net worth (sum of all assets net of debts) above $50 million. The tax would be 2% on the net worth above $50 million with an additional 1% tax on net worth above $1 billion. We estimate that about 75,000 American households (less than 0.1%) would be liable for the wealth tax and that the tax would raise around $2.75 trillion over the ten-year budget window 2019-2028, of which $0.3 trillion would come from the billionaire 1% surtax. The wealth tax would raise approximately 1.0% of GDP per year ($210 billion relative to a $21.1 trillion GDP in 2019).</p>
+<p>We write regarding your proposal to impose a progressive annual wealth tax on American households with net worth (sum of all assets net of debts) above $50m million. The tax would be 2% on the net worth above $50 million with an additional 1% tax on net worth above $1 billion. We estimate that about 75,000 American households (less than 0.1%) would be liable for the wealth tax and that the tax would raise around <strong>$2.75 trillion</strong> over the ten-year budget window 2019-2028, of which $0.3 trillion would come from the billionaire 1% surtax. The wealth tax would raise approximately 1.0% of GDP per year ($210 billion relative to a $21.1 trillion GDP in 2019).</p>
 <p>The figure below illustrates the distribution the tax burden across the population and, with detailed information on the fraction of households that will pay a wealth tax:</p>
 <pre class="r"><code># Insert a PNG of the figure here. </code></pre>
 </div>
@@ -325,11 +401,12 @@ $(document).ready(function () {
 <h1>Methodology</h1>
 <div id="data-sources" class="section level2">
 <h2>Data Sources</h2>
-<p>There are two main sources on the wealth of all American households: the Survey of Consumer Finances (SCF) from the Federal Reserve Board and the Distributional National Accounts (DINA) recently created by Piketty, Saez, and Zucman<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, which estimates wealth by capitalizing investment income from income tax returns. The latest year available for each source is 2016. Both sources can be used to estimate the tax revenue of the 2% wealth tax above $50 million. For the billionaire surtax, the best source is the Forbes 400 list of the richest 400 Americans. The latest year available is 2018. None of these sources provides perfect estimates but reassuringly, the SCF and DINA provide close estimates of the tax base above $50 million. One of the important virtues of the progressive wealth tax is that it will generate much more accurate data to estimate and track the wealth of the wealthiest Americans.</p>
+<p>There are two main sources on the wealth of all American households: the Survey of Consumer Finances (SCF) from the Federal Reserve Board and the Distributional National Accounts (DINA) recently created by Piketty, Saez, and Zucman<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, which estimates wealth by capitalizing investment income from income tax returns. The latest year available for each source is 2016. Both sources can be used to estimate the tax revenue of the 2% wealth tax above $50 million. For the billionaire surtax, the best source is the Forbes 400 list of the richest 400 Americans. The latest year available is 2018.</p>
+<p>None of these sources provides perfect estimates but reassuringly, the SCF and DINA provide close estimates of the tax base above $50 million. One of the important virtues of the progressive wealth tax is that it will generate much more accurate data to estimate and track the wealth of the wealthiest Americans.</p>
 </div>
 <div id="methods" class="section level2">
 <h2>Methods</h2>
-<p>1 - We age the 2016 SCF and DINA microfiles to 2019 by inflating the number of households and wealth uniformly to match the aggregate projections for population and total household wealth from the Federal Reserve Board. We also add the Forbes 400 to the SCF data. The total household net worth projection is $94 trillion for 2019 (the SCF records a total household net worth of $87 trillion in 2016).</p>
+<p>1 - We age the 2016 SCF and DINA microfiles to 2019 by inflating the number of households and wealth uniformly to match the aggregate projections for population and total household wealth from the Federal Reserve Board [SOURCE]. We also add the Forbes 400 to the SCF data. The total household net worth projection is $94 trillion for 2019 (the SCF records a total household net worth of $87 trillion in 2016).</p>
 <p>2 - Tax avoidance/evasion: recent research shows that the extent of wealth tax evasion/avoidance depends crucially on loopholes and enforcement. The proposed wealth tax has a comprehensive base with no loopholes and is well enforced through a combination of systematic third party reporting and audits. Therefore, the avoidance/evasion response is likely to be small. To be on the conservative side, we assume that households subject to the wealth tax are able to reduce their reported net worth by 15% through a combination of tax evasion and tax avoidance. This is a large response in light of existing estimates<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 <p>3 - In 2019, there would be around 75,000 households liable to the wealth tax (72,000 households according to the SCF data and 78,000 tax filers according to the DINA data). In both cases, this would be less than .1% of the 130 million US households in 2019. The tax base above $50 million would be $8.2 trillion based on the SCF data and $10.5 trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as $9.3 trillion, i.e. approximately 10% of total household net worth of $94 trillion population-wide. A two percent tax on this base would raise $187 billion in 2019.</p>
 <p>4 - For the billionaire surtax, the Forbes 400 reports that in 2018 the top 400 richest Americans had an average net worth of $7.2 billion and that the 400th wealthiest had $2.1 billion. Given the recent stock price declines, we assume that the wealth of the Forbes 400 in 2019 will be the same as in 2018. We also assume that their reported wealth for tax purposes would be 85% of the Forbes estimate due to avoidance and evasion. Hence the top 400 wealth taxpayers would report at least $1.8 billion (=2.1<em>.85) and have an average reported wealth of $6.1 billion (=7.2</em>.85). Hence, the Forbes 400 taxable base would be 400*(6.1-1)=$2040 billion or approximately $2 trillion. Using a standard Pareto interpolation technique, we estimate that the billionaire tax base between $1 billion and $1.8 billion (below the Forbes 400) would add 25% to the Forbes 400 tax base and would add about 500 families<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Therefore, the billionaire surtax base is estimated at $2.5 trillion and hence the billionaire surtax would raise $25 billion in 2019 from about 900 billionaire families.</p>

@@ -2,7 +2,9 @@
 title: "Demo for Tax Plan"
 author: ""
 date: "1/28/2019"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 editor_options: 
   chunk_output_type: console
 ---
@@ -10,7 +12,6 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-
 ```
 
 
@@ -18,9 +19,6 @@ library(tidyverse)
 
 ```{r params, include=FALSE}
 setwd('..')
-
-hhld_gr <- 0.009
-evasion_disc <- 0.15
 
 # Research:
 research_df <- read_csv("rawdata/research.csv")
@@ -38,18 +36,58 @@ ela4 <- (as.numeric(research_df[5,"param"])+ as.numeric(research_df[6,"param"]))
 final_ela <- mean(c(ela1, ela2, ela3, ela4))
 
 
-# Policy: 
+
+
+# Data
+# Number of tax payers 
+numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
+taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560)
+num_billionares <- round(400 * 1.8^1.4)
+
+
+cum_numberTaxpayers_scf <- c(1100144, 298649, 72143, 34552, 7119,  2555,  671)
+cum_numberTaxpayers_dina <- c(673449, 194548, 78434, 32751, 10236, 4491, 1597) 
+cum_numberTaxpayers_scf[7] <- num_billionares
+cum_numberTaxpayers_dina[7] <- num_billionares 
+
+cum_tax_base_scf <-  c(203.97, 121.63,  81.79, 59.18, 36.67, 27.46, 20.78)
+cum_tax_base_dina <- c(187.35, 135.38, 105.02, 80.11, 53.43, 36.94, 23.39)
+cum_tax_base_scf[7] <-  top_tax_base
+cum_tax_base_dina[7] <- top_tax_base
+  
+# Numbers in third bracket differ in 1 hhld 41636 instead of 4637
+# numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
+aux1 <- (cum_numberTaxpayers_dina + cum_numberTaxpayers_scf)/2
+numberTaxpayers <- c(-1 * diff(aux1, lag = 1), num_billionares)
+
+aux2 <- (cum_tax_base_dina + cum_tax_base_scf)/2
+tax_base <- c(-1 * diff(aux2, lag = 1), top_tax_base) * 100
+
+# Guesswork
+
+hhld_gr <- 0.009
+evasion_disc <- 0.15
+
+
+#### Policy: 
+# Rates 
+
+# Brackets
+brackets <- c(0, 10e6, 25e6, 50e6, 100e6, 250e6, 500e6,  1e9, 1e10)
+tax_rates <- c(0,   0,    0, 0.02,  0.02,  0.02,  0.02, 0.02, 0.02)
 
 
 
-#3 We make the classical assumption that the tail of the wealth distribution is Pareto distributed. As the average wealth of the Forbes 400 ($7.2b) is 3.4 times the threshold to belong to the Forbes 400 ($2.1b), the corresponding Pareto parameter is a=3.4/(3.4-1)=1.4. Standard calculations imply that the extra tax base between $1bn and $1.8bn (relative to the tax base above $1.8bn) is [(1.8/1)^(a-1)-1] =.27 or approximately 25%. The number of families above $1bn is estimated as 400*(1.8/1)^a=911, or about 900. The important point is that the vast majority of the billionaire surtax base (over three quarters) is in the Forbes 400, for which we have relatively good estimates of net worth.
 
+#######
+
+tax_starts_at <- brackets[min(which(tax_rates>0 ))]
 
 ```
 
  
 # Policy Result
-We write regarding your proposal to impose a progressive annual wealth tax on American households with net worth (sum of all assets net of debts) above \$50 million. The tax would be 2% on the net worth above \$50 million with an additional 1% tax on net worth above \$1 billion. We estimate that about 75,000 American households (less than 0.1%) would be liable for the wealth tax and that the tax would raise around \$2.75 trillion over the ten-year budget window 2019-2028, of which \$0.3 trillion would come from the billionaire 1% surtax. The wealth tax would raise approximately 1.0% of GDP per year (\$210 billion relative to a \$21.1 trillion GDP in 2019).
+We write regarding your proposal to impose a progressive annual wealth tax on American households with net worth (sum of all assets net of debts) above `r paste("$", tax_starts_at/1e6, "m", sep = "")` million. The tax would be 2% on the net worth above \$50 million with an additional 1% tax on net worth above \$1 billion. We estimate that about 75,000 American households (less than 0.1%) would be liable for the wealth tax and that the tax would raise around **\$2.75 trillion** over the ten-year budget window 2019-2028, of which \$0.3 trillion would come from the billionaire 1% surtax. The wealth tax would raise approximately 1.0% of GDP per year (\$210 billion relative to a \$21.1 trillion GDP in 2019).
 
 The figure below illustrates the distribution the tax burden across the population and, with detailed information on the fraction of households that will pay a wealth tax:
 
@@ -62,14 +100,15 @@ The figure below illustrates the distribution the tax burden across the populati
 
 ## Data Sources
 
-There are two main sources on the wealth of all American households: the Survey of Consumer Finances (SCF) from the Federal Reserve Board and the Distributional National Accounts (DINA) recently created by Piketty, Saez, and Zucman[^1], which estimates wealth by capitalizing investment income from income tax returns. The latest year available for each source is 2016. Both sources can be used to estimate the tax revenue of the 2% wealth tax above \$50 million. For the billionaire surtax, the best source is the Forbes 400 list of the richest 400 Americans. The latest year available is 2018.
+There are two main sources on the wealth of all American households: the Survey of Consumer Finances (SCF) from the Federal Reserve Board and the Distributional National Accounts (DINA) recently created by Piketty, Saez, and Zucman[^1], which estimates wealth by capitalizing investment income from income tax returns. The latest year available for each source is 2016. Both sources can be used to estimate the tax revenue of the 2% wealth tax above \$50 million. For the billionaire surtax, the best source is the Forbes 400 list of the richest 400 Americans. The latest year available is 2018.  
+
 None of these sources provides perfect estimates but reassuringly, the SCF and DINA provide close estimates of the tax base above \$50 million. One of the important virtues of the progressive wealth tax is that it will generate much more accurate data to estimate and track the wealth of the wealthiest Americans.
 
 ## Methods
 
-1 - We age the 2016 SCF and DINA microfiles to 2019 by inflating the number of households and wealth uniformly to match the aggregate projections for population and total household wealth from the Federal Reserve Board. We also add the Forbes 400 to the SCF data. The total household net worth projection is \$94 trillion for 2019 (the SCF records a total household net worth of \$87 trillion in 2016).  
+1 - We age the 2016 SCF and DINA microfiles to 2019 by inflating the number of households and wealth uniformly to match the aggregate projections for population and total household wealth from the Federal Reserve Board [SOURCE]. We also add the Forbes 400 to the SCF data. The total household net worth projection is \$94 trillion for 2019 (the SCF records a total household net worth of \$87 trillion in 2016).  
 
-2 - Tax avoidance/evasion: recent research shows that the extent of wealth tax evasion/avoidance depends crucially on loopholes and enforcement. The proposed wealth tax has a comprehensive base with no loopholes and is well enforced through a combination of systematic third party reporting and audits. Therefore, the avoidance/evasion response is likely to be small. To be on the conservative side, we assume that households subject to the wealth tax are able to reduce their reported net worth by 15% through a combination of tax evasion and tax avoidance. This is a large response in light of existing estimates[^2].
+2 - Tax avoidance/evasion: recent research shows that the extent of wealth tax evasion/avoidance depends crucially on loopholes and enforcement. The proposed wealth tax has a comprehensive base with no loopholes and is well enforced through a combination of systematic third party reporting and audits. Therefore, the avoidance/evasion response is likely to be small. To be on the conservative side, we assume that households subject to the wealth tax are able to reduce their reported net worth by `r paste((final_ela * 0.02 - 0.01)*100,"%", sep="")` through a combination of tax evasion and tax avoidance. This is a large response in light of existing estimates[^2].
 
 3 - In 2019, there would be around 75,000 households liable to the wealth tax (72,000 households according to the SCF data and 78,000 tax filers according to the DINA data). In both cases, this would be less than .1% of the 130 million US households in 2019. The tax base above \$50 million would be \$8.2 trillion based on the SCF data and \$10.5 trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as \$9.3 trillion, i.e. approximately 10% of total household net worth of \$94 trillion population-wide. A two percent tax on this base would raise \$187 billion in 2019.
 
@@ -95,7 +134,8 @@ We start from DINA tax data 2016 inflated to 2019.
 To inflate, we assume `r paste(hhld_gr*100,"%", sep="")` # household growth per year, wealth inflated uniformly to match 2019 aggregate total of $94Tr). Uniform discount of `r paste((final_ela * 0.02 - 0.01)*100,"%", sep="")` to account for tax evasion/avoidance when wealth tax in place. 
 
 
-
+----  
+Our analysis complies with the highest levels of transparency and reproducibilty of open policy analysis proposed by the Berkeley Initiative for Transparency in Social Sciences. We invite critiques and contributors of this analysis to follow similar standards. 
 
 ```{r}
 # Ask Sara:
