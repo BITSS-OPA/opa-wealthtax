@@ -164,10 +164,23 @@ extra5=cbind.data.frame(x = rep(500e6,2), y =c(0,taxRate[5]))
 extra5b=cbind.data.frame(x = rep(500e6,2), y =c(0,taxRate[6]))
 extra6=cbind.data.frame(x = rep(1e9,2), y =c(0,taxRate[6]))
 extra6b=cbind.data.frame(x = rep(1e9,2), y =c(0,taxRate[7]))
+toPlot2$id=1:nrow(toPlot2)
 
+showMargin <- function(x){
+  if(is.null(x)) return(NULL)
+  #notice below the id column is how ggvis can understand which session to show 
+  row <- toPlot2[toPlot2$id == x$id, ]
+  #prettyNum shows the number with thousand-comma separator  
+  paste0("Marginal Tax Rate: ",round(row$marginalRate,2),"%",sep="")
+}
   
   toPlot2 %>%
-    ggvis(x = ~xval, y= ~tax) %>% layer_points() %>% layer_lines(x = ~xval, y=~marginalRate, stroke:="red") %>%
+    ggvis(x = ~xval, y= ~tax) %>% layer_points() %>% 
+    
+    layer_points(x = ~xval, y=~marginalRate, stroke:="red",key:=~id) %>%
+    add_tooltip(showMargin ,"hover") %>%
+    layer_lines(x = ~xval, y=~marginalRate, stroke:="red") %>%
+  
     layer_paths(data = extra1, ~x,~y) %>% 
     layer_paths(data = extra2, ~x, ~y) %>%
     layer_paths(data = extra3, ~x, ~y) %>%
@@ -181,7 +194,8 @@ extra6b=cbind.data.frame(x = rep(1e9,2), y =c(0,taxRate[7]))
     layer_paths(data = extra4b, ~x, ~y) %>%
     layer_paths(data = extra5b, ~x, ~y) %>%
     layer_paths(data = extra6b, ~x, ~y) %>%
-    
+
+  
   add_axis("x", title = "Wealth before taxes") %>%
     add_axis("y", title = "Tax rate (%)") %>%
     #add_legend("stroke", title = "Won Oscar", values = c("Yes", "No")) %>%
