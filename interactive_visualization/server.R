@@ -4,6 +4,41 @@ server <- function(input, output) {
   taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
 
   bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+")
+  
+  dataInput = reactive({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    
+    xval <- seq(10e6, 1e9 + 1e8, by = 100000)
+    
+    idx1 <- xval <= 25e6
+    idx2 <- xval > 25e6 & xval <= 50e6
+    idx3 <- xval > 50e6 & xval <= 100e6
+    idx4 <- xval > 100e6 & xval <= 250e6
+    idx5 <- xval > 250e6 & xval <= 500e6
+    idx6 <- xval > 500e6 & xval <= 1e9
+    idx7 <- xval > 1e9
+    
+    idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
+    
+    # Indicator across income on tax bracke position
+    getGroup <- unlist(apply(idx, 1, function(x) {
+      which(x)
+    }))
+    
+    toPlot <- cbind.data.frame(xval, getGroup)
+    
+    toMatch <- cbind.data.frame(group = 1:7, tax = taxRate)
+    
+    toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
+    
+    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getMarginalTax, taxRate))
+    # Here is where the total tax payed by each individuals is transform into marginal tax rates
+    toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
+    
+    toPlot2$id <- 1:nrow(toPlot2)
+    
+    toPlot2
+  })
 
   
   # Computes total tax revenue
@@ -90,33 +125,7 @@ server <- function(input, output) {
   vis2 <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
 
-    xval <- seq(10e6, 1e9 + 1e8, by = 100000)
-
-    idx1 <- xval <= 25e6
-    idx2 <- xval > 25e6 & xval <= 50e6
-    idx3 <- xval > 50e6 & xval <= 100e6
-    idx4 <- xval > 100e6 & xval <= 250e6
-    idx5 <- xval > 250e6 & xval <= 500e6
-    idx6 <- xval > 500e6 & xval <= 1e9
-    idx7 <- xval > 1e9
-
-    idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
     
-    # Indicator across income on tax bracke position
-    getGroup <- unlist(apply(idx, 1, function(x) {
-      which(x)
-    }))
-
-    toPlot <- cbind.data.frame(xval, getGroup)
-
-    toMatch <- cbind.data.frame(group = 1:7, tax = taxRate)
-
-    toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
-
-    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getMarginalTax, taxRate))
-    # Here is where the total tax payed by each individuals is transform into marginal tax rates
-    toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
-
     # These are mini data set that ggvis needs to create vertical lines
     extra0 <- cbind.data.frame(x = rep(10e6, 2), y = c(0, taxRate[1]))
     extra1 <- cbind.data.frame(x = rep(25e6, 2), y = c(0, taxRate[1]))
@@ -133,17 +142,18 @@ server <- function(input, output) {
     extra5b <- cbind.data.frame(x = rep(500e6, 2), y = c(0, taxRate[6]))
     extra6 <- cbind.data.frame(x = rep(1e9, 2), y = c(0, taxRate[6]))
     extra6b <- cbind.data.frame(x = rep(1e9, 2), y = c(0, taxRate[7]))
-    toPlot2$id <- 1:nrow(toPlot2)
+    
 
     showMargin <- function(x) {
       # Walk through?
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
-      row <- toPlot2[toPlot2$id == x$id, ]
+      data = dataInput()
+      row <- data[data$id == x$id, ]
       paste0("Marginal Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
     }
 
-    toPlot2 %>%
+    dataInput() %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
       layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
