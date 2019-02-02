@@ -13,6 +13,7 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(EnvStats)
 ```
 
 
@@ -21,7 +22,7 @@ library(tidyverse)
 ```{r params, echo=TRUE, message=FALSE, warning=FALSE}
 setwd('..')
 
-# Research:
+################ Research:
 research_df <- read_csv("rawdata/research.csv")
 
 # Elasticities
@@ -29,36 +30,44 @@ ela1 <- as.numeric(research_df[1,"param"]) # 0.5 - eim, David. 2017. "Behavioral
 
 ela2 <- as.numeric(research_df[2,"param"])  # 0.5 - Jakobsen, Kristian, Katrine Jakobsen, Henrik Kleven and Gabriel Zucman. 2018. “Wealth Accumulation and Wealth Taxation: Theory and Evidence from Denmark” NBER working paper No. 24371
 
+ela3_1 <- as.numeric(research_df[3,"param"])    # 2
+ela3_2 <-   as.numeric(research_df[4,"param"])  # 3 - Londono-Velez, Juliana and Javier Avila. "Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia", UC Berkeley working paper, 2018 
 
-ela3 <- (as.numeric(research_df[3,"param"])+ as.numeric(research_df[4,"param"]))/2 # (2 + 3)/2 - Londono-Velez, Juliana and Javier Avila. "Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia", UC Berkeley working paper, 2018 
-
-ela4 <- (as.numeric(research_df[5,"param"])+ as.numeric(research_df[6,"param"]))/2 # (23 + 34)/2 - Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016
-
-final_ela <- mean(c(ela1, ela2, ela3, ela4))
-
-
+ela4_1 <- as.numeric(research_df[5,"param"])    # 23
+ela4_2 <- as.numeric(research_df[6,"param"])    # 34 - Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016
+################
 
 
-# Data
-# Number of tax payers 
-numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
-taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560)
-num_billionares <- round(400 * 1.8^1.4)
-top_tax_base <- 0.01 * ( 400 * ( (1-0.15) * 7.2 - 1 ) * 1.25 )
 
+################ Data:
+# Number of tax payers SCF & DINA
 cum_numberTaxpayers_scf <- c(1100144, 298649, 72143, 34552, 7119,  2555,  671)
 cum_numberTaxpayers_dina <- c(673449, 194548, 78434, 32751, 10236, 4491, 1597) 
-cum_numberTaxpayers_scf[7] <- num_billionares
-cum_numberTaxpayers_dina[7] <- num_billionares 
 
+# Tax base for brackets below
 cum_tax_base_scf <-  c(203.97, 121.63,  81.79, 59.18, 36.67, 27.46, 20.78)
 cum_tax_base_dina <- c(187.35, 135.38, 105.02, 80.11, 53.43, 36.94, 23.39)
-cum_tax_base_scf[7] <-  top_tax_base
-cum_tax_base_dina[7] <- top_tax_base
 
-total_wealth <- 94e12 # [SOURCE]
-total_hhlds <- 129.4e6
+# Total wealth and number if households [SOURCE NEEDED]
+total_wealth <- 94e12   # [SOURCE]  
+total_hhlds <- 129.4e6  # [SOURCE]
 
+# Forbes: average across 400 and value for 400th billionare
+average_wealth_top_400 <- 7.2e9
+wealth_last_400 <- 2.1e9
+################ 
+
+################  Guesswork:
+hhld_gr <- 0.009
+growth_wealth <- 0.055
+#As computed, the response to a 2% tax is a 16% tax elasticity. However the one
+#used in the report is 15%. Until we understand why, we will adjust by an explicit factor. 
+adj_factor1 <- 0.01
+################ 
+
+
+num_billionares <- round(400 * 1.8^1.4)
+top_tax_base <- 0.01 * ( 400 * ( (1-0.15) * 7.2 - 1 ) * 1.25 )
 # Numbers in third bracket differ in 1 hhld 41636 instead of 4637
 # numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
 aux1 <- (cum_numberTaxpayers_dina + cum_numberTaxpayers_scf)/2
@@ -67,31 +76,25 @@ numberTaxpayers <- c(-1 * diff(aux1, lag = 1), num_billionares)
 aux2 <- (cum_tax_base_dina + cum_tax_base_scf)/2
 tax_base <- c(-1 * diff(aux2, lag = 1), top_tax_base) * 100
 
-# Guesswork
-
-hhld_gr <- 0.009
-evasion_disc <- 0.15
-growth_wealth <- 0.055
-
-
 #### Policy: 
-# Rates 
 
 # Brackets
 brackets <- c(10e6, 25e6, 50e6, 100e6, 250e6, 500e6,  1e9)
-tax_rates <- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.02, 0.02)
+tax_rates <- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03)
+starting_brack <- brackets[min(which(tax_rates>0))]
+main_tax <- median(tax_rates)
 
-
-
-
+# Tax base called from data (SCF and DINA) already accounts for the adjustments
+# due to population growth, tax avoidance, 
 #######
 
-tax_starts_at <- brackets[min(which(tax_rates>0 ))]
-```
 
- 
-# Policy Result
-We write regarding your proposal to impose a progressive annual wealth tax on American households with net worth (sum of all assets net of debts) above `r paste("$", tax_starts_at/1e6, "m", sep = "")` million. The tax would be 2% on the net worth above \$50 million with an additional 1% tax on net worth above \$1 billion. We estimate that about 75,000 American households (less than 0.1%) would be liable for the wealth tax and that the tax would raise around **\$2.75 trillion** over the ten-year budget window 2019-2028, of which \$0.3 trillion would come from the billionaire 1% surtax. The wealth tax would raise approximately 1.0% of GDP per year (\$210 billion relative to a \$21.1 trillion GDP in 2019).
+
+tax_starts_at <- brackets[min(which(tax_rates>0 ))]
+final_ela <- mean(c(ela1, ela2, (ela3_1 + ela3_2)/2, (ela4_1 + ela4_2)/2))
+
+rm(list = c("aux1", "aux2"))
+```
 
 The figure below illustrates the distribution the tax burden across the population and, with detailed information on the fraction of households that will pay a wealth tax:
 
@@ -100,23 +103,108 @@ The figure below illustrates the distribution the tax burden across the populati
 # Insert a PNG of the figure here. 
 ```
 
-# Methodology
 
-## Data Sources
+
+Steps of analysis: 
+ 
+1 -  Compute tax elasticity
+Seim, David. 2017. “Behavioral Responses to an Annual Wealth Tax: Evidence from Sweden”, American Economic Journal: Economic Policy, 9(4), 395-421 and Jakobsen, Kristian, Katrine Jakobsen, Henrik Kleven and Gabriel Zucman. 2018. “Wealth Accumulation and Wealth Taxation: Theory and Evidence from Denmark” NBER working paper No. 24371, obtain small avoidance/evasion responses in the case of Sweden and Denmark in two countries with systematic third party reporting of wealth: a 1% wealth tax reduces reported wealth by less than 1%. Londono-Velez, Juliana and Javier Avila. “Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia”, UC Berkeley working paper, 2018 show medium size avoidance/evasion responses in the case of Colombia where enforcement is not as strong: a 1% wealth tax reduces reported wealth by about `r paste(ela3_1, "-", ela3_2,"%", sep="")`. The study for Switzerland, Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016 is an outlier that finds very large responses to wealth taxation in Switzerland: a 1% wealth tax lowers reported wealth by `r paste(ela4_1, "-", ela4_2,"%", sep="")`. This extremely large estimate is extrapolated from very small variations in wealth tax rates over time and across Swiss cantons and hence is not as compellingly identified as the other estimates based on large variations in the wealth tax rate. Switzerland has no systematic third party reporting of assets which can also make tax evasion responses larger than in Scandinavia. 
+
+```{r tax-elasticity}
+final_ela <- mean(c(ela1, ela2, (ela3_1 + ela3_2)/2, (ela4_1 + ela4_2)/2))
+evasion_param <- 0.02 * final_ela - adj_factor1
+```
+
+The final `r paste(evasion_param * 100,"%", sep="")` tax avoidance/evasion response to a 2% wealth tax was computed as and average across these four studies. 
+
+2 - Estimate number of billionares and their total tax base (over one billion)  
+```{r est-billionares}
+non_evaded_tax <- (1 - evasion_param)
+
+totax_last_400 <- non_evaded_tax * wealth_last_400/1e9
+totax_average_400 <- (1 - evasion_param) * average_wealth_top_400/1e9
+totax_total_400 <- 400 * (totax_average_400 - 1)
+
+aux1 <- average_wealth_top_400/wealth_last_400
+pareto_scale <- aux1/(aux1-1)
+ratio1 <- round(aux1, 1)
+
+# Comput missing fraction of taxbase above 1 billion
+one_billion <- 1
+missing_fraction <- ( totax_last_400/1 / one_billion )^( pareto_scale - 1 ) - 1
+# to do: review this approximation
+missing_fraction_aprx <- round(missing_fraction - 0.02, 2)
+
+missing_taxbase <- missing_fraction * totax_total_400
+missing_taxbase_aprx <- missing_fraction_aprx * round(totax_total_400,1)
+
+#Diff between original document (911) and below (906) is due to rounding in inputs 
+num_billionares <- 400 * ( totax_last_400 / 1 )^pareto_scale
+final_taxbase_b <- totax_total_400 + missing_taxbase
+final_taxbase_b_aprx <- round(final_taxbase_b/1e3,1) - 0.1
+
+#This is the taxed money (the aboves is the totale taxable) in billions 
+top_tax_base_aprx <- final_taxbase_b * 0.01 - 1
+top_tax_base <- top_tax_base_aprx
+
+#edit the number of billionares
+cum_numberTaxpayers_scf[7] <- num_billionares
+cum_numberTaxpayers_dina[7] <- num_billionares 
+cum_tax_base_scf[7] <-  top_tax_base
+cum_tax_base_dina[7] <- top_tax_base
+
+target_hhlds <- sum( numberTaxpayers[brackets>=starting_brack] )
+target_hhlds_round <- format(round( sum( numberTaxpayers[brackets>=50e6] )/1000 ) * 1000, scientific=FALSE)
+
+rm(list = c("aux1"))
+```
+
+For the billionaire surtax, the Forbes 400 reports that in 2018 the top 400 richest Americans had an average net worth of `r paste("$", average_wealth_top_400/1e9,sep="")` billion and that the 400th wealthiest had `r paste("$", wealth_last_400/1e9,sep="")` billion. Given the recent stock price declines, we assume that the wealth of the Forbes 400 in 2019 will be the same as in 2018. We also assume that their reported wealth for tax purposes would be `r paste(non_evaded_tax * 100,"%", sep="")` of the Forbes estimate due to avoidance and evasion. Hence the top 400 wealth taxpayers would report at least `r paste("$", round(totax_last_400, 1),sep="")` billion (= `r paste( non_evaded_tax," * ",wealth_last_400/1e9,sep="")`) and have an average reported wealth of `r paste("$", round(totax_average_400, 1),sep="")` billion (= `r paste( non_evaded_tax," * ",average_wealth_top_400/1e9,sep="")`). Hence, the Forbes 400 taxable base would be 400\*(6.1-1)=`r paste("$", totax_total_400, sep="")` billion or approximately `r paste("$", round(totax_total_400/1e3), sep="")` trillion.   
+
+We use a standard Pareto interpolation technique, to estimate the billionaire tax base between \$1 billion and `r paste("$", round(totax_last_400, 1),sep="")` (below the Forbes 400).
+
+We make the classical assumption that the tail of the wealth distribution is Pareto distributed. As the average wealth of the Forbes 400 (\$7.2b) is `r ratio1` times the threshold to belong to the Forbes 400 (\$2.1b), the corresponding Pareto parameter is a=3.4/(3.4-1)=`r round(pareto_scale,1)`. Standard calculations imply that the extra tax base between \$1bn and \$1.8bn (relative to the tax base above \$1.8bn) is [(1.8/1)^(a-1)-1] =`r round(missing_fraction, 2)` or approximately `r paste(missing_fraction_aprx*100, "%", sep="")` of the above `r paste("$", round(totax_total_400/1e3), sep="")` trillion. The number of families above \$1bn is estimated as 400*(1.8/1)^a=`r round(num_billionares)`, or about 900. The important point is that the vast majority of the billionaire surtax base (over three quarters) is in the Forbes 400, for which we have relatively good estimates of net worth.
+
+Therefore, the billionaire surtax base is estimated at `r paste("$", final_taxbase_b_aprx, sep="")` trillion (`r paste("$", round(totax_total_400/1e3),"t", sep="")` from those above `r paste("$", round(totax_last_400, 1),"b",sep="")` and `r paste("$", round(missing_taxbase_aprx/1e3,1),"t", sep="")` from those between 1  and `r paste("$", round(totax_total_400/1e3) ,"b",sep="")` from those above `r paste("$", round(totax_last_400, 1),sep="")`) and hence the billionaire surtax would raise `r paste("$", round(top_tax_base_aprx), sep="")` billion in 2019 from about 900 billionaire families.
+
+# Total tax base  
+
+In 2019, there would be around `r  target_hhlds_round` households liable to the wealth tax (`r  format(round( sum( cum_numberTaxpayers_scf[brackets==50e6] )/1000 ) * 1000, scientific=FALSE)` households according to the SCF data and `r  format(round( sum( cum_numberTaxpayers_dina[brackets==50e6] )/1000 ) * 1000, scientific=FALSE)` tax filers according to the DINA data). In both cases, this would be less than `r paste(round(sum( numberTaxpayers[brackets>=50e6] )/total_hhlds * 100 , digits = 1), "%", sep = "")` of the `r round(total_hhlds/1e7)*10` million US households in 2019. The tax base above \$50 million would be \$8.2 trillion based on the SCF data and \$10.5 trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as `r paste("$", round(sum(tax_base[brackets>=50e6])/1000, digits = 1  ), sep="")` trillion, i.e. approximately 10% of total household net worth of \$94 trillion population-wide. A two percent tax on this base would raise `r paste("$", round(sum(tax_base[brackets>=50e6]) * 0.02), sep="")` billion in 2019.
+
+
+
+3 - Apply tax rates and compute yearly collection
+
+4 - Compute 10-year projection
+
+
+**Note:** Our analysis complies with the highest levels of transparency and reproducibilty for open policy analysis proposed by the Berkeley Initiative for Transparency in Social Sciences. We invite contributors and critics of this analysis to follow similar standards. 
+
+----  
+
+# Original Letter to Sen. Warren  
+
+Dear Senator Warren:   
+
+We write regarding your proposal to impose a progressive annual wealth tax on American households with net worth (sum of all assets net of debts) above `r paste("$", tax_starts_at/1e6, "m", sep = "")` million. The tax would be 2% on the net worth above \$50 million with an additional 1% tax on net worth above \$1 billion. We estimate that about `r  format(round( sum( numberTaxpayers[brackets>=50e6] )/1000 ) * 1000, scientific=FALSE)` American households (less than  `r paste(round(sum( numberTaxpayers[brackets>=50e6] )/total_hhlds * 100 , digits = 1), "%", sep = "")`) would be liable for the wealth tax and that the tax would raise around **\$2.75 trillion** over the ten-year budget window 2019-2028, of which \$0.3 trillion would come from the billionaire 1% surtax. The wealth tax would raise approximately 1.0% of GDP per year (\$210 billion relative to a \$21.1 trillion GDP in 2019).
+
+## Details on the estimation
+
+## Data Sources:
 
 There are two main sources on the wealth of all American households: the Survey of Consumer Finances (SCF) from the Federal Reserve Board and the Distributional National Accounts (DINA) recently created by Piketty, Saez, and Zucman[^1], which estimates wealth by capitalizing investment income from income tax returns. The latest year available for each source is 2016. Both sources can be used to estimate the tax revenue of the 2% wealth tax above \$50 million. For the billionaire surtax, the best source is the Forbes 400 list of the richest 400 Americans. The latest year available is 2018.  
 
 None of these sources provides perfect estimates but reassuringly, the SCF and DINA provide close estimates of the tax base above \$50 million. One of the important virtues of the progressive wealth tax is that it will generate much more accurate data to estimate and track the wealth of the wealthiest Americans.
 
-## Methods
+## Methodology:
 
 1 - We age the 2016 SCF and DINA microfiles to 2019 by inflating the number of households and wealth uniformly to match the aggregate projections for population and total household wealth from the Federal Reserve Board [SOURCE]. We also add the Forbes 400 to the SCF data. The total household net worth projection is \$94 trillion for 2019 (the SCF records a total household net worth of \$87 trillion in 2016).  
 
-2 - Tax avoidance/evasion: recent research shows that the extent of wealth tax evasion/avoidance depends crucially on loopholes and enforcement. The proposed wealth tax has a comprehensive base with no loopholes and is well enforced through a combination of systematic third party reporting and audits. Therefore, the avoidance/evasion response is likely to be small. To be on the conservative side, we assume that households subject to the wealth tax are able to reduce their reported net worth by `r paste((final_ela * 0.02 - 0.01)*100,"%", sep="")` through a combination of tax evasion and tax avoidance. This is a large response in light of existing estimates[^2].
+2 - Tax avoidance/evasion: recent research shows that the extent of wealth tax evasion/avoidance depends crucially on loopholes and enforcement. The proposed wealth tax has a comprehensive base with no loopholes and is well enforced through a combination of systematic third party reporting and audits. Therefore, the avoidance/evasion response is likely to be small. To be on the conservative side, we assume that households subject to the wealth tax are able to reduce their reported net worth by `r paste(evasion_param * 100,"%", sep="")` through a combination of tax evasion and tax avoidance. This is a large response in light of existing estimates[^2].
 
 3 - In 2019, there would be around `r  format(round( sum( numberTaxpayers[brackets>=50e6] )/1000 ) * 1000, scientific=FALSE)` households liable to the wealth tax (`r  format(round( sum( cum_numberTaxpayers_scf[brackets==50e6] )/1000 ) * 1000, scientific=FALSE)` households according to the SCF data and `r  format(round( sum( cum_numberTaxpayers_dina[brackets==50e6] )/1000 ) * 1000, scientific=FALSE)` tax filers according to the DINA data). In both cases, this would be less than `r paste(round(sum( numberTaxpayers[brackets>=50e6] )/total_hhlds * 100 , digits = 1), "%", sep = "")` of the `r round(total_hhlds/1e7)*10` million US households in 2019. The tax base above \$50 million would be \$8.2 trillion based on the SCF data and \$10.5 trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as `r paste("$", round(sum(tax_base[brackets>=50e6])/1000, digits = 1  ), sep="")` trillion, i.e. approximately 10% of total household net worth of \$94 trillion population-wide. A two percent tax on this base would raise `r paste("$", round(sum(tax_base[brackets>=50e6]) * 0.02), sep="")` billion in 2019.
 
-4 - For the billionaire surtax, the Forbes 400 reports that in 2018 the top 400 richest Americans had an average net worth of \$7.2 billion and that the 400th wealthiest had \$2.1 billion. Given the recent stock price declines, we assume that the wealth of the Forbes 400 in 2019 will be the same as in 2018. We also assume that their reported wealth for tax purposes would be 85% of the Forbes estimate due to avoidance and evasion. Hence the top 400 wealth taxpayers would report at least \$1.8 billion (=2.1*.85) and have an average reported wealth of \$6.1 billion (=7.2*.85). Hence, the Forbes 400 taxable base would be 400*(6.1-1)=\$2040 billion or approximately \$2 trillion. Using a standard Pareto interpolation technique, we estimate that the billionaire tax base between \$1 billion and \$1.8 billion (below the Forbes 400) would add 25% to the Forbes 400 tax base and would add about 500 families[^3]. Therefore, the billionaire surtax base is estimated at \$2.5 trillion and hence the billionaire surtax would raise \$25 billion in 2019 from about 900 billionaire families.
+4 - For the billionaire surtax, the Forbes 400 reports that in 2018 the top 400 richest Americans had an average net worth of `r paste("$", average_wealth_top_400/1e9,sep="")` billion and that the 400th wealthiest had `r paste("$", wealth_last_400/1e9,sep="")` billion. Given the recent stock price declines, we assume that the wealth of the Forbes 400 in 2019 will be the same as in 2018. We also assume that their reported wealth for tax purposes would be `r paste((1 - evasion_param) * 100,"%", sep="")` of the Forbes estimate due to avoidance and evasion. Hence the top 400 wealth taxpayers would report at least `r paste("$", round((1 - evasion_param) * wealth_last_400/1e9, 1),sep="")` billion (= `r paste( (1 - evasion_param)," * ",wealth_last_400/1e9,sep="")`) and have an average reported wealth of `r paste("$", round((1 - evasion_param) * average_wealth_top_400/1e9, 1),sep="")` billion (= `r paste( (1 - evasion_param)," * ",average_wealth_top_400/1e9,sep="")`). Hence, the Forbes 400 taxable base would be 400*(6.1-1)=\$2040 billion or approximately \$2 trillion. Using a standard Pareto interpolation technique, we estimate that the billionaire tax base between \$1 billion and \$1.8 billion (below the Forbes 400) would add 25% to the Forbes 400 tax base and would add about 500 families[^3]. Therefore, the billionaire surtax base is estimated at \$2.5 trillion and hence the billionaire surtax would raise \$25 billion in 2019 from about 900 billionaire families.
 
 5 - The combination of the 2% tax above \$50 million and the billionaire surtax would raise \$187 + \$25 = \$212 billion in 2019.  
 
@@ -138,35 +226,20 @@ We start from DINA tax data 2016 inflated to 2019.
 
 To inflate, we assume `r paste(hhld_gr*100,"%", sep="")` # household growth per year, wealth inflated uniformly to match 2019 aggregate total of $94Tr). Uniform discount of `r paste((final_ela * 0.02 - 0.01)*100,"%", sep="")` to account for tax evasion/avoidance when wealth tax in place. 
   
-  
+To do:   
+ - remove all the rounded values.
+ - Incorporate wealthtax.do.  
+ - replace any remaining hard coded values.  
+ - 
+
 ----    
-
-Steps of analysis: 
- 
-1 -   
-
-2 -   
-
-3 -   
-
-4 - Apply tax rates  
-
-
-----  
-Our analysis complies with the highest levels of transparency and reproducibilty of open policy analysis proposed by the Berkeley Initiative for Transparency in Social Sciences. We invite critiques and contributors of this analysis to follow similar standards. 
-
-```{r}
-# Ask Sara:
- # - Zooming capabilities?
- # - Interactive number seems off sometimes
-```
 
 [^1]: Piketty, Thomas, Emmanuel Saez, and Gabriel Zucman, “Distributional National Accounts: Methods and Estimates for the United States”, Quarterly Journal of Economics 133(2), 2018, 553-609. Data online at http://gabriel-zucman.eu/usdina/
 
-[^2]: Seim, David. 2017. "Behavioral Responses to an Annual Wealth Tax: Evidence from Sweden", American Economic Journal: Economic Policy, 9(4), 395-421 and Jakobsen, Kristian, Katrine Jakobsen, Henrik Kleven and Gabriel Zucman. 2018. “Wealth Accumulation and Wealth Taxation: Theory and Evidence from Denmark” NBER working paper No. 24371, obtain small avoidance/evasion responses in the case of Sweden and Denmark in two countries with systematic third party reporting of wealth: a 1% wealth tax reduces reported wealth by less than 1%. Londono-Velez, Juliana and Javier Avila. "Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia", UC Berkeley working paper, 2018 show medium size avoidance/evasion responses in the case of Colombia where enforcement is not as strong: a 1% wealth tax reduces reported wealth by about 2-3%. The study for Switzerland, Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016 is an outlier that finds very large responses to wealth taxation in Switzerland: a 1% wealth tax lowers reported wealth by 23-34%. This extremely large estimate is extrapolated from very small variations in wealth tax rates over time and across Swiss cantons and hence is not as compellingly identified as the other estimates based on large variations in the wealth tax rate. Switzerland has no systematic third party reporting of assets which can also make tax evasion responses larger than in Scandinavia. Our 15% tax avoidance/evasion response to a 2% wealth tax is based on the average across these four studies (2%*(.5+.5+2.5+28.5)/4=16%).
+[^2]: Seim, David. 2017. “Behavioral Responses to an Annual Wealth Tax: Evidence from Sweden”, American Economic Journal: Economic Policy, 9(4), 395-421 and Jakobsen, Kristian, Katrine Jakobsen, Henrik Kleven and Gabriel Zucman. 2018. “Wealth Accumulation and Wealth Taxation: Theory and Evidence from Denmark” NBER working paper No. 24371, obtain small avoidance/evasion responses in the case of Sweden and Denmark in two countries with systematic third party reporting of wealth: a 1% wealth tax reduces reported wealth by less than 1%. Londono-Velez, Juliana and Javier Avila. “Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia”, UC Berkeley working paper, 2018 show medium size avoidance/evasion responses in the case of Colombia where enforcement is not as strong: a 1% wealth tax reduces reported wealth by about `r paste(ela3_1, "-", ela3_2,"%", sep="")`. The study for Switzerland, Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016 is an outlier that finds very large responses to wealth taxation in Switzerland: a 1% wealth tax lowers reported wealth by `r paste(ela4_1, "-", ela4_2,"%", sep="")`. This extremely large estimate is extrapolated from very small variations in wealth tax rates over time and across Swiss cantons and hence is not as compellingly identified as the other estimates based on large variations in the wealth tax rate. Switzerland has no systematic third party reporting of assets which can also make tax evasion responses larger than in Scandinavia.  Our `r paste(evasion_param * 100,"%", sep="")` tax avoidance/evasion response to a 2% wealth tax is based on the average across these four studies (2%*(.5+.5+2.5+28.5)/4=16%).
 
-[^3]: We make the classical assumption that the tail of the wealth distribution is Pareto distributed. As the average wealth of the Forbes 400 ($7.2b) is 3.4 times the threshold to belong to the Forbes 400 ($2.1b), the corresponding Pareto parameter is a=3.4/(3.4-1)=1.4. Standard calculations imply that the extra tax base between $1bn and $1.8bn (relative to the tax base above $1.8bn) is [(1.8/1)^(a-1)-1] =.27 or approximately 25%. The number of families above $1bn is estimated as 400*(1.8/1)^a=911, or about 900. The important point is that the vast majority of the billionaire surtax base (over three quarters) is in the Forbes 400, for which we have relatively good estimates of net worth.
+[^3]: We make the classical assumption that the tail of the wealth distribution is Pareto distributed. As the average wealth of the Forbes 400 (\$7.2b) is 3.4 times the threshold to belong to the Forbes 400 (\$2.1b), the corresponding Pareto parameter is a=3.4/(3.4-1)=1.4. Standard calculations imply that the extra tax base between \$1bn and \$1.8bn (relative to the tax base above \$1.8bn) is [(1.8/1)^(a-1)-1] =.27 or approximately 25%. The number of families above \$1bn is estimated as 400*(1.8/1)^a=911, or about 900. The important point is that the vast majority of the billionaire surtax base (over three quarters) is in the Forbes 400, for which we have relatively good estimates of net worth.
 
-[^4]: With r=5.5%, we have [1+(1+r)+..+(1+r)^9]=[(1+r)^10-1]/r=12.9, approximately 13.
+[^4]: With r=5.5%, we have [1+(1+r)+..+(1+r)^9]=[(1+r)^10-1]/r=`r sum((1 + 0.055)^(0:9))`, approximately 13.
 
 [^5]: Saez, Emmanuel and Gabriel Zucman, “Wealth Inequality in the United States since 1913: Evidence from Capitalized Income Tax Data”, Quarterly Journal of Economics 131(2), 2016, 519-578, updated series available at http://gabriel-zucman.eu/usdina/
