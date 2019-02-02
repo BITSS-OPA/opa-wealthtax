@@ -17,31 +17,31 @@ ui <-
           ## can set different defaults if desired
           sliderInput("bracket1", "Marginal Tax Rate in $10m-$25m Bracket",
             0, 5, 0,
-            step = 0.5
+            step = 0.1
           ),
           sliderInput("bracket2", "Marginal Tax Rate in $25m-$50m Bracket",
             0, 5, 0,
-            step = 0.5
+            step = 0.1
           ),
           sliderInput("bracket3", "Marginal Tax Rate in $50m-$100m Bracket",
             0, 5, 2,
-            step = 0.5
+            step = 0.1
           ),
           sliderInput("bracket4", "Marginal Tax Rate in $100m-$250m Bracket",
             0, 5, 2,
-            step = 0.5
+            step = 0.1
           ),
           sliderInput("bracket5", "Marginal Tax Rate in $250m-$500m Bracket",
             0, 5, 2,
-            step = 0.5
+            step = 0.1
           ),
           sliderInput("bracket6", "Marginal Tax Rate in $500m-$1bn Bracket",
             0, 5, 2,
-            step = 0.5
+            step = 0.1
           ),
           sliderInput("bracket7", "Marginal Tax Rate in $1bn+ Bracket",
             0, 5, 3,
-            step = 0.5
+            step = 0.1
           )
         )
       ),

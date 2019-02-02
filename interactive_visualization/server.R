@@ -8,7 +8,7 @@ server <- function(input, output) {
   dataInput = reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
     
-    xval <- seq(10e6, 1e9 + 1e8, by = 100000)
+    xval <- seq(10e6, 1e9 + 1e8, by = 1000000)
     
     idx1 <- xval <= 25e6
     idx2 <- xval > 25e6 & xval <= 50e6
