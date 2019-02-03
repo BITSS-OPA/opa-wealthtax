@@ -1,7 +1,7 @@
 
 server <- function(input, output) {
-  numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911) ## eventually be able to change these based on other parameters
-  taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
+  numberTaxpayers <- numberTaxpayers ## eventually be able to change these based on other parameters
+  taxBase <- tax_base ## eventaully be able to change these based on other parameters
 
   bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+")
   
@@ -77,9 +77,21 @@ server <- function(input, output) {
 
     totalTax <- sum(tax)
 
-    totalTax ## could round if desired
+    round(totalTax) ## could round if desired
   })
 
+  output$totalTax_10 <- renderText({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRateP <- taxRate / 100 ## get to percentage
+    
+    tax <- taxBase * taxRateP
+    
+    totalTax <- sum(tax) * 13
+    
+    round(totalTax/1e3,2) ## could round if desired
+  })
+  
+  
   output$totalTaxpayers <- renderText({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
     taxRateP <- taxRate / 100 ## get to percentage
@@ -90,7 +102,7 @@ server <- function(input, output) {
 
     totalTaxpayers <- sum(householdsTaxed)
 
-    totalTaxpayers
+    round(totalTaxpayers)
   })
 
   output$percentHouseAffected <- renderText({
@@ -101,9 +113,9 @@ server <- function(input, output) {
 
     householdsTaxed <- numberTaxpayers * (taxRateP > 0)
 
-    householdsAffected <- sum(householdsTaxed) / 129400000 ## make the denominator updateable later
+    householdsAffected <- sum(householdsTaxed) / 129.4e6 ## make the denominator updateable later
 
-    householdsAffected * 100 ## get to percentage
+    round(householdsAffected * 100,1) ## get to percentage
     ## can round if desired
   })
 
@@ -117,7 +129,7 @@ server <- function(input, output) {
 
     taxUnits <- sum(householdsTaxed) / 183460000 ## make the denominator updateable later
 
-    taxUnits * 100 ## get to percentage
+    round(taxUnits * 100,2) ## get to percentage
     ## can round if desired
   })
 

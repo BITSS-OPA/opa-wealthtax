@@ -51,8 +51,10 @@ ui <-
         ggvisOutput("plot2"),
         # Format changes?
         # wellPanel(
-        h2("Total Taxes ($bn)"),
+        h3("Total Taxes ($bn)"),
         textOutput("totalTax"),
+        h4("Total Taxes over 10 years ($t)"),
+        textOutput("totalTax_10"),
         h4("Total Taxpayers (Households)"),
         textOutput("totalTaxpayers"),
         h4("Percentage of Households Affected"),
