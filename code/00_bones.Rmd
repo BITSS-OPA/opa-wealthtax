@@ -16,17 +16,28 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r parameters}
+################ 
 ##### Data  
 #############
 
+################ 
 ##### Research
-#############
+################ 
 
+################ 
 ##### Guess work   
-#############
+################ 
 
-##### Notes:
-#############
+################ 
+#####  Notes:
+################ 
+### Source ---->  Input ----> Model ----> Policy Estimates (output)
+###  (_so)        (_in)       (_mo)        (_pe)
+### values      functions   functions      values
+###             & values    & values 
+### arguments in functions should used "_var" and functions should "_f"
+
+
 ```
 
 
