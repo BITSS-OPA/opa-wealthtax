@@ -22,59 +22,51 @@ library(here)
 
 
 ```{r params, echo=TRUE, message=FALSE, warning=FALSE}
-#setwd('..')
-
-################ 
-################ Research:
-research_df <- read_csv("rawdata/research.csv")
-
+################  
+####### Research:
+################  
+research_df <- read_csv("rawdata/research.csv")       #load data set that contains parameters from research
 # Elasticities
-ela1 <- as.numeric(research_df[1,"param"]) # 0.5 - eim, David. 2017. "Behavioral Responses to an Annual Wealth Tax: Evidence from Sweden", American Economic Journal: Economic Policy, 9(4), 395-421
+ela1 <- as.numeric(research_df[1,"param"])           # 0.5 - David. 2017
+ela2 <- as.numeric(research_df[2,"param"])           # 0.5 - Jakobsen et al. 2018
+ela3_1 <- as.numeric(research_df[3,"param"])         # 2 - Londono-Velez 2018
+ela3_2 <-   as.numeric(research_df[4,"param"])       # 3 - Londono-Velez 2018
+ela4_1 <- as.numeric(research_df[5,"param"])         # 23 - Brülhart et al. 2016
+ela4_2 <- as.numeric(research_df[6,"param"])         # 34 - Brülhart et al. 2016
 
-ela2 <- as.numeric(research_df[2,"param"])  # 0.5 - Jakobsen, Kristian, Katrine Jakobsen, Henrik Kleven and Gabriel Zucman. 2018. “Wealth Accumulation and Wealth Taxation: Theory and Evidence from Denmark” NBER working paper No. 24371
-
-ela3_1 <- as.numeric(research_df[3,"param"])    # 2
-ela3_2 <-   as.numeric(research_df[4,"param"])  # 3 - Londono-Velez, Juliana and Javier Avila. "Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia", UC Berkeley working paper, 2018 
-
-ela4_1 <- as.numeric(research_df[5,"param"])    # 23
-ela4_2 <- as.numeric(research_df[6,"param"])    # 34 - Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016
 ################
-
-
+###### Data:
 ################ 
-################ Data:
 # Tax base called from data (SCF and DINA) already accounts for the adjustments
 # due to population growth, tax avoidance, 
-
 # Number of tax payers SCF & DINA
 cum_numberTaxpayers_scf <- c(1100144, 298649, 72143, 34552, 7119,  2555,  671)
 cum_numberTaxpayers_dina <- c(673449, 194548, 78434, 32751, 10236, 4491, 1597) 
-
 # Tax base for brackets below
 cum_tax_base_scf <-  c(203.97, 121.63,  81.79, 59.18, 36.67, 27.46, 20.78)
 cum_tax_base_dina <- c(187.35, 135.38, 105.02, 80.11, 53.43, 36.94, 23.39)
-
 # Total wealth and number if households [SOURCE NEEDED]
 total_wealth <- 94e12   # [SOURCE]  
 total_hhlds <- 129.4e6  # [SOURCE]
-
 # Forbes: average across 400 and value for 400th billionare
 average_wealth_top_400 <- 7.2e9
 wealth_last_400 <- 2.1e9
-
 # Macro-economy/demographics
 inflation <- 0.025      # CBO/JCT
 population_gr <- 0.01   # CBO/JCT
 real_growth <- 0.02     # CBO/JCT
-################ 
 
 ################ 
-################  Guesswork:
+#####  Guesswork:
+################ 
 hhld_gr <- 0.009
 growth_wealth <- 0.055
 #As computed, the response to a 2% tax is a 16% tax elasticity. However the one
 #used in the report is 15%. Until we understand why, we will adjust by an explicit factor. 
 adj_factor1 <- 0.01
+
+################ 
+#####  Notes:
 ################ 
 
 
