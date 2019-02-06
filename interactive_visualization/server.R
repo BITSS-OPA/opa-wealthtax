@@ -1,8 +1,7 @@
 
 server <- function(input, output) {
-  numberTaxpayers <- numberTaxpayers ## eventually be able to change these based on other parameters
-  taxBase <- tax_base ## eventaully be able to change these based on other parameters
-
+  numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911) ## eventually be able to change these based on other parameters
+  taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
   bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+")
   
   dataInput = reactive({
