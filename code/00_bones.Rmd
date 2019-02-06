@@ -1,0 +1,79 @@
+---
+title: "Template"
+output:
+  html_document:
+    code_folding: hide
+  word_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+\def\blue{\color{blue}}
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r parameters}
+##### Data  
+#############
+
+##### Research
+#############
+
+##### Guess work   
+#############
+
+##### Notes:
+#############
+```
+
+
+# Key policy estimates for policy makers  
+
+```{r final-output}
+
+```
+
+# Methodology
+
+## Main Equation (the model)
+
+\begin{equation}
+y = f(x)
+\label{eq:1}
+\tag{1}
+\end{equation}
+
+```{r model}
+
+```
+
+
+## Sub components:
+
+### 1 - Component 1 ("$r$")
+
+```{r comp1}
+
+```
+# Main results
+```{r main-results}
+
+```
+
+
+# Montecarlo simulations  
+```{r}
+# Draws
+
+# Compute inputs
+
+# Compute model
+
+# Run sims
+
+```
+
+# Sensitivity Analysis  
