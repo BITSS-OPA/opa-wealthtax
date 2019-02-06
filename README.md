@@ -6,4 +6,5 @@ High level to dos:
 - [ ] Remove rounding
 - [ ] Wrap each chunk in the DD into a function
 - [ ] Run the shiny app based on the functions above
-- [ ] Run everything on datahub 
+- [ ] Run everything on datahub
+- [ ] Share prototypes of DD and App privately
