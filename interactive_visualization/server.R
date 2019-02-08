@@ -7,25 +7,33 @@ server <- function(input, output) {
   dataInput = reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
     
-    xval <- seq(10e6, 1e9 + 1e8, by = 1000000)
+    #using when running outside the app
+    #taxRate <- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03) 
+    #brackets_po <- c(10e6, 25e6, 50e6, 100e6, 250e6, 500e6,  1e9)
     
-    idx1 <- xval <= 25e6
-    idx2 <- xval > 25e6 & xval <= 50e6
-    idx3 <- xval > 50e6 & xval <= 100e6
-    idx4 <- xval > 100e6 & xval <= 250e6
-    idx5 <- xval > 250e6 & xval <= 500e6
-    idx6 <- xval > 500e6 & xval <= 1e9
-    idx7 <- xval > 1e9
+    xval <- seq(10e6, 1e9 + 1e8, by = 1e6)
+
+    if (FALSE) {    
+        idx1 <- xval <= 25e6
+        idx2 <- xval > 25e6 & xval <= 50e6
+        idx3 <- xval > 50e6 & xval <= 100e6
+        idx4 <- xval > 100e6 & xval <= 250e6
+        idx5 <- xval > 250e6 & xval <= 500e6
+        idx6 <- xval > 500e6 & xval <= 1e9
+        idx7 <- xval > 1e9
+        
+        idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
+        
+        # Indicator across income on tax bracke position
+        getGroup <- unlist(apply(idx, 1, function(x) {
+          which(x)
+        }))
+    }
     
-    idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
-    
-    # Indicator across income on tax bracke position
-    getGroup <- unlist(apply(idx, 1, function(x) {
-      which(x)
-    }))
-    
+    # suggested replacement for getGroup
+    getGroup <- as.numeric(cut(toPlot2$xval, c(brackets_po, 1e10), include.lowest = TRUE))
     toPlot <- cbind.data.frame(xval, getGroup)
-    
+
     toMatch <- cbind.data.frame(group = 1:7, tax = taxRate)
     
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
