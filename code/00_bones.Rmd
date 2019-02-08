@@ -37,6 +37,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ###             & values    & values 
 ### arguments in functions should used "_var" and functions should "_f"
 
+#invisible( list2env(call_params_f(),.GlobalEnv) )
 
 ```
 
@@ -58,7 +59,8 @@ y = f(x)
 \end{equation}
 
 ```{r model}
-
+# - inputs: tax_rev_init_mo, top_tax_base_in
+# - outputs: total_rev_pe
 ```
 
 
@@ -67,11 +69,13 @@ y = f(x)
 ### 1 - Component 1 ("$r$")
 
 ```{r comp1}
-
+# - inputs: tax_rev_init_mo, top_tax_base_in
+# - outputs: total_rev_pe
 ```
 # Main results
 ```{r main-results}
-
+# - inputs: tax_rev_init_mo, top_tax_base_in
+# - outputs: total_rev_pe
 ```
 
 
