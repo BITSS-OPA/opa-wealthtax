@@ -74,10 +74,13 @@ invisible( list2env(call_params_f(),.GlobalEnv) )
 ################ 
 #####  Notes:
 ################ 
-### Source ---->  Input ----> Model ----> Policy Estimates (output)
-###  (_so)        (_in)       (_mo)        (_pe)
-### values      functions   functions      values
-###             & values    & values 
+### Source ---------->  Input ---------->  Model ---------->  Policy Estimates (output)
+###  (_so)              (_in)              (_mo)                (_pe)
+### values            functions          functions              values
+###                   & values           & values             
+# - call_params_f - tax_elasticity_in_f  - tax_revenue_mo_f     - ten_year_revenue_pe
+# - policy_f      - est_billionares_in_f - total_rev_mo_f       - ten_year_top_tax_pe
+#                                        - ten_years_mo_f       - total_rev_pe
 ### arguments in functions should used "_var" and functions should "_f"
 
 ```
