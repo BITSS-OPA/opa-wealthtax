@@ -13,7 +13,7 @@ server <- function(input, output) {
     
     xval <- seq(10e6, 1e9 + 1e8, by = 1e6)
 
-    if (FALSE) {    
+    #if (FALSE) {    
         idx1 <- xval <= 25e6
         idx2 <- xval > 25e6 & xval <= 50e6
         idx3 <- xval > 50e6 & xval <= 100e6
@@ -28,10 +28,10 @@ server <- function(input, output) {
         getGroup <- unlist(apply(idx, 1, function(x) {
           which(x)
         }))
-    }
+    #}
     
     # suggested replacement for getGroup
-    getGroup <- as.numeric(cut(toPlot2$xval, c(brackets_po, 1e10), include.lowest = TRUE))
+    #getGroup <- as.numeric(cut(toPlot2$xval, c(brackets_po, 1e10), include.lowest = TRUE))
     toPlot <- cbind.data.frame(xval, getGroup)
 
     toMatch <- cbind.data.frame(group = 1:7, tax = taxRate)
