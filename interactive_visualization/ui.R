@@ -12,42 +12,59 @@ ui <-
 
     fluidRow(
       column(
-        3,
+        2,
         wellPanel(
           ## can set different defaults if desired
-          sliderInput("bracket1", "Marginal Tax Rate in $10m-$25m Bracket",
-            0, 5, 0,
-            step = 0.1#, ticks = F
-          ),
-          sliderInput("bracket2", "Marginal Tax Rate in $25m-$50m Bracket",
-            0, 5, 0,
-            step = 0.1#, ticks = F
-          ),
-          sliderInput("bracket3", "Marginal Tax Rate in $50m-$100m Bracket",
-            0, 5, 2,
-            step = 0.1#, ticks = F
-          ),
-          sliderInput("bracket4", "Marginal Tax Rate in $100m-$250m Bracket",
-            0, 5, 2,
-            step = 0.1#, ticks = F
-          ),
-          sliderInput("bracket5", "Marginal Tax Rate in $250m-$500m Bracket",
-            0, 5, 2,
-            step = 0.1#, ticks = F
-          ),
-          sliderInput("bracket6", "Marginal Tax Rate in $500m-$1bn Bracket",
-            0, 5, 2,
-            step = 0.1#, ticks = F
-          ),
-          sliderInput("bracket7", "Marginal Tax Rate in $1bn+ Bracket",
-            0, 5, 3,
-            step = 0.1#, ticks = F
-          )
+          
+          sliderInput("bracketV1", label = "First Tax Bracket (million)", min = 0, 
+                      max = 1000,step =5, value = c(10, 25)),
+          sliderInput("bracketV2", label = "Second Tax Bracket (million)", min = 0, 
+                      max = 1000,step =5, value = c(10, 25)),
+          sliderInput("bracketV3", label = "Third Tax Bracket (million)", min = 0, 
+                      max = 1000,step =5, value = c(10, 25)),
+          sliderInput("bracketV4", label = "First Tax Bracket (million)", min = 0, 
+                      max = 1000,step =5, value = c(10, 25))
+          
         )
       ),
+      
+      column(2,
+             wellPanel(
+               
+               sliderInput("bracket1", "Marginal Tax Rate in $10m-$25m Bracket",
+                           0, 5, 0,
+                           step = 0.1#, ticks = F
+               ),
+               sliderInput("bracket2", "Marginal Tax Rate in $25m-$50m Bracket",
+                           0, 5, 0,
+                           step = 0.1#, ticks = F
+               ),
+               sliderInput("bracket3", "Marginal Tax Rate in $50m-$100m Bracket",
+                           0, 5, 2,
+                           step = 0.1#, ticks = F
+               ),
+               sliderInput("bracket4", "Marginal Tax Rate in $100m-$250m Bracket",
+                           0, 5, 2,
+                           step = 0.1#, ticks = F
+               ),
+               sliderInput("bracket5", "Marginal Tax Rate in $250m-$500m Bracket",
+                           0, 5, 2,
+                           step = 0.1#, ticks = F
+               ),
+               sliderInput("bracket6", "Marginal Tax Rate in $500m-$1bn Bracket",
+                           0, 5, 2,
+                           step = 0.1#, ticks = F
+               ),
+               sliderInput("bracket7", "Marginal Tax Rate in $1bn+ Bracket",
+                           0, 5, 3,
+                           step = 0.1#, ticks = F
+               )
+             )
+             
+             ),#),#
 
       column(
-        9,
+        8,
         ggvisOutput("plot2"),
         # Format changes?
         # wellPanel(

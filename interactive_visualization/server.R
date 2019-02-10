@@ -1,8 +1,27 @@
 
-server <- function(input, output) {
+server <- function(input, output,session) {
   numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911) ## eventually be able to change these based on other parameters
   taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
   bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+")
+  
+  ### update tax brackets based on previous decisions
+  observe({
+    val <- input$bracketV1[2]
+    updateSliderInput(session, "bracketV2", min = 0,value = c(val,min(val+20,1000)),
+                       max = 1000, step = 5)
+  })
+  
+  observe({
+    val <- input$bracketV2[2]
+    updateSliderInput(session, "bracketV3", min = 0,value = c(val,min(val+20,1000)),
+                      max = 1000, step = 5)
+  })
+  
+  observe({
+    val <- input$bracketV3[2]
+    updateSliderInput(session, "bracketV4", min = 0,value = c(val,min(val+20,1000)),
+                      max = 1000, step = 5)
+  })
   
   dataInput = reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
