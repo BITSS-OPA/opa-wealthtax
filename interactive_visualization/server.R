@@ -169,7 +169,7 @@ server <- function(input, output) {
       if (is.null(x)) return(NULL)
       data = dataInput()
       row <- data[data$id == x$id, ]
-      paste0("Marginal Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
+      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
     }
 
     dataInput() %>%
