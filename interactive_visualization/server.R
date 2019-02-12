@@ -82,11 +82,10 @@ server <- function(input, output,session) {
     toMatch <- cbind.data.frame(group = 1:4, tax = taxRate)
     
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
-    #browser()
+
     toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getMarginalTax, taxRate))
     # Here is where the total tax payed by each individuals is transform into marginal tax rates
     toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
-    ### this is too large
     
     
     toPlot2$id <- 1:nrow(toPlot2)
@@ -125,11 +124,10 @@ server <- function(input, output,session) {
     # 
     firstChunk <- ifelse(second >=0, taxLevels[1]*(input$bracketV1[2]*1e6-input$bracketV1[1]*1e6), taxLevels[1]*first)
     secondChunk <- ifelse(second >=0, taxLevels[2]*(input$bracketV2[2]*1e6-input$bracketV2[1]*1e6), taxLevels[2]*max(second,0))
-    thirdChunk <- ifelse(third >=0, taxLevels[3]*(input$bracketV3[2]*1e6-input$bracket3[1]*1e6), taxLevels[3]*max(third,0))
-    fourthChunk <- ifelse(fourth >=0, fourth*taxLevels[4]*1e6,0)
+    thirdChunk <- ifelse(third >=0, taxLevels[3]*(input$bracketV3[2]*1e6-input$bracketV3[1]*1e6), taxLevels[3]*max(third,0))
+    fourthChunk <- ifelse(fourth >=0, fourth*taxLevels[4],0)
 
     toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk #+ fifthChunk + sixthChunk + seventhChunk
-
     return(toReturn)
   }
 
