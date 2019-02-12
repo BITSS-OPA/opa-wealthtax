@@ -1,5 +1,10 @@
 
 server <- function(input, output,session) {
+  
+  ### note these need to be recalculated based on the tax rates
+  ### the calculations won't reflect that, but this version sets up the functionality
+  
+  
   numberTaxpayers <- c(640198, 171310, 41637, 24974)#, 5155, 2612, 911) ## eventually be able to change these based on other parameters
   taxBase <- c(6716, 3510, 2376, 2460)#, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
  # bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+") ## don't actually use
@@ -18,12 +23,31 @@ server <- function(input, output,session) {
     updateSliderInput(session, "bracketV3", min = 0,value = c(val,min(val+20,1000)),
                       max = 1000, step = 5)
   })
+  # 
   
+  ## not ideal: but have to avoid looping back and forth
+   observe({
+     val <- bracketVal3()[2]
+     updateSliderInput(session, "bracketV4", min = 0,value = val,
+                       max = 1000, step = 5)
+     output$warn = renderText({""})
+   })
+   
+   observe({
+     if(bracketVal3()[2]==bracketVal4()){
+       output$warn = renderText({""})
+     }
+    
+   })
+
   observe({
-    #val <- input$bracketV3[2]
-    val <- bracketVal3()[2]
-    updateSliderInput(session, "bracketV4", min = 0,value = val,
-                      max = 1000, step = 5)
+   if(bracketVal3()[2]<bracketVal4()){
+     updateSliderInput(session, "bracketV3", min = 0,value = c(bracketVal3()[1],bracketVal4()),
+                      max = 1000, step = 5) ## this one works in forward direction
+     output$warn = renderText({""})
+     }else if(bracketVal3()[2]>bracketVal4()){
+    output$warn = renderText({"Warning: Last tax bracket is below third."})
+      }
   })
   
   bracketVal1 <- reactive({input$bracketV1})

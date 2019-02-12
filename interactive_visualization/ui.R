@@ -23,7 +23,8 @@ ui <-
           sliderInput("bracketV3", label = "Third Tax Bracket (million)", min = 0, 
                       max = 1000,step =5, value = c(50, 150)),
           sliderInput("bracketV4", label = "Last Tax Bracket (million)", min = 0, 
-                      max = 1000,step =5, value=150)
+                      max = 1000,step =5, value=150),
+          textOutput("warn")
           
         )
       ),
