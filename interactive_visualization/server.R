@@ -224,18 +224,18 @@ server <- function(input, output,session) {
   vis2 <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
 #browser()
-    
+    #browser()
     # These are mini data set that ggvis needs to create vertical lines
-    extra0 <- cbind.data.frame(x = rep(10e6, 2), y = c(0, taxRate[1]))
-    extra1 <- cbind.data.frame(x = rep(25e6, 2), y = c(0, taxRate[1]))
-    extra1b <- cbind.data.frame(x = rep(25e6, 2), y = c(0, taxRate[2]))
-    extra2 <- cbind.data.frame(x = rep(50e6, 2), y = c(0, taxRate[2]))
-    extra2b <- cbind.data.frame(x = rep(50e6, 2), y = c(0, taxRate[3]))
+    extra0 <- cbind.data.frame(x = rep(bracketVal1()[1]*1e6, 2), y = c(0, taxRate[1]))
+    extra1 <- cbind.data.frame(x = rep(bracketVal1()[2]*1e6, 2), y = c(0, taxRate[1]))
+    extra1b <- cbind.data.frame(x = rep(bracketVal2()[1]*1e6, 2), y = c(0, taxRate[2]))
+    extra2 <- cbind.data.frame(x = rep(bracketVal2()[2]*1e6, 2), y = c(0, taxRate[2]))
+    extra2b <- cbind.data.frame(x = rep(bracketVal3()[1]*1e6, 2), y = c(0, taxRate[3]))
 
-    extra3 <- cbind.data.frame(x = rep(100e6, 2), y = c(0, taxRate[3]))
-    extra3b <- cbind.data.frame(x = rep(100e6, 2), y = c(0, taxRate[4]))
+    extra3 <- cbind.data.frame(x = rep(bracketVal3()[2]*1e6, 2), y = c(0, taxRate[3]))
+    extra3b <- cbind.data.frame(x = rep(bracketVal4()*1e6, 2), y = c(0, taxRate[4]))
 
-    extra4 <- cbind.data.frame(x = rep(250e6, 2), y = c(0, taxRate[4]))
+    #extra4 <- cbind.data.frame(x = rep(bracketVal4()[2]*1e6, 2), y = c(0, taxRate[4]))
     # extra4b <- cbind.data.frame(x = rep(250e6, 2), y = c(0, taxRate[5]))
     # extra5 <- cbind.data.frame(x = rep(500e6, 2), y = c(0, taxRate[5]))
     # extra5b <- cbind.data.frame(x = rep(500e6, 2), y = c(0, taxRate[6]))
@@ -261,7 +261,7 @@ server <- function(input, output,session) {
       layer_paths(data = extra1, ~x, ~y) %>%
       layer_paths(data = extra2, ~x, ~y) %>%
       layer_paths(data = extra3, ~x, ~y) %>%
-      layer_paths(data = extra4, ~x, ~y) %>%
+      #layer_paths(data = extra4, ~x, ~y) %>%
       #layer_paths(data = extra5, ~x, ~y) %>%
       #layer_paths(data = extra6, ~x, ~y) %>%
       layer_paths(data = extra0, ~x, ~y) %>%
