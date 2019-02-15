@@ -50,6 +50,53 @@ server <- function(input, output,session) {
       }
   })
   
+  
+  observe({
+    if(bracket2() < bracket1()){
+      updateSliderInput(session, "bracket2", min = 0,value = bracket1(),
+                        max = 10, step = 1)
+    }
+  })
+  
+  observe({
+    if(bracket3() < bracket2()){
+      updateSliderInput(session, "bracket3", min = 0,value = bracket2(),
+                        max = 10, step = 1)
+    }
+  })
+  
+  observe({
+    if(bracket4() < bracket3()){
+      updateSliderInput(session, "bracket4", min = 0,value = bracket3(),
+                        max = 10, step = 1)
+    }
+  })
+  
+  observe({
+    if(bracket5() < bracket4()){
+      updateSliderInput(session, "bracket5", min = 0,value = bracket4(),
+                        max = 10, step = 1)
+    }
+  })
+  
+  observe({
+    if(bracketVal4() ==1000){
+      updateSliderInput(session, "bracketV5", min = 0,value = 1,
+                        max = 10, step = .5)
+
+    }
+  })
+  
+  
+  
+  bracket1 <- reactive({input$bracket1})
+  bracket2 <- reactive({input$bracket2})
+  bracket3 <- reactive({input$bracket3})
+  bracket4 <- reactive({input$bracket4})
+  bracket5 <- reactive({input$bracket5})
+  
+  
+  
   bracketVal1 <- reactive({input$bracketV1})
   bracketVal2 <- reactive({input$bracketV2})
   bracketVal3 <- reactive({input$bracketV3})

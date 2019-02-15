@@ -15,7 +15,7 @@ ui <-
         2,
         wellPanel(
           ## can set different defaults if desired
-          
+          #shinyWidgets::sliderTextInput("bracketV1",label = "First Tax Bracket (million)",choices = c(seq(0,1000,by=5),"2bn","3bn","4bn","5bn","6bn","7bn","8bn","9bn","10bn"),selected=0, grid=F),
           sliderInput("bracketV1", label = "First Tax Bracket (million)", min = 0, 
                       max = 1000,step =5, value = c(10, 25)),
           sliderInput("bracketV2", label = "Second Tax Bracket (million)", min = 0, 
@@ -24,7 +24,8 @@ ui <-
                       max = 1000,step =5, value = c(50, 150)),
           sliderInput("bracketV4", label = "Last Tax Bracket (million)", min = 0, 
                       max = 1000,step =5, value=150),
-          textOutput("warn")
+          textOutput("warn"),
+          sliderInput("bracketV5",label= "Billionaire Tax Bracket (billion)",min=0,max=10,step=.5,value=0)
           
         )
       ),
@@ -32,22 +33,25 @@ ui <-
       column(2,
              wellPanel(
                
-               sliderInput("bracket1", "Marginal Tax Rate in First Bracket",
+               sliderInput("bracket1", "Marginal Tax Rate in Bracket 1",
                            0, 10, 0,
                            step = 1#, ticks = F
                ),
-               sliderInput("bracket2", "Marginal Tax Rate in Second Bracket",
+               sliderInput("bracket2", "Marginal Tax Rate in Bracket 2",
                            0, 10, 0,
                            step = 1#, ticks = F
                ),
-               sliderInput("bracket3", "Marginal Tax Rate in Third Bracket",
+               sliderInput("bracket3", "Marginal Tax Rate in Bracket 3",
                            0, 10, 2,
                            step = 1#, ticks = F
                ),
-               sliderInput("bracket4", "Marginal Tax Rate in Fourth Bracket",
+               sliderInput("bracket4", "Marginal Tax Rate in Bracket 4",
                            0, 10, 2,
                            step = 1#, ticks = F
-               )
+               ),
+               sliderInput("bracket5","Marginal Tax Rate in Billionaire Bracket",
+                            0, 10, 2,
+                            step = 1)
              )
              
              ),#),#
