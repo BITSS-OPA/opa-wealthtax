@@ -201,7 +201,7 @@ tax_rev_init <- sum(tax_base[brackets>=tax_starts_at]) * main_tax
 ```
 
 
-In 2019, there would be around `r  target_hhlds_round` households liable to the wealth tax (`r target_hhlds_round_scf` households according to the SCF data and `r  target_hhlds_round_dina` tax filers according to the DINA data). In both cases, this would be less than `r paste(round(target_hhlds/total_wealth_so * 100 , digits = 1), "%", sep = "")` of the `r round(total_wealth_so/1e7)*10` million US households in 2019. The tax base above `r paste("$", tax_starts_at/1e6, sep="")` million would be `r paste("$", round(tax_base_scf/10,1), sep="")` trillion based on the SCF data and `r paste("$", round(tax_base_dina/10,1), sep="")` trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as `r paste("$", round(tax_base_total, digits = 1), sep="")` trillion, i.e. approximately 10% of total household net worth of \$94 trillion population-wide. A two percent tax on this base would raise `r paste("$", round(tax_rev_init), sep="")` billion in 2019.
+In 2019, there would be around `r  target_hhlds_round` households liable to the wealth tax (`r target_hhlds_round_scf` households according to the SCF data and `r  target_hhlds_round_dina` tax filers according to the DINA data). In both cases, this would be less than `r paste(round(target_hhlds/total_hhlds_so * 100 , digits = 1), "%", sep = "")` of the `r round(total_hhlds_so/1e7)*10` million US households in 2019. The tax base above `r paste("$", tax_starts_at/1e6, sep="")` million would be `r paste("$", round(tax_base_scf/10,1), sep="")` trillion based on the SCF data and `r paste("$", round(tax_base_dina/10,1), sep="")` trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as `r paste("$", round(tax_base_total, digits = 1), sep="")` trillion, i.e. approximately 10% of total household net worth of \$94 trillion population-wide. A two percent tax on this base would raise `r paste("$", round(tax_rev_init), sep="")` billion in 2019.
 
 
 ```{r total-rev}
@@ -230,7 +230,7 @@ The figure below illustrates the distribution the tax burden across the populati
 
 ![](plot1.png)
 
-[Click here/ADD URL WHEN ALLOWED](NULL) to try different policy proposals.   
+[Click here/ADD URL WHEN ALLOWED](https://fhoces.shinyapps.io/demo/) to try different policy proposals.   
 [Click here/ADD URL WHEN ALLOWED](NULL) to see how the assumptions of the analysis affect the results.
 
 [SAMPLE TEXT]**Note:** Our analysis complies with the highest levels of transparency and reproducibilty for open policy analysis proposed by the Berkeley Initiative for Transparency in Social Sciences. We invite contributors and critics of this analysis to follow similar standards. 

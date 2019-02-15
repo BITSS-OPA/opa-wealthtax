@@ -441,10 +441,13 @@ invisible( list2env(call_params_f(),.GlobalEnv) )
 ################ 
 #####  Notes:
 ################ 
-### Source ----&gt;  Input ----&gt; Model ----&gt; Policy Estimates (output)
-###  (_so)        (_in)       (_mo)        (_pe)
-### values      functions   functions      values
-###             &amp; values    &amp; values 
+### Source ----------&gt;  Input ----------&gt;  Model ----------&gt;  Policy Estimates (output)
+###  (_so)              (_in)              (_mo)                (_pe)
+### values            functions          functions              values
+###                   &amp; values           &amp; values             
+# - call_params_f - tax_elasticity_in_f  - tax_revenue_mo_f     - ten_year_revenue_pe
+# - policy_f      - est_billionares_in_f - total_rev_mo_f       - ten_year_top_tax_pe
+#                                        - ten_years_mo_f       - total_rev_pe
 ### arguments in functions should used &quot;_var&quot; and functions should &quot;_f&quot;</code></pre>
 <div id="policy-choices" class="section level3">
 <h3>1 - Policy choices</h3>
@@ -508,7 +511,7 @@ knitr::kable(cbind(&quot;Bracket (millions of $)&quot; = brackets_po/1e6,tax_rat
 <p>The tax-avoidance elasticity is computed as the average elasticity from four studies.</p>
 <p>Seim, David. 2017. “Behavioral Responses to an Annual Wealth Tax: Evidence from Sweden”, American Economic Journal: Economic Policy, 9(4), 395-421 and Jakobsen, Kristian, Katrine Jakobsen, Henrik Kleven and Gabriel Zucman. 2018. “Wealth Accumulation and Wealth Taxation: Theory and Evidence from Denmark” NBER working paper No. 24371, obtain small avoidance/evasion responses in the case of Sweden and Denmark in two countries with systematic third party reporting of wealth: a 1% wealth tax reduces reported wealth by less than 1%. Londono-Velez, Juliana and Javier Avila. “Can Wealth Taxation Work in Developing Countries? Quasi-Experimental Evidence from Colombia”, UC Berkeley working paper, 2018 show medium size avoidance/evasion responses in the case of Colombia where enforcement is not as strong: a 1% wealth tax reduces reported wealth by about 2-3%. The study for Switzerland, Brülhart, Marius, Jonathan Gruber, Matthias Krapf, and Kurt Schmidheiny.“Taxing Wealth: Evidence from Switzerland,” NBER working paper No. 22376, 2016 is an outlier that finds very large responses to wealth taxation in Switzerland: a 1% wealth tax lowers reported wealth by 23-34%. This extremely large estimate is extrapolated from very small variations in wealth tax rates over time and across Swiss cantons and hence is not as compellingly identified as the other estimates based on large variations in the wealth tax rate. Switzerland has no systematic third party reporting of assets which can also make tax evasion responses larger than in Scandinavia.</p>
 <pre class="r"><code># input: elasticity parameters from research, main tax, adjutment factor
-# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in)
+# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in) 
 tax_elasticity_in_f &lt;- function(ela1_var = ela1_so, ela2_var = ela2_so, ela3_1_var = ela3_1_so, 
                                 ela3_2_var = ela3_2_so, ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
                                 main_tax_var = main_tax_po,  adj_factor1_var = adj_factor1_so){
@@ -517,16 +520,16 @@ tax_elasticity_in_f &lt;- function(ela1_var = ela1_so, ela2_var = ela2_so, ela3_
     return(list(&quot;final_ela_in&quot; = final_ela_in, 
                 &quot;evasion_param_in&quot; = evasion_param_in))
 }
-invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) )
+invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) ) 
 
 #ls(pattern = &quot;_in\\b|_in_&quot;)</code></pre>
 <p>The final 15% tax avoidance/evasion response to a 2% wealth tax was computed as and average across these four studies.</p>
 </div>
 <div id="estimate-number-of-billionares-and-their-total-tax-base-over-one-billion" class="section level3">
 <h3>3 - Estimate number of billionares and their total tax base (over one billion)</h3>
-<pre class="r"><code># - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so, 
-# cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so, 
-# cum_tax_base_dina_so
+<pre class="r"><code># - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
+# cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so,  
+# cum_tax_base_dina_so 
 # - outputs: non_evaded_tax_in, totax_last_400_in, totax_average_400_in, totax_total_400_in, 
 # pareto_scale_in, ratio1_in, missing_fraction_in, missing_taxbase_in, num_billionares_in, 
 # final_taxbase_b_in, top_tax_base_in, cum_numberTaxpayers_scf_in, cum_numberTaxpayers_dina_in, 
@@ -656,19 +659,19 @@ target_hhlds_round_dina &lt;- format(round( sum(
 # - outputs: total_rev_pe
 total_rev_mo_f &lt;- function(tax_rev_init_var = tax_rev_init_mo, top_tax_base_var = top_tax_base_in) {
     total_rev_pe &lt;- tax_rev_init_var + top_tax_base_var #PE
-    return(total_rev_pe)
+    return(list(&quot;total_rev_pe&quot; = total_rev_pe))
 }
-total_rev_pe &lt;- total_rev_mo_f()</code></pre>
+invisible( list2env(total_rev_mo_f(),.GlobalEnv) )</code></pre>
 <p>The combination of the %2 tax above $50 million and the billionaire surtax would raise 187 + 25 = 212 billion in 2019.</p>
 </div>
-<div id="ten-year-projections" class="section level3">
-<h3>5 - Ten year projections</h3>
+<div id="ten-year-projections-talk-about-removing-rounding" class="section level3">
+<h3>5 - Ten year projections (talk about removing rounding)</h3>
 <pre class="r"><code># - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_base_in
 # - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
 ten_years_mo_f &lt;- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
                            real_growth_var = real_growth_so, total_rev_var = total_rev_pe, 
                            top_tax_base_var = top_tax_base_in){
-    discount_rate_mo &lt;- inflation_var + population_gr_so + real_growth_so 
+    discount_rate_mo &lt;- inflation_var + population_gr_so + real_growth_so  
     ten_year_factor_mo &lt;- sum( ( 1 + discount_rate_mo )^( 0:9 ) ) 
     ten_year_factor_round &lt;- round(ten_year_factor_mo) 
     ten_year_revenue_pe &lt;- round(total_rev_pe) * ten_year_factor_round     
@@ -682,7 +685,22 @@ ten_years_mo_f &lt;- function(inflation_var = inflation_so, population_gr_var = 
 invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
 
 #TO DELETE
-ten_year_factor_round &lt;- round(ten_year_factor_mo) </code></pre>
+ten_year_factor_round &lt;- round(ten_year_factor_mo) 
+
+
+
+# test to run from the beginning (only functions)
+if (FALSE) {
+    rm(list = ls()[!(ls() %in% ls(pattern = &quot;_f\\b&quot;))])
+    list2env(call_params_f(), .GlobalEnv)
+    list2env(policy_f(), .GlobalEnv)
+    list2env(tax_elasticity_in_f(), .GlobalEnv)
+    list2env(est_billionares_in_f(), .GlobalEnv)
+    list2env(tax_revenue_mo_f(), .GlobalEnv)
+    list2env(total_rev_mo_f(), .GlobalEnv)
+    invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
+    sapply(ls(pattern = &quot;_pe\\b&quot;), get)
+}</code></pre>
 <p>To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, at 5.5% per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over the 10 years 2019-2028 is 13 times the revenue raised in 2019<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is most likely that top wealth would continue to grow at least as fast as the average.</p>
 <p>This 10-year projection implies that revenue raised by the progressive wealth tax would be 13 * 212 = $2756 billion, rounded to $2.75 trillion. Out of these $2.75 trillion, the billionaire surtax would raise 25 * 13 = $325, rounded to $0.3 trillion.</p>
 <p>It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because your proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.</p>

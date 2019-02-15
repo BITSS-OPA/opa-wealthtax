@@ -119,7 +119,7 @@ Seim, David. 2017. “Behavioral Responses to an Annual Wealth Tax: Evidence fro
 
 ```{r tax-elasticity, warning=FALSE, message=FALSE} 
 # input: elasticity parameters from research, main tax, adjutment factor
-# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in)
+# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in) 
 tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so, ela3_1_var = ela3_1_so, 
                                 ela3_2_var = ela3_2_so, ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
                                 main_tax_var = main_tax_po,  adj_factor1_var = adj_factor1_so){
@@ -128,7 +128,7 @@ tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so, ela3_1_v
     return(list("final_ela_in" = final_ela_in, 
                 "evasion_param_in" = evasion_param_in))
 }
-invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) )
+invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) ) 
 
 #ls(pattern = "_in\\b|_in_")
 ```
@@ -136,10 +136,10 @@ invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) )
 The final `r paste(evasion_param_in * 100,"%", sep="")` tax avoidance/evasion response to a 2% wealth tax was computed as and average across these four studies. 
 
 ### 3 - Estimate number of billionares and their total tax base (over one billion)  
-```{r est-billionares}
-# - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so, 
-# cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so, 
-# cum_tax_base_dina_so
+```{r est-billionares} 
+# - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
+# cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so,  
+# cum_tax_base_dina_so 
 # - outputs: non_evaded_tax_in, totax_last_400_in, totax_average_400_in, totax_total_400_in, 
 # pareto_scale_in, ratio1_in, missing_fraction_in, missing_taxbase_in, num_billionares_in, 
 # final_taxbase_b_in, top_tax_base_in, cum_numberTaxpayers_scf_in, cum_numberTaxpayers_dina_in, 
@@ -213,7 +213,7 @@ We make the classical assumption that the tail of the wealth distribution is Par
 Therefore, the billionaire surtax base is estimated at `r paste("$", final_taxbase_b_aprx, sep="")` trillion (`r paste("$", round(totax_total_400_in/1e3),"t", sep="")` from those above `r paste("$", round(totax_last_400_in, 1),"b",sep="")` and `r paste("$", round(missing_taxbase_aprx/1e3,1),"t", sep="")` from those between 1  and `r paste("$", round(totax_total_400_in/1e3) ,"b",sep="")` from those above `r paste("$", round(totax_last_400_in, 1),sep="")`) and hence the billionaire surtax would raise `r paste("$", round(top_tax_base_aprx), sep="")` billion in 2019 from about 900 billionaire families.
 
 ### 4 - Total tax revenue (Model)
-```{r tax-revenue}
+```{r tax-revenue} 
 # num_billionares_in <- round(400 * 1.8^1.4)
 # top_tax_base <- 0.01 * ( 400 * ( (1-0.15) * 7.2 - 1 ) * 1.25 )
 # Numbers in third bracket differ in 1 hhld 41636 instead of 4637
@@ -285,8 +285,6 @@ total_rev_mo_f <- function(tax_rev_init_var = tax_rev_init_mo, top_tax_base_var 
     return(list("total_rev_pe" = total_rev_pe))
 }
 invisible( list2env(total_rev_mo_f(),.GlobalEnv) )
-
-total_rev_pe <- total_rev_mo_f()
 ```
 
 The combination of the `r paste("%",100*main_tax_po, sep = "")` tax above `r paste("$",starting_brack_po/1e6, sep = "")` million and the billionaire surtax would raise `r paste(round(tax_rev_init_mo)," + ", round(top_tax_base_in), sep="")` = `r round(total_rev_pe)` billion in 2019.  
@@ -299,13 +297,13 @@ The combination of the `r paste("%",100*main_tax_po, sep = "")` tax above `r pas
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
                            real_growth_var = real_growth_so, total_rev_var = total_rev_pe, 
                            top_tax_base_var = top_tax_base_in){
-    discount_rate_mo <- inflation_var + population_gr_so + real_growth_so 
+    discount_rate_mo <- inflation_var + population_gr_so + real_growth_so  
     ten_year_factor_mo <- sum( ( 1 + discount_rate_mo )^( 0:9 ) ) 
     ten_year_factor_round <- round(ten_year_factor_mo) 
     ten_year_revenue_pe <- round(total_rev_pe) * ten_year_factor_round     
     #ten_year_revenue_pe <- total_rev_pe * ten_year_factor_mo                      #PE
     ten_year_top_tax_pe <- top_tax_base_var * ten_year_factor_round          
-    #ten_year_top_tax_pe <- top_tax_base_var * ten_year_factor_mo                   #PE
+    #ten_year_top_tax_pe <- top_tax_base_var * ten_year_factor_mo                  #PE
     return( list("discount_rate_mo" = discount_rate_mo, "ten_year_factor_mo" = ten_year_factor_mo, 
            "ten_year_revenue_pe" = ten_year_revenue_pe, "ten_year_top_tax_pe" = ten_year_top_tax_pe) )
 }
