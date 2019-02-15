@@ -72,10 +72,10 @@ ui <-
         textOutput("totalTax_10"),
         h4("Total Taxpayers (CHECK UNITS)"),
         textOutput("totalTaxpayers"),
-        h4("Percentage of Households Affected"),
-        textOutput("percentHouseAffected"),
-        h4("Percentage Tax Units"),
-        textOutput("percentTaxUnits")
+        h4("Percentage of (CHECK UNITS) Affected"),
+        textOutput("percentHouseAffected")#,
+        #h4("Percentage Tax Units"),
+        #textOutput("percentTaxUnits")
         # )
       )
     )
