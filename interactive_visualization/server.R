@@ -249,45 +249,35 @@ server <- function(input, output,session) {
     round(totalTax/1e3,2) ## could round if desired
   })
   
-  
-  output$totalTaxpayers <- renderText({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
+  householdsTaxed=reactive({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
     taxRateP <- taxRate / 100 ## get to percentage
-    #browser()
     
     bracketStarts = 1e6*c(input$bracketV1[1], input$bracketV2[1], input$bracketV3[1], input$bracketV4[1])
     peoplePerBracket = getPeoplePerBracket(grid,bracketStarts)
     numberTaxpayers = peoplePerBracket$totalPeople
     householdsTaxed <- numberTaxpayers * (taxRateP > 0)
+    householdsTaxed
+  })
+  
+  output$totalTaxpayers <- renderText({
 
-    totalTaxpayers <- sum(householdsTaxed)
+    totalTaxpayers <- sum(householdsTaxed())
 
     round(totalTaxpayers)
   })
 
   output$percentHouseAffected <- renderText({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
-    taxRateP <- taxRate / 100 ## get to percentage
 
-    tax <- taxBase * taxRateP
-
-    householdsTaxed <- numberTaxpayers * (taxRateP > 0)
-
-    householdsAffected <- sum(householdsTaxed) / 129.4e6 ## make the denominator updateable later
+    householdsAffected <- sum(householdsTaxed()) / 129.4e6 ## make the denominator updateable later
 
     round(householdsAffected * 100,1) ## get to percentage
     ## can round if desired
   })
 
   output$percentTaxUnits <- renderText({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
-    taxRateP <- taxRate / 100 ## get to percentage
-
-    tax <- taxBase * taxRateP
-
-    householdsTaxed <- numberTaxpayers * (taxRateP > 0)
-
-    taxUnits <- sum(householdsTaxed) / 183460000 ## make the denominator updateable later
+  
+    taxUnits <- sum(householdsTaxed()) / 183460000 ## make the denominator updateable later
 
     round(taxUnits * 100,2) ## get to percentage
     ## can round if desired
