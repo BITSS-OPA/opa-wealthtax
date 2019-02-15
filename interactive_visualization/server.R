@@ -17,8 +17,14 @@ server <- function(input, output,session) {
   
   getPeoplePerBracket=function(grid,brackets){
     ## brackets is lower end of each bracket
-    brackets = c(brackets, max(grid$thres)+1) ## get last bracket
+    brackets = c(brackets, 1e10) ## get last bracket
+    grid$group=cut(grid$thres,brackets,include.lowest=T)
     toReturn = grid %>% group_by(group) %>% summarise(totalPeople=sum(nb)) %>% drop_na()
+    
+    ## HACK: only for now because the grid doesn't go far enough
+    if(nrow(toReturn)!=4){
+      toReturn=rbind(toReturn,cbind.data.frame(group="bill",totalPeople=911))
+    }
     return(toReturn)
   }
   
@@ -247,9 +253,11 @@ server <- function(input, output,session) {
   output$totalTaxpayers <- renderText({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
     taxRateP <- taxRate / 100 ## get to percentage
-
-    tax <- taxBase * taxRateP
-
+    #browser()
+    
+    bracketStarts = 1e6*c(input$bracketV1[1], input$bracketV2[1], input$bracketV3[1], input$bracketV4[1])
+    peoplePerBracket = getPeoplePerBracket(grid,bracketStarts)
+    numberTaxpayers = peoplePerBracket$totalPeople
     householdsTaxed <- numberTaxpayers * (taxRateP > 0)
 
     totalTaxpayers <- sum(householdsTaxed)

@@ -70,7 +70,7 @@ ui <-
         textOutput("totalTax"),
         h4("Total Taxes over 10 years ($t)"),
         textOutput("totalTax_10"),
-        h4("Total Taxpayers (Households)"),
+        h4("Total Taxpayers (CHECK UNITS)"),
         textOutput("totalTaxpayers"),
         h4("Percentage of Households Affected"),
         textOutput("percentHouseAffected"),
