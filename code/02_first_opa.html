@@ -390,7 +390,9 @@ $(document).ready(function () {
 
 <div id="wealth-tax-analysis" class="section level1">
 <h1>Wealth tax analysis</h1>
-<pre class="r"><code>call_params_f &lt;- function(){
+<pre class="r"><code># - inputs: none
+# - outputs: all the original source values
+call_params_f &lt;- function(){
     ################  
     ####### Research:
     ################  
@@ -452,7 +454,9 @@ invisible( list2env(call_params_f(),.GlobalEnv) )
 <div id="policy-choices" class="section level3">
 <h3>1 - Policy choices</h3>
 <p>The wealth tax applies to wealth above $50 million dollars, and follows the following structure:</p>
-<pre class="r"><code>#### Policy:  
+<pre class="r"><code># - inputs: none
+# - outputs: all the original source values
+#### Policy:  
 policy_f &lt;- function(){
     # brackets_po
     brackets_po &lt;- c(10e6, 25e6, 50e6, 100e6, 250e6, 500e6,  1e9)
@@ -534,12 +538,13 @@ invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) )
 # pareto_scale_in, ratio1_in, missing_fraction_in, missing_taxbase_in, num_billionares_in, 
 # final_taxbase_b_in, top_tax_base_in, cum_numberTaxpayers_scf_in, cum_numberTaxpayers_dina_in, 
 # cum_tax_base_scf_in, cum_tax_base_dina_in 
-est_billionares_in_f &lt;- function(evasion_param_var = evasion_param_in, wealth_last_400_var = wealth_last_400_so,
-                                  average_wealth_top_400_var = average_wealth_top_400_so,
-                                  cum_numberTaxpayers_scf_var = cum_numberTaxpayers_scf_so,
-                                  cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_so, 
-                                  cum_tax_base_scf_var = cum_tax_base_scf_so, 
-                                  cum_tax_base_dina_var = cum_tax_base_dina_so){
+est_billionares_in_f &lt;- function(evasion_param_var = evasion_param_in, 
+                                 wealth_last_400_var = wealth_last_400_so,
+                                 average_wealth_top_400_var = average_wealth_top_400_so,
+                                 cum_numberTaxpayers_scf_var = cum_numberTaxpayers_scf_so,
+                                 cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_so, 
+                                 cum_tax_base_scf_var = cum_tax_base_scf_so, 
+                                 cum_tax_base_dina_var = cum_tax_base_dina_so){
     non_evaded_tax_in &lt;- (1 - evasion_param_var)
      
     # Post evasion taxable wealth
@@ -565,7 +570,7 @@ est_billionares_in_f &lt;- function(evasion_param_var = evasion_param_in, wealth
     final_taxbase_b_in &lt;- totax_total_400_in + missing_taxbase_in
 
     #This is the taxed money (the aboves is the totale taxable) in billions  (minus one is just to match original results)
-    top_tax_base_in &lt;- final_taxbase_b_in * 0.01
+    top_tax_base_in &lt;- final_taxbase_b_in * 0.01                                     # ALERT: Hard coded number
      
     #edit the number of billionares
     cum_numberTaxpayers_scf_in &lt;- c(cum_numberTaxpayers_scf_var[1:6], num_billionares_in)
@@ -627,7 +632,7 @@ tax_revenue_mo_f &lt;- function(cum_numberTaxpayers_dina_var = cum_numberTaxpaye
 invisible( list2env(tax_revenue_mo_f(),.GlobalEnv) )
 
 
-# TO BE DELETED                 
+# Temporary values to be used in next paragraph             
 target_hhlds_round &lt;- format(round( sum( 
   numberTaxpayers_mo[brackets_po&gt;=starting_brack_po] )/1000 
   ) * 1000, scientific = FALSE)
@@ -676,12 +681,12 @@ ten_year_factor_round &lt;- round(ten_year_factor_mo)
 # test to run from the beginning (only functions)
 if (FALSE) {
     rm(list = ls()[!(ls() %in% ls(pattern = &quot;_f\\b&quot;))])
-    list2env(call_params_f(), .GlobalEnv)
-    list2env(policy_f(), .GlobalEnv)
-    list2env(tax_elasticity_in_f(), .GlobalEnv)
-    list2env(est_billionares_in_f(), .GlobalEnv)
-    list2env(tax_revenue_mo_f(), .GlobalEnv)
-    list2env(total_rev_mo_f(), .GlobalEnv)
+    invisible( list2env(call_params_f(), .GlobalEnv) )
+    invisible( list2env(policy_f(), .GlobalEnv) )
+    invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
+    invisible( list2env(est_billionares_in_f(), .GlobalEnv) )
+    invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) )
+    invisible( list2env(total_rev_mo_f(), .GlobalEnv) )
     invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
     sapply(ls(pattern = &quot;_pe\\b&quot;), get)
 }</code></pre>
