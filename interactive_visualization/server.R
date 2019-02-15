@@ -1,17 +1,19 @@
 
 server <- function(input, output,session) {
   
-  ### note these need to be recalculated based on the tax rates
-  ### the calculations won't reflect that, but this version sets up the functionality
-  
   grid = read.csv("taxBaseGrid.csv")
   #print(head(grid)) ## check that app has access to this file
   
   getTaxBasePerBracket=function(grid,brackets){
     ## brackets is lower end of each bracket
-    brackets = c(brackets, max(grid$thres)+1) ## get last bracket
+    brackets = c(brackets, 1e10) ## get last bracket
     grid$group=cut(grid$thres,brackets)
     toReturn = grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()
+    #browser()
+    ## HACK: only for now because the grid doesn't go far enough
+    if(nrow(toReturn)!=4){
+      toReturn=rbind(toReturn,cbind.data.frame(group="bill",taxBase=2560e9))
+    }
     return(toReturn)
   }
   
@@ -28,8 +30,8 @@ server <- function(input, output,session) {
     return(toReturn)
   }
   
-  numberTaxpayers <- c(640198, 171310, 41637, 24974)#, 5155, 2612, 911) ## eventually be able to change these based on other parameters
-  taxBase <- c(6716, 3510, 2376, 2460)#, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
+  #numberTaxpayers <- c(640198, 171310, 41637, 24974)#, 5155, 2612, 911) ## eventually be able to change these based on other parameters
+  #taxBase <- c(6716, 3510, 2376, 2460)#, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
  # bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+") ## don't actually use
   
   ### update tax brackets based on previous decisions
@@ -225,28 +227,31 @@ server <- function(input, output,session) {
     toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk #+ fifthChunk + sixthChunk + seventhChunk
     return(toReturn)
   }
+  
+  totalTax <- reactive({
+    
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
+    taxRateP <- taxRate / 100 ## get to percentage
+    bracketStarts = 1e6*c(input$bracketV1[1], input$bracketV2[1], input$bracketV3[1], input$bracketV4[1])
+    taxPerBracket = getTaxBasePerBracket(grid,bracketStarts)
+    taxBase = taxPerBracket$taxBase
+    tax <- taxBase * taxRateP
+    
+    totalTax <- sum(tax)
+  })
 
   # need to understand difference between this and getMarginalTax()
   output$totalTax <- renderText({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
-    taxRateP <- taxRate / 100 ## get to percentage
+   
 
-    tax <- taxBase * taxRateP
-
-    totalTax <- sum(tax)
-
-    round(totalTax) ## could round if desired
+    round(totalTax()) ## could round if desired
   })
 
   output$totalTax_10 <- renderText({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
-    taxRateP <- taxRate / 100 ## get to percentage
     
-    tax <- taxBase * taxRateP
+    totalTax10 <- totalTax() * 13
     
-    totalTax <- sum(tax) * 13
-    
-    round(totalTax/1e3,2) ## could round if desired
+    round(totalTax10/1e3,2) ## could round if desired
   })
   
   householdsTaxed=reactive({
