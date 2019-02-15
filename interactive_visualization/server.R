@@ -4,6 +4,23 @@ server <- function(input, output,session) {
   ### note these need to be recalculated based on the tax rates
   ### the calculations won't reflect that, but this version sets up the functionality
   
+  grid = read.csv("taxBaseGrid.csv")
+  #print(head(grid)) ## check that app has access to this file
+  
+  getTaxBasePerBracket=function(grid,brackets){
+    ## brackets is lower end of each bracket
+    brackets = c(brackets, max(grid$thres)+1) ## get last bracket
+    grid$group=cut(grid$thres,brackets)
+    toReturn = grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()
+    return(toReturn)
+  }
+  
+  getPeoplePerBracket=function(grid,brackets){
+    ## brackets is lower end of each bracket
+    brackets = c(brackets, max(grid$thres)+1) ## get last bracket
+    toReturn = grid %>% group_by(group) %>% summarise(totalPeople=sum(nb)) %>% drop_na()
+    return(toReturn)
+  }
   
   numberTaxpayers <- c(640198, 171310, 41637, 24974)#, 5155, 2612, 911) ## eventually be able to change these based on other parameters
   taxBase <- c(6716, 3510, 2376, 2460)#, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
@@ -28,8 +45,8 @@ server <- function(input, output,session) {
   ## not ideal: but have to avoid looping back and forth
    observe({
      val <- bracketVal3()[2]
-     updateSliderInput(session, "bracketV4", min = 0,value = val,
-                       max = 1000, step = 5)
+     updateSliderInput(session, "bracketV4", value = val
+                      )
      output$warn = renderText({""})
    })
    
@@ -69,23 +86,24 @@ server <- function(input, output,session) {
     if(bracket4() < bracket3()){
       updateSliderInput(session, "bracket4", min = 0,value = bracket3(),
                         max = 10, step = 1)
+      
     }
   })
   
-  observe({
-    if(bracket5() < bracket4()){
-      updateSliderInput(session, "bracket5", min = 0,value = bracket4(),
-                        max = 10, step = 1)
-    }
-  })
+  # observe({
+  #   if(bracket5() < bracket4()){
+  #     updateSliderInput(session, "bracket5", min = 0,value = bracket4(),
+  #                       max = 10, step = 1)
+  #   }
+  # })
   
-  observe({
-    if(bracketVal4() ==1000){
-      updateSliderInput(session, "bracketV5", min = 0,value = 1,
-                        max = 10, step = .5)
-
-    }
-  })
+  # observe({
+  #   if(bracketVal4() ==1000){
+  #     updateSliderInput(session, "bracketV5", min = 0,value = 1,
+  #                       max = 10, step = .5)
+  # 
+  #   }
+  # })
   
   
   
@@ -110,7 +128,7 @@ server <- function(input, output,session) {
     #taxRate <- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03) 
     #brackets_po <- c(10e6, 25e6, 50e6, 100e6, 250e6, 500e6,  1e9)
     
-    xval <- seq(10e6, 1e9 + 1e8, by = 1e6)
+    xval <- seq(10e6, 10e9 + 1e8, by = 1e6)
 
     #if (FALSE) {    
     # idx1 <- xval <= 25e6
