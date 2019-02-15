@@ -33,20 +33,20 @@ ui <-
              wellPanel(
                
                sliderInput("bracket1", "Marginal Tax Rate in First Bracket",
-                           0, 5, 0,
-                           step = 0.1#, ticks = F
+                           0, 10, 0,
+                           step = 1#, ticks = F
                ),
                sliderInput("bracket2", "Marginal Tax Rate in Second Bracket",
-                           0, 5, 0,
-                           step = 0.1#, ticks = F
+                           0, 10, 0,
+                           step = 1#, ticks = F
                ),
                sliderInput("bracket3", "Marginal Tax Rate in Third Bracket",
-                           0, 5, 2,
-                           step = 0.1#, ticks = F
+                           0, 10, 2,
+                           step = 1#, ticks = F
                ),
                sliderInput("bracket4", "Marginal Tax Rate in Fourth Bracket",
-                           0, 5, 2,
-                           step = 0.1#, ticks = F
+                           0, 10, 2,
+                           step = 1#, ticks = F
                )
              )
              
