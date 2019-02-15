@@ -37,8 +37,7 @@ server <- function(input, output,session) {
   observe({
     #val <- input$bracketV2[2]
     val <- bracketVal2()[2]
-    updateSliderInput(session, "bracketV3", min = 0,value = c(val,min(val+20,1000)),
-                      max = 1000, step = 5)
+    updateSliderInput(session, "bracketV3", value = c(val,min(val+20,1000)))
   })
   # 
   
@@ -59,8 +58,7 @@ server <- function(input, output,session) {
 
   observe({
    if(bracketVal3()[2]<bracketVal4()){
-     updateSliderInput(session, "bracketV3", min = 0,value = c(bracketVal3()[1],bracketVal4()),
-                      max = 1000, step = 5) ## this one works in forward direction
+     updateSliderInput(session, "bracketV3",value = c(bracketVal3()[1],bracketVal4())) ## this one works in forward direction
      output$warn = renderText({""})
      }else if(bracketVal3()[2]>bracketVal4()){
     output$warn = renderText({"Warning: Last tax bracket is below third."})
@@ -119,6 +117,7 @@ server <- function(input, output,session) {
   bracketVal2 <- reactive({input$bracketV2})
   bracketVal3 <- reactive({input$bracketV3})
   bracketVal4 <- reactive({input$bracketV4})
+  
   dataInput = reactive({
    # taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
@@ -128,8 +127,9 @@ server <- function(input, output,session) {
     #taxRate <- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03) 
     #brackets_po <- c(10e6, 25e6, 50e6, 100e6, 250e6, 500e6,  1e9)
     
-    xval <- seq(10e6, 10e9 + 1e8, by = 1e6)
+    xval <- seq(10e6, 10e9 + 1e8, by = 5e6)
 
+    
     #if (FALSE) {    
     # idx1 <- xval <= 25e6
     # idx2 <- xval > 25e6 & xval <= 50e6
@@ -312,12 +312,12 @@ server <- function(input, output,session) {
       # Walk through?
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
-      data = dataInput()
+      data = subset(dataInput(),xval<1e9)
       row <- data[data$id == x$id, ]
       paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
     }
 
-    dataInput() %>%
+    subset(dataInput(),xval<1e9) %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
       layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
@@ -340,6 +340,67 @@ server <- function(input, output,session) {
       add_axis("y", title = "Tax rate (%)") %>%
       set_options(width = 1000, height = 500)
   })
+  
 
   vis2 %>% bind_shiny("plot2")
+  
+  
+  visBillion <- reactive({
+    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
+    #browser()
+    #browser()
+    # These are mini data set that ggvis needs to create vertical lines
+    extra0 <- cbind.data.frame(x = rep(bracketVal1()[1]*1e6, 2), y = c(0, taxRate[1]))
+    extra1 <- cbind.data.frame(x = rep(bracketVal1()[2]*1e6, 2), y = c(0, taxRate[1]))
+    extra1b <- cbind.data.frame(x = rep(bracketVal2()[1]*1e6, 2), y = c(0, taxRate[2]))
+    extra2 <- cbind.data.frame(x = rep(bracketVal2()[2]*1e6, 2), y = c(0, taxRate[2]))
+    extra2b <- cbind.data.frame(x = rep(bracketVal3()[1]*1e6, 2), y = c(0, taxRate[3]))
+    
+    extra3 <- cbind.data.frame(x = rep(bracketVal3()[2]*1e6, 2), y = c(0, taxRate[3]))
+    extra3b <- cbind.data.frame(x = rep(bracketVal4()*1e6, 2), y = c(0, taxRate[4]))
+    
+    #extra4 <- cbind.data.frame(x = rep(bracketVal4()[2]*1e6, 2), y = c(0, taxRate[4]))
+    # extra4b <- cbind.data.frame(x = rep(250e6, 2), y = c(0, taxRate[5]))
+    # extra5 <- cbind.data.frame(x = rep(500e6, 2), y = c(0, taxRate[5]))
+    # extra5b <- cbind.data.frame(x = rep(500e6, 2), y = c(0, taxRate[6]))
+    # extra6 <- cbind.data.frame(x = rep(1e9, 2), y = c(0, taxRate[6]))
+    # extra6b <- cbind.data.frame(x = rep(1e9, 2), y = c(0, taxRate[7]))
+    # 
+    
+    showMargin <- function(x) {
+      # Walk through?
+      # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
+      if (is.null(x)) return(NULL)
+      data = subset(dataInput(),xval>=1e9)
+      row <- data[data$id == x$id, ]
+      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
+    }
+    
+    subset(dataInput(),xval>=1e9) %>%
+      ggvis(x = ~xval, y = ~tax) %>%
+      layer_points() %>%
+      layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
+      add_tooltip(showMargin, "hover") %>%
+      layer_lines(x = ~xval, y = ~marginalRate, stroke := "red") %>%
+      #layer_paths(data = extra1, ~x, ~y) %>%
+      #layer_paths(data = extra2, ~x, ~y) %>%
+      layer_paths(data = extra3, ~x, ~y) %>%
+      #layer_paths(data = extra4, ~x, ~y) %>%
+      #layer_paths(data = extra5, ~x, ~y) %>%
+      #layer_paths(data = extra6, ~x, ~y) %>%
+      #layer_paths(data = extra0, ~x, ~y) %>%
+      #layer_paths(data = extra1b, ~x, ~y) %>%
+      #layer_paths(data = extra2b, ~x, ~y) %>%
+      layer_paths(data = extra3b, ~x, ~y) %>%
+      # layer_paths(data = extra4b, ~x, ~y) %>%
+      # layer_paths(data = extra5b, ~x, ~y) %>%
+      # layer_paths(data = extra6b, ~x, ~y) %>%
+      add_axis("x", title = "Wealth before taxes") %>%
+      add_axis("y", title = "Tax rate (%)") %>%
+      scale_numeric("x", domain = c(1e9, 10e9), nice = FALSE) %>%
+      set_options(width = 1000, height = 500)
+    
+  })
+  
+  visBillion %>% bind_shiny("plotB")
 }

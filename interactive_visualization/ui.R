@@ -1,6 +1,7 @@
 library(ggvis)
 library(tidyr)
 library(dplyr)
+library(ggplot2)
 ## template from here
 ## https://github.com/rstudio/shiny-examples/tree/master/051-movie-explorer
 ui <-
@@ -22,11 +23,11 @@ ui <-
                       max = 1000,step =5, value = c(10, 50)),
           sliderInput("bracketV2", label = "Second Tax Bracket (million)", min = 0, 
                       max = 1000,step =5, value = c(50, 250)),
-          sliderInput("bracketV3", label = "Third Tax Bracket (million)", min = 0, 
-                      max = 1000,step =5, value = c(250, 1000)),
+          sliderInput("bracketV3", label = "Third Tax Bracket (million)", min = 500, 
+                      max = 1500,step =5, value = c(250, 1000)),
+          h6("billionaires"),
           sliderInput("bracketV4", label = "Last Tax Bracket (million)", min = 1000, 
                       max = 10000,step =100, value=150),
-          h6("billionaires"),
           textOutput("warn")#,
           #sliderInput("bracketV5",label= "Billionaire Tax Bracket (billion)",min=0,max=10,step=.5,value=0)
           
@@ -62,6 +63,7 @@ ui <-
       column(
         8,
         ggvisOutput("plot2"),
+        ggvisOutput("plotB"),
         # Format changes?
         # wellPanel(
         h3("Total Taxes ($bn)"),
