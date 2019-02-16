@@ -459,7 +459,7 @@ invisible( list2env(call_params_f(),.GlobalEnv) )
 #### Policy:  
 policy_f &lt;- function(){
     # brackets_po
-    brackets_po &lt;- c(10e6, 25e6, 50e6, 100e6, 250e6, 500e6,  1e9)
+    brackets_po &lt;- c(10, 25, 50, 100, 250, 500,  1000) * 1e6
     tax_rates_po &lt;- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03) 
     starting_brack_po &lt;- brackets_po[min(which(tax_rates_po&gt;0))]
     next_increase_po &lt;- brackets_po[min(which(tax_rates_po&gt;0.02))]
@@ -580,12 +580,15 @@ est_billionares_in_f &lt;- function(evasion_param_var = evasion_param_in,
     cum_tax_base_dina_in &lt;- c(cum_tax_base_dina_var[1:6], top_tax_base_in)
     
     return( list( &quot;non_evaded_tax_in&quot; = non_evaded_tax_in, &quot;totax_last_400_in&quot; = totax_last_400_in, 
-                  &quot;totax_average_400_in&quot; = totax_average_400_in, &quot;totax_total_400_in&quot; = totax_total_400_in, 
-                  &quot;pareto_scale_in&quot; = pareto_scale_in, &quot;ratio1_in&quot; = ratio1_in, &quot;missing_fraction_in&quot; = missing_fraction_in, 
-                  &quot;missing_taxbase_in&quot; = missing_taxbase_in, &quot;num_billionares_in&quot; = num_billionares_in, 
-                  &quot;final_taxbase_b_in&quot; = final_taxbase_b_in, &quot;top_tax_base_in&quot; = top_tax_base_in, &quot;cum_numberTaxpayers_scf_in&quot; = 
-                    cum_numberTaxpayers_scf_in, &quot;cum_numberTaxpayers_dina_in&quot; = cum_numberTaxpayers_dina_in, 
-                  &quot;cum_tax_base_scf_in&quot; = cum_tax_base_scf_in, &quot;cum_tax_base_dina_in&quot; = cum_tax_base_dina_in ) )
+                  &quot;totax_average_400_in&quot; = totax_average_400_in, &quot;totax_total_400_in&quot; = 
+                    totax_total_400_in, &quot;pareto_scale_in&quot; = pareto_scale_in, &quot;ratio1_in&quot; = ratio1_in, 
+                  &quot;missing_fraction_in&quot; = missing_fraction_in, &quot;missing_taxbase_in&quot; = 
+                    missing_taxbase_in, &quot;num_billionares_in&quot; = num_billionares_in, 
+                  &quot;final_taxbase_b_in&quot; = final_taxbase_b_in, &quot;top_tax_base_in&quot; = top_tax_base_in, 
+                  &quot;cum_numberTaxpayers_scf_in&quot; = cum_numberTaxpayers_scf_in, 
+                  &quot;cum_numberTaxpayers_dina_in&quot; = cum_numberTaxpayers_dina_in, 
+                  &quot;cum_tax_base_scf_in&quot; = cum_tax_base_scf_in, 
+                  &quot;cum_tax_base_dina_in&quot; = cum_tax_base_dina_in ) )
 }
 
 invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
