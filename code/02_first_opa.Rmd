@@ -327,6 +327,69 @@ It is important to emphasize that our computations assume that the wealth tax ba
 
 The figure below illustrates the distribution the tax burden across the population and, with detailed information on the fraction of households that will pay a wealth tax:
 
+```{r figure}
+wealth_aux <- 10:1000 * 1e6
+
+
+numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911) ## eventually be able to change these based on other parameters
+taxBase <- c(6716, 3510, 2376, 2460, 1285, 660, 2560) ## eventaully be able to change these based on other parameters
+bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+")
+#This function computes the total tax collected for a tax unit with wealth "wealth_var", applying "taxrates_var" to "brackets_var"
+# - inputs: wealth, tax rates, brackets to tax
+# - ouputs: total tax collected
+getTaxRevenue <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+                          brackets_var = brackets_po) {
+    ## expecting taxLevels in percentage
+    # taxLevels <- taxLevels / 100
+    if (length(brackets_var) != length(taxrates_var)){
+      stop("Tax brackets and tax rates do not match")
+    }
+   # Compute max taxable wealth per bracket
+    max_tax_per_brack <- c(diff(c(0, brackets_var)), 1e100)
+   # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
+   # then assign max taxable wealth to that given bracket
+    to_tax <- ifelse( wealth_var - c(0, brackets_var) > max_tax_per_brack, 
+                      max_tax_per_brack, 
+                      ( wealth_var - c(0,brackets_var) ) )   
+   # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
+    to_tax <- ifelse( to_tax<0, 0, to_tax )
+    # Apply trax rates to each corresponding bracket and all together
+    total_tax <- sum( to_tax * c(0, taxrates_var) )   
+    return(total_tax)
+}
+  
+
+  xval <- seq(10e6, 1e9 + 1e8, by = 1e6)
+    
+    #brackets_po <- c(0, 25, 50, 100, 250, 500, 1000) * 1e6
+    getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
+    
+    toPlot <- cbind.data.frame(xval, getGroup)
+    
+    toMatch <- cbind.data.frame(group = 1:7, tax = tax_rates_po)
+    
+    toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
+    
+    #lapply(x = 1:5, f(x,y), y = 6:10) = (1, 6:10); (2, 6:10);... ;(5, 6:10)  
+    toPlot2$averageInt <- sapply( toPlot2$xval, 
+                                  function(x) getTaxRevenue(wealth_var = x, 
+                                                            taxrates_var = tax_rates_po, 
+                                                            brackets_var = brackets_po) )
+
+    # Here is where the total tax payed by each individuals is transform into marginal tax rates
+    toPlot2$averageRate <- (toPlot2$averageInt / toPlot2$xval) * 100
+    
+    toPlot2$id <- 1:nrow(toPlot2)
+    #browser()
+    View(toPlot2)
+
+
+sapply( toPlot2$xval, function(x) getTaxRevenue(wealth_var = x, taxrates_var = tax_rates_po, brackets_var = brackets_po) )
+ 
+getTaxRevenue(wealth_aux[500], tax_rates_po)/wealth_aux[990] *100
+```
+
+
 ![](plot1.png)
 
 [Click here](https://fhoces.shinyapps.io/demo/) to try different policy proposals.   
