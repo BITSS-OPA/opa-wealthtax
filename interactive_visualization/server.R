@@ -7,6 +7,7 @@ server <- function(input, output,session) {
   getTaxBasePerBracket=function(grid,brackets){
     ## brackets is lower end of each bracket
     brackets = c(brackets, 1e10) ## get last bracket
+    #browser()
     grid$group=cut(grid$thres,brackets)
     toReturn = grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()
     #browser()
@@ -38,15 +39,77 @@ server <- function(input, output,session) {
   observe({
     #val <- input$bracketV1[2]
     val <- bracketVal1()[2]
-    updateSliderInput(session, "bracketV2", min = 0,value = c(val,min(val+50,1000)),
+    #val2 <-bracketVal2()[1]
+    updateSliderInput(session, "bracketV2", min = 0,value = c(val,max(val+50,bracketVal2()[2])),
                        max = 1000, step = 5)
+    output$warn2 = renderText({""})
+    #val2>
+  })
+  
+  observe({
+    val <- bracketVal1()[2]
+    val2 <-bracketVal2()[1]
+    
+    if(val2<val){
+     output$warn1=renderText({"Warning: First and second brackets overlap."})
+    }
+    if(val2 == val){
+      output$warn1 = renderText({""})
+      
+    }
+    
+    if(val2>val){
+      output$warn1=renderText({"Warning: Gap between first and second brackets."})
+      
+    }
+    
+  })
+  
+  observe({
+    val <- bracketVal2()[2]
+    val2 <-bracketVal3()[1]
+    
+    if(val2<val){
+      output$warn2=renderText({"Warning: Second and third brackets overlap."})
+    }
+    if(val2 == val){
+      output$warn2 = renderText({""})
+      
+    }
+    
+    if(val2>val){
+      output$warn2=renderText({"Warning: Gap between second and third brackets."})
+      
+    }
+    
+  })
+  
+  observe({
+    val <- bracketVal3()[2]
+    val2 <-bracketVal4()
+    
+    if(val2<val){
+      output$warn3=renderText({"Warning: Third and fourth brackets overlap."})
+    }
+    if(val2 == val){
+      output$warn3 = renderText({""})
+      
+    }
+    
+    if(val2>val){
+      output$warn3=renderText({"Warning: Gap between third and fourth brackets."})
+      
+    }
+    
   })
   
   observe({
     #val <- input$bracketV2[2]
     val <- bracketVal2()[2]
-    updateSliderInput(session, "bracketV3", value = c(val,min(val+50,1000)))
+    updateSliderInput(session, "bracketV3", value = c(val,max(val+50,bracketVal3()[2])))
   })
+  output$warn3 = renderText({""})
+  
   # 
   
   ## not ideal: but have to avoid looping back and forth
@@ -54,7 +117,7 @@ server <- function(input, output,session) {
      val <- bracketVal3()[2]
      updateSliderInput(session, "bracketV4", value = val
                       )
-     output$warn = renderText({""})
+     output$warn4 = renderText({""})
    })
    
   #  observe({
