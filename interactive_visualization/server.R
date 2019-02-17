@@ -7,10 +7,10 @@ server <- function(input, output,session) {
   getTaxBasePerBracket=function(grid,brackets){
     ## brackets is lower end of each bracket
     brackets = c(brackets, 1e10) ## get last bracket
-    #browser()
+
     grid$group=cut(grid$thres,brackets)
     toReturn = grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()
-    #browser()
+
     ## HACK: only for now because the grid doesn't go far enough
     if(nrow(toReturn)!=4){
       toReturn=rbind(toReturn,cbind.data.frame(group="bill",taxBase=2560e9))
@@ -193,7 +193,7 @@ server <- function(input, output,session) {
   dataInput = reactive({
    # taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
-    #browser()
+
     
     #using when running outside the app
     #taxRate <- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03) 
@@ -210,7 +210,7 @@ server <- function(input, output,session) {
     # idx5 <- xval > 250e6 & xval <= 500e6
     # idx6 <- xval > 500e6 & xval <= 1e9
     # idx7 <- xval > 1e9
-    #browser()
+
   
         # idx1 <- xval <= input$bracketV1[2]*1e6
         # idx2 <- xval > input$bracketV2[1]*1e6 & xval <= input$bracketV2[2]*1e6
@@ -258,7 +258,7 @@ server <- function(input, output,session) {
   # Computes total tax revenue
   getMarginalTax <- function(wealth, taxLevels) {
     ## expecting taxLevels in percentage
-    #browser()
+
     taxLevels <- taxLevels / 100
     # first <- wealth - 10e6 ## first bracket of taxable wealth. first 10 million is free
     # second <- first - 15e6
@@ -298,7 +298,7 @@ server <- function(input, output,session) {
     taxRateP <- taxRate / 100 ## get to percentage
     bracketStarts = 1e6*c(input$bracketV1[1], input$bracketV2[1], input$bracketV3[1], input$bracketV4[1])
     taxPerBracket = getTaxBasePerBracket(grid,bracketStarts)
-    taxBase = taxPerBracket$taxBase
+    taxBase = taxPerBracket$taxBase/1e9 ## in billions
     tax <- taxBase * taxRateP
     
     totalTax <- sum(tax)
@@ -355,8 +355,7 @@ server <- function(input, output,session) {
 
   vis2 <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
-#browser()
-    #browser()
+
     # These are mini data set that ggvis needs to create vertical lines
     extra0 <- cbind.data.frame(x = rep(bracketVal1()[1]*1e6, 2), y = c(0, taxRate[1]))
     extra1 <- cbind.data.frame(x = rep(bracketVal1()[2]*1e6, 2), y = c(0, taxRate[1]))
@@ -414,8 +413,7 @@ server <- function(input, output,session) {
   
   visBillion <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)#, input$bracket5, input$bracket6, input$bracket7)
-    #browser()
-    #browser()
+
     # These are mini data set that ggvis needs to create vertical lines
     extra0 <- cbind.data.frame(x = rep(bracketVal1()[1]*1e6, 2), y = c(0, taxRate[1]))
     extra1 <- cbind.data.frame(x = rep(bracketVal1()[2]*1e6, 2), y = c(0, taxRate[1]))
