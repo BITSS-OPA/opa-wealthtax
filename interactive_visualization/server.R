@@ -38,14 +38,14 @@ server <- function(input, output,session) {
   observe({
     #val <- input$bracketV1[2]
     val <- bracketVal1()[2]
-    updateSliderInput(session, "bracketV2", min = 0,value = c(val,min(val+20,1000)),
+    updateSliderInput(session, "bracketV2", min = 0,value = c(val,min(val+50,1000)),
                        max = 1000, step = 5)
   })
   
   observe({
     #val <- input$bracketV2[2]
     val <- bracketVal2()[2]
-    updateSliderInput(session, "bracketV3", value = c(val,min(val+20,1000)))
+    updateSliderInput(session, "bracketV3", value = c(val,min(val+50,1000)))
   })
   # 
   
@@ -57,23 +57,24 @@ server <- function(input, output,session) {
      output$warn = renderText({""})
    })
    
-   observe({
-     if(bracketVal3()[2]==bracketVal4()){
-       output$warn = renderText({""})
-     }
-    
-   })
-
-  observe({
-   if(bracketVal3()[2]<bracketVal4()){
-     updateSliderInput(session, "bracketV3",value = c(bracketVal3()[1],bracketVal4())) ## this one works in forward direction
-     output$warn = renderText({""})
-     }else if(bracketVal3()[2]>bracketVal4()){
-    output$warn = renderText({"Warning: Last tax bracket is below third."})
-      }
-  })
+  #  observe({
+  #    if(bracketVal3()[2]==bracketVal4()){
+  #      output$warn = renderText({""})
+  #    }
+  #   
+  #  })
+  # 
+  # observe({
+  #  if(bracketVal3()[2]<bracketVal4()){
+  #    updateSliderInput(session, "bracketV3",value = c(bracketVal3()[1],bracketVal4())) ## this one works in forward direction
+  #    output$warn = renderText({""})
+  #    }else if(bracketVal3()[2]>bracketVal4()){
+  #   output$warn = renderText({"Warning: Last tax bracket is below third."})
+  #     }
+  # })
   
   
+   ### marginal tax rate only increasing
   observe({
     if(bracket2() < bracket1()){
       updateSliderInput(session, "bracket2", min = 0,value = bracket1(),
