@@ -1,20 +1,17 @@
 
 server <- function(input, output, session) {
-  grid <- read.csv("taxBaseGrid.csv")
-  #grid <- read.csv("taxBaseGridUpdated.csv")
+  #grid <- read.csv("taxBaseGrid.csv")
+  grid <- read.csv("taxBaseGridUpdated.csv")
   # print(head(grid)) ## check that app has access to this file
 
   getTaxBasePerBracket <- function(grid, brackets) {
     ## brackets is lower end of each bracket
     brackets <- c(brackets, 1e10) ## get last bracket
-    #grid$total <- grid$nb*grid$avg
+    grid$total <- grid$nb*grid$avg
     grid$group <- cut(grid$thres, brackets)
     toReturn <- grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()
 
-    ## HACK: remove when updated grid is stable
-    if (nrow(toReturn) != 4) {
-      toReturn <- rbind(toReturn, cbind.data.frame(group = "bill", taxBase = 2560e9))
-    }
+    
     return(toReturn)
   }
 
@@ -24,10 +21,7 @@ server <- function(input, output, session) {
     grid$group <- cut(grid$thres, brackets, include.lowest = T)
     toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na()
 
-    ## HACK: remove when updated grid is stable
-    if (nrow(toReturn) != 4) {
-      toReturn <- rbind(toReturn, cbind.data.frame(group = "bill", totalPeople = 911))
-    }
+    
     return(toReturn)
   }
 
