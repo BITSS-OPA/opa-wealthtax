@@ -117,8 +117,7 @@ server <- function(input, output) {
   dataInput = reactive({
     
     #taxBracket <- c(input$dollars1, input$dollars2)
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, 
-                 input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRate <- c(0,    0, 2,  2,  2 , input$bracket6, input$bracket7)
     
     taxBase_1 <- c(input$dollar1, input$dollar2)
     
@@ -244,7 +243,7 @@ server <- function(input, output) {
   }
   
   vis2 <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRate <- c(0,    0, 2,  2,  2, input$bracket6, input$bracket7)
     
     
     # These are mini data set that ggvis needs to create vertical lines
@@ -291,7 +290,7 @@ server <- function(input, output) {
       layer_paths(data = extra2b, ~x, ~y) %>%
       layer_paths(data = extra3b, ~x, ~y) %>%
       layer_paths(data = extra4b, ~x, ~y) %>%
-      layer_paths(data = extra5b, ~x, ~y) %>%
+ #    layer_paths(data = extra5b, ~x, ~y) %>%
       layer_paths(data = extra6b, ~x, ~y) %>%
       add_axis("x", title = "Wealth before taxes") %>%
       add_axis("y", title = "Tax rate (%)") %>%
