@@ -6,7 +6,6 @@ output:
   html_document:
     code_folding: hide
   pdf_document: default
-runtime: shiny
 editor_options:
   chunk_output_type: console
 ---
