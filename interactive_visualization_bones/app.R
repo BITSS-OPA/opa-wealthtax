@@ -3,8 +3,10 @@
 # (link here: )
 
 library(shiny)
+library(ggvis)
 
 # Define UI for application that draws a histogram
+##############
 ui <- fluidPage(
   titlePanel("TITLE HERE"),
   tags$a(href = "https://sastoudt.github.io", "Additional Info Here"),
@@ -38,7 +40,7 @@ ui <- fluidPage(
                     step = 0.1#, ticks = F
         ),
         sliderInput("dollar1", "Dollars for first bracket",
-                    50e6, 0.5e9, 50e6,
+                    75e6, 125e6, 100e6,
                     step = 1e7#, ticks = F
         ),
         sliderInput("bracket6", "Marginal Tax Rate in $500m-$1bn Bracket",
@@ -46,7 +48,7 @@ ui <- fluidPage(
                     step = 0.1#, ticks = F
         ),
         sliderInput("dollar2", "Dollars for second bracket",
-                    0.5e9, 10e9, 0.5e9,
+                    750e6, 1250e6, 1000e6,
                     step = 0.1e9#, ticks = F
         ),
         sliderInput("bracket7", "Marginal Tax Rate in $1bn+ Bracket",
@@ -58,19 +60,19 @@ ui <- fluidPage(
     
     column(
       9,
-      ggvisOutput("plot2"),
+      ggvisOutput("plot2") #,
       # Format changes?
       # wellPanel(
-      h3("Total Taxes ($bn)"),
-      textOutput("totalTax"),
-      h4("Total Taxes over 10 years ($t)"),
-      textOutput("totalTax_10"),
-      h4("Total Taxpayers (Households)"),
-      textOutput("totalTaxpayers"),
-      h4("Percentage of Households Affected"),
-      textOutput("percentHouseAffected"),
-      h4("Percentage Tax Units"),
-      textOutput("percentTaxUnits")
+      # h3("Total Taxes ($bn)"),
+      # textOutput("totalTax"),
+      # h4("Total Taxes over 10 years ($t)"),
+      # textOutput("totalTax_10"),
+      # h4("Total Taxpayers (Households)"),
+      # textOutput("totalTaxpayers"),
+      # h4("Percentage of Households Affected"),
+      # textOutput("percentHouseAffected"),
+      # h4("Percentage Tax Units"),
+      # textOutput("percentTaxUnits")
       # )
     )
   )
@@ -104,12 +106,13 @@ server <- function(input, output) {
     return(toReturn)
   }
   
+  # TO DO: reduce bracket to 2 or 3
+  # 
   
   dataInput = reactive({
     
     #taxBracket <- c(input$dollars1, input$dollars2)
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, 
-                 input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRate <- c(0,    0, 2,  2,  2 , input$bracket6, input$bracket7)
     
     taxBase_1 <- c(input$dollar1, input$dollar2)
     
@@ -120,6 +123,8 @@ server <- function(input, output) {
     xval <- seq(10e6, 1e9 + 1e8, by = 1e6)
     
     brackets_po <- c(0, 25, 50, 100, 250, 500, 1000) * 1e6
+    brackets_po[4] <- taxBase_1[1]
+    brackets_po[7] <- taxBase_1[2]
     getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
     
     toPlot <- cbind.data.frame(xval, getGroup)
@@ -129,8 +134,10 @@ server <- function(input, output) {
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
     
     #lapply(x = 1:5, f(x,y), y = 6:10) = (1, 6:10); (2, 6:10);... ;(5, 6:10)  
-    toPlot2$averageInt <- unlist(lapply(toPlot2$xval, getTaxRevenue, taxRate))
-    # Here is where the total tax payed by each individuals is transform into marginal tax rates
+    toPlot2$averageInt <- sapply( toPlot2$xval, 
+                                  function(x) getTaxRevenue(wealth_var = x, 
+                                                            taxrates_var = taxRate, 
+                                                            brackets_var = brackets_po) )    # Here is where the total tax payed by each individuals is transform into marginal tax rates
     toPlot2$averageRate <- (toPlot2$averageInt / toPlot2$xval) * 100
     
     toPlot2$id <- 1:nrow(toPlot2)
@@ -139,36 +146,31 @@ server <- function(input, output) {
   })
   
   
-  # Computes total tax revenue for a given level of wealth and tax schedule
-  #renamed from "getmarginaltax
-  getTaxRevenue <- function(wealth, taxLevels) {
+  #brackets_po <- c(0, 25, 50, 100, 250, 500, 1000) * 1e6
+  
+  getTaxRevenue <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+                            brackets_var = brackets_po) {
     ## expecting taxLevels in percentage
-    taxLevels <- taxLevels / 100
-    first <- wealth - 10e6 ## first bracket of taxable wealth. first 10 million is free
-    
-    second <- first - 15e6
-    third <- second - 25e6
-    fourth <- third - 50e6
-    fifth <- fourth - 150e6
-    sixth <- fifth - 250e6
-    seventh <- sixth - 500e6
-    
-    
-    firstChunk <- ifelse(second >= 0, taxLevels[1] * 15e6, taxLevels[1] * first)
-    secondChunk <- ifelse(third >= 0, taxLevels[2] * 25e6, taxLevels[2] * max(second, 0))
-    thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * 50e6, taxLevels[3] * max(third, 0))
-    fourthChunk <- ifelse(fifth >= 0, taxLevels[4] * 150e6, taxLevels[4] * max(fourth, 0))
-    fifthChunk <- ifelse(sixth >= 0, taxLevels[5] * 250e6, taxLevels[5] * max(fifth, 0))
-    sixthChunk <- ifelse(seventh >= 0, taxLevels[6] * 500e6, taxLevels[6] * max(sixth, 0))
-    seventhChunk <- ifelse(seventh >= 0, seventh * taxLevels[7], 0)
-    
-    toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk + fifthChunk + sixthChunk + seventhChunk
-    return(toReturn)
+    taxrates_var <- taxrates_var / 100
+    if (length(brackets_var) != length(taxrates_var)){
+      stop("Tax brackets and tax rates do not match")
+    }
+    # Compute max taxable wealth per bracket
+    max_tax_per_brack <- c(diff(c(0, brackets_var)), 1e100)
+    # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
+    # then assign max taxable wealth to that given bracket
+    to_tax <- ifelse( wealth_var - c(0, brackets_var) > max_tax_per_brack, 
+                      max_tax_per_brack, 
+                      ( wealth_var - c(0,brackets_var) ) )   
+    # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
+    to_tax <- ifelse( to_tax<0, 0, to_tax )
+    # Apply trax rates to each corresponding bracket and all together
+    total_tax <- sum( to_tax * c(0, taxrates_var) )   
+    return(total_tax)
   }
   
-  
  
-  
+  if (FALSE){
   # need to understand difference between this and getTaxRevenue()
   output$totalTax <- renderText({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
@@ -233,10 +235,10 @@ server <- function(input, output) {
     round(taxUnits * 100,2) ## get to percentage
     ## can round if desired
   })
-  
+  }
   
   vis2 <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
+    taxRate <- c(0,    0, 2,  2,  2, input$bracket6, input$bracket7)
     
     
     # These are mini data set that ggvis needs to create vertical lines
@@ -283,7 +285,7 @@ server <- function(input, output) {
       layer_paths(data = extra2b, ~x, ~y) %>%
       layer_paths(data = extra3b, ~x, ~y) %>%
       layer_paths(data = extra4b, ~x, ~y) %>%
-      layer_paths(data = extra5b, ~x, ~y) %>%
+ #    layer_paths(data = extra5b, ~x, ~y) %>%
       layer_paths(data = extra6b, ~x, ~y) %>%
       add_axis("x", title = "Wealth before taxes") %>%
       add_axis("y", title = "Tax rate (%)") %>%
