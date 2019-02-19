@@ -7,10 +7,8 @@ library(ggplot2)
 ui <-
 
   fluidPage(
-    titlePanel("Tax Rates"),
-    tags$a(href = "https://sastoudt.github.io", "Visualization by Sara Stoudt"),
-    h6(""),
-    tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization"),
+    titlePanel("Wealth Tax Explorer"),
+    
 
 
     fluidRow(
@@ -33,7 +31,20 @@ ui <-
                       0, 10, 2,  
                       step = 1 ,post = " %" # , ticks = F
           )
-        )
+        ),
+        
+        h6("Policy Analysis by:"),
+        tags$a(href = "https://eml.berkeley.edu/~saez/", "Emmanuel Saez"),
+        h6("and"),
+        tags$a(href = "http://gabriel-zucman.eu/", "Gabriel Zucman"),
+        h6("Interactive Visualization by:"),
+        tags$a(href = "https://sastoudt.github.io", "Sara Stoudt"),
+        h6(""),
+        tags$a(href = "https://github.com/fhoces/opa-wealthtax", "Open Policy Analysis by"),
+        h6(""),
+        tags$a(href = "https://fhoces.github.io/", "Fernando Hoces de la Guardia")
+        
+        
       ),
       column(
         2,
@@ -54,10 +65,13 @@ ui <-
             label = "to wealth above:", min = 1000,
             max = 10000, step = 100, value = 1000, post = " (m)"
           )
-        )
+        ),
+        h6("Assisted by:"),
+        h6(""),
+        h6("Katie Donnelly Moran,"),
+        h6("get undergrad names"),
+        tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
       ),
-
-    
 
       column(
         8,
