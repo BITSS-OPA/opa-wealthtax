@@ -223,7 +223,7 @@ server <- function(input, output, session) {
   # Computes total tax revenue
   getAverageTax <- function(wealth, taxLevels) {
     ## expecting taxLevels in percentage
-
+#browser()
     taxLevels <- taxLevels / 100
 
     first <- wealth - input$bracketV1[1] * 1e6
@@ -233,8 +233,8 @@ server <- function(input, output, session) {
 
 
     firstChunk <- ifelse(second >= 0, taxLevels[1] * (input$bracketV1[2] * 1e6 - input$bracketV1[1] * 1e6), taxLevels[1] * first)
-    secondChunk <- ifelse(second >= 0, taxLevels[2] * (input$bracketV2[2] * 1e6 - input$bracketV2[1] * 1e6), taxLevels[2] * max(second, 0))
-    thirdChunk <- ifelse(third >= 0, taxLevels[3] * (input$bracketV3[2] * 1e6 - input$bracketV3[1] * 1e6), taxLevels[3] * max(third, 0))
+    secondChunk <- ifelse(third >= 0, taxLevels[2] * (input$bracketV2[2] * 1e6 - input$bracketV2[1] * 1e6), taxLevels[2] * max(second, 0))
+    thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * (input$bracketV3[2] * 1e6 - input$bracketV3[1] * 1e6), taxLevels[3] * max(third, 0))
     fourthChunk <- ifelse(fourth >= 0, fourth * taxLevels[4], 0)
 
     toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk
@@ -307,7 +307,7 @@ server <- function(input, output, session) {
 
 
     showMargin <- function(x) {
-
+      #browser()
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
       data <- subset(dataInput(), xval < 1e9)
