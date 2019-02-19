@@ -108,7 +108,6 @@ policy_f <- function(){
     return( sapply( ls(pattern= "_po\\b"), function(x) get(x)) ) 
 }
 invisible( list2env(policy_f(),.GlobalEnv) )
-
 knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,tax_rates_po) )  
 ```  
 
