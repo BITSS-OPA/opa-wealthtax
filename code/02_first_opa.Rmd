@@ -214,8 +214,36 @@ We make the classical assumption that the tail of the wealth distribution is Par
 
 Therefore, the billionaire surtax base is estimated at `r paste("$", round(final_taxbase_b_in/1e3, 2), sep="")` trillion (`r paste("$", round(totax_total_400_in/1e3),"t", sep="")` from those above `r paste("$", round(totax_last_400_in, 1),"b",sep="")` and `r paste("$", round(missing_taxbase_in/1e3,1),"t", sep="")` from those between 1  and `r paste("$", round(totax_total_400_in/1e3) ,"b",sep="")` from those above `r paste("$", round(totax_last_400_in, 1),sep="")`) and hence the billionaire surtax would raise `r paste("$", round(top_tax_base_in), sep="")` billion in 2019 from about `r round(num_billionares_in/100) * 100` billionaire families.
 
+
+### 3.5 Compute tax Brackets: number of hhlds and taxabl wealth [TO DO]
+
+```{r tax-brackets, eval=FALSE, include = FALSE}
+ grid <- read.csv("taxBaseGrid.csv")  %>% filter(!is.na(gperc))
+  # print(head(grid)) ## check that app has access to this file
+  
+  
+  getTaxBasePerBracket=function(grid,brackets){
+    ## brackets is lower end of each bracket
+    brackets = c(brackets, 1e12) ## get last bracket
+    #adding one dollar as the threshold represents the lower bound
+    grid$group=cut(grid$thres + 1, brackets)
+    toReturn = grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()
+    return(toReturn)
+  }
+  
+  getPeoplePerBracket=function(grid,brackets){
+    brackets = c(brackets, 1e12) ## get last bracket
+    grid$group=cut(grid$thres,brackets)
+    toReturn = grid %>% group_by(group) %>% summarise(totalPeople=sum(nb)) %>% drop_na()
+    return(toReturn)
+  }
+  
+```
+
+
+
 ### 4 - Total tax revenue (Model)
-```{r tax-revenue} 
+```{r tax-revenue}  
 # num_billionares_in <- round(400 * 1.8^1.4)
 # top_tax_base <- 0.01 * ( 400 * ( (1-0.15) * 7.2 - 1 ) * 1.25 )
 # Numbers in third bracket differ in 1 hhld 41636 instead of 4637
@@ -328,7 +356,7 @@ It is important to emphasize that our computations assume that the wealth tax ba
 
 The figure below illustrates the distribution the tax burden across the population and, with detailed information on the fraction of households that will pay a wealth tax:
 
-```{r figure}
+```{r figure, warning=FALSE}
 wealth_aux <- 10:1000 * 1e6
 
 
