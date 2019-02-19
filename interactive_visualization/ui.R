@@ -17,49 +17,47 @@ ui <-
       column(
         2,
         wellPanel(
+          sliderInput("bracket1", "Apply a tax of:",
+                      0, 10, 1,
+                      step = 1 , post = " %" # , ticks = F
+          ),
+          sliderInput("bracket2", "Apply a tax of:",
+                      0, 10, 1,
+                      step = 1 , post = " %" # , ticks = F
+          ),
+          sliderInput("bracket3", "Apply a tax of:",
+                      0, 10, 1,
+                      step = 1 , post = " %" # , ticks = F
+          ),
+          sliderInput("bracket4", "Apply a tax of:",
+                      0, 10, 2,  
+                      step = 1 ,post = " %" # , ticks = F
+          )
+        )
+      ),
+      column(
+        2,
+        wellPanel(
           sliderInput("bracketV1",
-            label = "First Tax Bracket (million)", min = 0,
-            max = 1000, step = 5, value = c(10, 50)
+            label = "to wealth above: ", min = 0,
+            max = 1000, step = 5, value = 10, post = " (m)"
           ),
-          textOutput("warn1"),
           sliderInput("bracketV2",
-            label = "Second Tax Bracket (million)", min = 0,
-            max = 1000, step = 5, value = c(50, 500)
+            label = "to wealth above: ", min = 0,
+            max = 1000, step = 5, value = 50, post = " (m)"
           ),
-          textOutput("warn2"),
           sliderInput("bracketV3",
-            label = "Third Tax Bracket (million)", min = 500,
-            max = 1500, step = 5, value = c(500, 1000)
+            label = "to wealth above:", min = 500,
+            max = 1500, step = 5, value = 500, post = " (m)"
           ),
-          textOutput("warn3"),
           sliderInput("bracketV4",
-            label = "Last Tax Bracket (million)", min = 1000,
-            max = 10000, step = 100, value = 1000
+            label = "to wealth above:", min = 1000,
+            max = 10000, step = 100, value = 1000, post = " (m)"
           )
         )
       ),
 
-      column(
-        2,
-        wellPanel(
-          sliderInput("bracket1", "Marginal Tax Rate in Bracket 1",
-            0, 10, 1,
-            step = 1 # , ticks = F
-          ),
-          sliderInput("bracket2", "Marginal Tax Rate in Bracket 2",
-            0, 10, 1,
-            step = 1 # , ticks = F
-          ),
-          sliderInput("bracket3", "Marginal Tax Rate in Bracket 3",
-            0, 10, 1,
-            step = 1 # , ticks = F
-          ),
-          sliderInput("bracket4", "Marginal Tax Rate in Bracket 4",
-            0, 10, 2,
-            step = 1 # , ticks = F
-          )
-        )
-      ),
+    
 
       column(
         8,
