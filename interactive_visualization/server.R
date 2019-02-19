@@ -6,7 +6,7 @@ server <- function(input, output, session) {
 
   getTaxBasePerBracket <- function(grid, brackets) {
     ## brackets is lower end of each bracket
-    brackets <- c(brackets, 1e10) ## get last bracket
+    brackets <- c(brackets, 1e10+1e6) ## get last bracket
     grid$total <- grid$nb*grid$avg
     grid$group <- cut(grid$thres, brackets)
     toReturn <- grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()  %>% complete(group, fill = list(taxBase = 0)) ## avoid dropping levels without any taxBase
@@ -18,7 +18,7 @@ server <- function(input, output, session) {
 
   getPeoplePerBracket <- function(grid, brackets) {
     ## brackets is lower end of each bracket
-    brackets <- c(brackets, 1e10) ## get last bracket
+    brackets <- c(brackets, 1e10+1e6) ## get last bracket
     grid$group <- cut(grid$thres, brackets, include.lowest = T)
     toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na() %>% complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
 
@@ -30,24 +30,28 @@ server <- function(input, output, session) {
   ### update tax brackets based on previous decisions
   observe({
     val <- bracketVal1()
-    val2 <- bracketVal2()
-    
+    #val2 <- bracketVal2()
+    val2 <- input$bracketV2
     updateSliderInput(session, "bracketV2",
-      min = val, value = ifelse(val2>val,val2,val+50) ,
+      min = val+5, value = ifelse(val2>val,val2,val+50) ,
       max = 1000, step = 5
     )
   })
 
   observe({
     val <- bracketVal2()
-    val2 <- bracketVal3()
-    updateSliderInput(session, "bracketV3", min = val, value = ifelse(val2>val,val2,val+50))
+    #val2 <- bracketVal3()
+    val2 <- input$bracketV3
+    
+    updateSliderInput(session, "bracketV3", min = val+5, value = ifelse(val2>val,val2,val+50))
   })
 
   observe({
     val <- bracketVal3()
-    val2 <- bracketVal4()
-    updateSliderInput(session, "bracketV4", min= val,value = ifelse(val2>val,val2,val+50))
+    #val2 <- bracketVal4()
+    val2 <- input$bracketV4
+    
+    updateSliderInput(session, "bracketV4", min= val+5,value = ifelse(val2>val,val2,val+50))
   })
   
 
