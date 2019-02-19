@@ -8,7 +8,7 @@ ui <-
 
   fluidPage(
     titlePanel("Wealth Tax Explorer"),
-    
+
 
 
     fluidRow(
@@ -16,23 +16,23 @@ ui <-
         2,
         wellPanel(
           sliderInput("bracket1", "Apply a tax of:",
-                      0, 10, 1,
-                      step = 1 , post = " %" # , ticks = F
+            0, 10, 1,
+            step = 1, post = " %" # , ticks = F
           ),
           sliderInput("bracket2", "Apply a tax of:",
-                      0, 10, 1,
-                      step = 1 , post = " %" # , ticks = F
+            0, 10, 1,
+            step = 1, post = " %" # , ticks = F
           ),
           sliderInput("bracket3", "Apply a tax of:",
-                      0, 10, 1,
-                      step = 1 , post = " %" # , ticks = F
+            0, 10, 1,
+            step = 1, post = " %" # , ticks = F
           ),
           sliderInput("bracket4", "Apply a tax of:",
-                      0, 10, 2,  
-                      step = 1 ,post = " %" # , ticks = F
+            0, 10, 2,
+            step = 1, post = " %" # , ticks = F
           )
         ),
-        
+
         h6("Policy Analysis by:"),
         tags$a(href = "https://eml.berkeley.edu/~saez/", "Emmanuel Saez"),
         h6("and"),
@@ -43,8 +43,6 @@ ui <-
         tags$a(href = "https://github.com/fhoces/opa-wealthtax", "Open Policy Analysis by"),
         h6(""),
         tags$a(href = "https://fhoces.github.io/", "Fernando Hoces de la Guardia")
-        
-        
       ),
       column(
         2,
@@ -76,7 +74,7 @@ ui <-
       column(
         8,
         ggvisOutput("plot2"),
-        #ggvisOutput("plotB"),
+        # ggvisOutput("plotB"),
 
         h3("Total Taxes ($bn)"),
         textOutput("totalTax"),
