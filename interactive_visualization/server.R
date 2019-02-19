@@ -144,7 +144,9 @@ server <- function(input, output, session) {
 
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
-    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate))
+    brackets <- c(bracketVal1(),bracketVal2(),bracketVal3(),bracketVal4())
+    
+    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate,brackets))
 
     toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
 
@@ -156,19 +158,18 @@ server <- function(input, output, session) {
 
 
   # Computes total tax revenue
-  getAverageTax <- function(wealth, taxLevels) {
+  getAverageTax <- function(wealth, taxLevels,brackets) {
     ## expecting taxLevels in percentage
-#browser()
     taxLevels <- taxLevels / 100
-
-    first <- wealth - input$bracketV1*1e6
-    second <- first - (input$bracketV2*1e6-input$bracketV1*1e6)
-    third <- second - (input$bracketV3*1e6-input$bracketV2*1e6)
-    fourth <- third - (input$bracketV4*1e6-input$bracketV3*1e6)
-
-    firstChunk <- ifelse(second >= 0, taxLevels[1] * (input$bracketV2 * 1e6 - input$bracketV1 * 1e6), taxLevels[1] * first)
-    secondChunk <- ifelse(third >= 0, taxLevels[2] * (input$bracketV3 * 1e6 - input$bracketV2 * 1e6), taxLevels[2] * max(second, 0))
-    thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * (input$bracketV4 * 1e6 - input$bracketV3 * 1e6), taxLevels[3] * max(third, 0))
+   # browser()
+    first <- wealth - brackets[1]*1e6
+    second <- first - (brackets[2]*1e6-brackets[1]*1e6)
+    third <- second - (brackets[3]*1e6-brackets[2]*1e6)
+    fourth <- third - (brackets[4]*1e6-brackets[3]*1e6)
+    
+    firstChunk <- ifelse(second >= 0, taxLevels[1] * (brackets[2] * 1e6 - brackets[1] * 1e6), taxLevels[1] * max(first,0))
+    secondChunk <- ifelse(third >= 0, taxLevels[2] * (brackets[3] * 1e6 - brackets[2]* 1e6), taxLevels[2] * max(second, 0))
+    thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * (brackets[4] * 1e6 - brackets[3] * 1e6), taxLevels[3] * max(third, 0))
     fourthChunk <- ifelse(fourth >= 0, fourth * taxLevels[4], 0)
 
     toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk
@@ -272,40 +273,5 @@ server <- function(input, output, session) {
   vis2 %>% bind_shiny("plot2")
 
 
-  visBillion <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
-
-    # These are mini data set that ggvis needs to create vertical lines
-    extra0 <- cbind.data.frame(x = rep(bracketVal1() * 1e6, 2), y = c(0, taxRate[1]))
-    extra1 <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[1]))
-    extra1b <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[2]))
-    extra2 <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[2]))
-    extra2b <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[3]))
-    extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
-    extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
-
-    showMargin <- function(x) {
-      # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
-      if (is.null(x)) return(NULL)
-      data <- subset(dataInput(), xval >= 1e9)
-      row <- data[data$id == x$id, ]
-      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
-    }
-
-    #subset(dataInput(), xval >= 1e9) %>%
-    dataInput() %>%
-      ggvis(x = ~xval, y = ~tax) %>%
-      layer_points() %>%
-      layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
-      add_tooltip(showMargin, "hover") %>%
-      layer_lines(x = ~xval, y = ~marginalRate, stroke := "red") %>%
-      layer_paths(data = extra3, ~x, ~y) %>%
-      layer_paths(data = extra3b, ~x, ~y) %>%
-      add_axis("x", title = "Wealth before taxes") %>%
-      add_axis("y", title = "Tax rate (%)") %>%
-      scale_numeric("x", domain = c(1e9, 10e9), nice = FALSE) %>%
-      set_options(width = 1000, height = 500)
-  })
-
-  visBillion %>% bind_shiny("plotB")
+  
 }
