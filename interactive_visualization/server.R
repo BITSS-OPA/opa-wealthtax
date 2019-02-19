@@ -9,8 +9,9 @@ server <- function(input, output, session) {
     brackets <- c(brackets, 1e10) ## get last bracket
     grid$total <- grid$nb*grid$avg
     grid$group <- cut(grid$thres, brackets)
-    toReturn <- grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()
+    toReturn <- grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na()  %>% complete(group, fill = list(taxBase = 0)) ## avoid dropping levels without any taxBase
 
+    #https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
     
     return(toReturn)
   }
@@ -19,106 +20,36 @@ server <- function(input, output, session) {
     ## brackets is lower end of each bracket
     brackets <- c(brackets, 1e10) ## get last bracket
     grid$group <- cut(grid$thres, brackets, include.lowest = T)
-    toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na()
+    toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na() %>% complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
 
+    #https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
     
     return(toReturn)
   }
 
   ### update tax brackets based on previous decisions
   observe({
-    val <- bracketVal1()[2]
+    val <- bracketVal1()
+    val2 <- bracketVal2()
+    
     updateSliderInput(session, "bracketV2",
-      min = 0, value = c(val, max(val + 50, bracketVal2()[2])),
+      min = val, value = ifelse(val2>val,val2,val+50) ,
       max = 1000, step = 5
     )
-    output$warn1 <- renderText({
-      ""
-    })
   })
 
   observe({
-    val <- bracketVal1()[2]
-    val2 <- bracketVal2()[1]
-
-    if (val2 < val) {
-      output$warn1 <- renderText({
-        "Warning: First and second brackets overlap."
-      })
-    }
-    if (val2 == val) {
-      output$warn1 <- renderText({
-        ""
-      })
-    }
-
-    if (val2 > val) {
-      output$warn1 <- renderText({
-        "Warning: Gap between first and second brackets."
-      })
-    }
-  })
-
-
-  observe({
-    # val <- input$bracketV2[2]
-    val <- bracketVal2()[2]
-    updateSliderInput(session, "bracketV3", value = c(val, max(val + 50, bracketVal3()[2])))
-  })
-  output$warn2 <- renderText({
-    ""
+    val <- bracketVal2()
+    val2 <- bracketVal3()
+    updateSliderInput(session, "bracketV3", min = val, value = ifelse(val2>val,val2,val+50))
   })
 
   observe({
-    val <- bracketVal2()[2]
-    val2 <- bracketVal3()[1]
-
-    if (val2 < val) {
-      output$warn2 <- renderText({
-        "Warning: Second and third brackets overlap."
-      })
-    }
-    if (val2 == val) {
-      output$warn2 <- renderText({
-        ""
-      })
-    }
-
-    if (val2 > val) {
-      output$warn2 <- renderText({
-        "Warning: Gap between second and third brackets."
-      })
-    }
-  })
-
-  observe({
-    val <- bracketVal3()[2]
-    updateSliderInput(session, "bracketV4", value = val)
-    output$warn3 <- renderText({
-      ""
-    })
-  })
-  observe({
-    val <- bracketVal3()[2]
+    val <- bracketVal3()
     val2 <- bracketVal4()
-
-    if (val2 < val) {
-      output$warn3 <- renderText({
-        "Warning: Third and fourth brackets overlap."
-      })
-    }
-    if (val2 == val) {
-      output$warn3 <- renderText({
-        ""
-      })
-    }
-
-    if (val2 > val) {
-      output$warn3 <- renderText({
-        "Warning: Gap between third and fourth brackets."
-      })
-    }
+    updateSliderInput(session, "bracketV4", min= val,value = ifelse(val2>val,val2,val+50))
   })
+  
 
   ### marginal tax rate only increasing
   observe({
@@ -151,6 +82,7 @@ server <- function(input, output, session) {
   ## streamline the input references
   bracket1 <- reactive({
     input$bracket1
+    #print(input$bracket1) ## make sure doesn't have % included
   })
   bracket2 <- reactive({
     input$bracket2
@@ -187,12 +119,10 @@ server <- function(input, output, session) {
     xval <- seq(10e6, 10e9 + 1e8, by = 5e6)
 
 
-    idx1 <- xval <= bracketVal1()[2] * 1e6
-    idx2 <- xval > bracketVal2()[1] * 1e6 & xval <= bracketVal2()[2] * 1e6
-    idx3 <- xval > bracketVal3()[1] * 1e6 & xval <= bracketVal3()[2] * 1e6
-    idx4 <- xval > bracketVal4() * 1e6
-
-
+    idx1 <- xval <= bracketVal2()*1e6
+    idx2 <- xval > bracketVal2()*1e6 & xval <= bracketVal3()*1e6
+    idx3 <- xval > bracketVal3()*1e6 & xval <= bracketVal4()*1e6
+    idx4 <- xval > bracketVal4()*1e6
 
 
     idx <- cbind.data.frame(idx1, idx2, idx3, idx4)
@@ -226,15 +156,14 @@ server <- function(input, output, session) {
 #browser()
     taxLevels <- taxLevels / 100
 
-    first <- wealth - input$bracketV1[1] * 1e6
-    second <- first - (input$bracketV1[2] * 1e6 - input$bracketV1[1] * 1e6)
-    third <- second - (input$bracketV2[2] * 1e6 - input$bracketV2[1] * 1e6)
-    fourth <- third - (input$bracketV3[2] * 1e6 - input$bracketV3[1] * 1e6)
+    first <- wealth - input$bracketV1*1e6
+    second <- first - (input$bracketV2*1e6-input$bracketV1*1e6)
+    third <- second - (input$bracketV3*1e6-input$bracketV2*1e6)
+    fourth <- third - (input$bracketV4*1e6-input$bracketV3*1e6)
 
-
-    firstChunk <- ifelse(second >= 0, taxLevels[1] * (input$bracketV1[2] * 1e6 - input$bracketV1[1] * 1e6), taxLevels[1] * first)
-    secondChunk <- ifelse(third >= 0, taxLevels[2] * (input$bracketV2[2] * 1e6 - input$bracketV2[1] * 1e6), taxLevels[2] * max(second, 0))
-    thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * (input$bracketV3[2] * 1e6 - input$bracketV3[1] * 1e6), taxLevels[3] * max(third, 0))
+    firstChunk <- ifelse(second >= 0, taxLevels[1] * (input$bracketV2 * 1e6 - input$bracketV1 * 1e6), taxLevels[1] * first)
+    secondChunk <- ifelse(third >= 0, taxLevels[2] * (input$bracketV3 * 1e6 - input$bracketV2 * 1e6), taxLevels[2] * max(second, 0))
+    thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * (input$bracketV4 * 1e6 - input$bracketV3 * 1e6), taxLevels[3] * max(third, 0))
     fourthChunk <- ifelse(fourth >= 0, fourth * taxLevels[4], 0)
 
     toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk
@@ -244,11 +173,10 @@ server <- function(input, output, session) {
   totalTax <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
     taxRateP <- taxRate / 100 ## get to percentage
-    bracketStarts <- 1e6 * c(input$bracketV1[1], input$bracketV2[1], input$bracketV3[1], input$bracketV4[1])
+    bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
     taxPerBracket <- getTaxBasePerBracket(grid, bracketStarts)
     taxBase <- taxPerBracket$taxBase / 1e9 ## in billions
     tax <- taxBase * taxRateP
-
     totalTax <- sum(tax)
   })
 
@@ -266,7 +194,7 @@ server <- function(input, output, session) {
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
     taxRateP <- taxRate / 100 ## get to percentage
 
-    bracketStarts <- 1e6 * c(input$bracketV1[1], input$bracketV2[1], input$bracketV3[1], input$bracketV4[1])
+    bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
     peoplePerBracket <- getPeoplePerBracket(grid, bracketStarts)
     numberTaxpayers <- peoplePerBracket$totalPeople
     householdsTaxed <- numberTaxpayers * (taxRateP > 0)
@@ -296,13 +224,12 @@ server <- function(input, output, session) {
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
 
     # These are mini data set that ggvis needs to create vertical lines
-    extra0 <- cbind.data.frame(x = rep(bracketVal1()[1] * 1e6, 2), y = c(0, taxRate[1]))
-    extra1 <- cbind.data.frame(x = rep(bracketVal1()[2] * 1e6, 2), y = c(0, taxRate[1]))
-    extra1b <- cbind.data.frame(x = rep(bracketVal2()[1] * 1e6, 2), y = c(0, taxRate[2]))
-    extra2 <- cbind.data.frame(x = rep(bracketVal2()[2] * 1e6, 2), y = c(0, taxRate[2]))
-    extra2b <- cbind.data.frame(x = rep(bracketVal3()[1] * 1e6, 2), y = c(0, taxRate[3]))
-
-    extra3 <- cbind.data.frame(x = rep(bracketVal3()[2] * 1e6, 2), y = c(0, taxRate[3]))
+    extra0 <- cbind.data.frame(x = rep(bracketVal1() * 1e6, 2), y = c(0, taxRate[1]))
+    extra1 <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[1]))
+    extra1b <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[2]))
+    extra2 <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[2]))
+    extra2b <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[3]))
+    extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
     extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
 
 
@@ -341,13 +268,12 @@ server <- function(input, output, session) {
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
 
     # These are mini data set that ggvis needs to create vertical lines
-    extra0 <- cbind.data.frame(x = rep(bracketVal1()[1] * 1e6, 2), y = c(0, taxRate[1]))
-    extra1 <- cbind.data.frame(x = rep(bracketVal1()[2] * 1e6, 2), y = c(0, taxRate[1]))
-    extra1b <- cbind.data.frame(x = rep(bracketVal2()[1] * 1e6, 2), y = c(0, taxRate[2]))
-    extra2 <- cbind.data.frame(x = rep(bracketVal2()[2] * 1e6, 2), y = c(0, taxRate[2]))
-    extra2b <- cbind.data.frame(x = rep(bracketVal3()[1] * 1e6, 2), y = c(0, taxRate[3]))
-
-    extra3 <- cbind.data.frame(x = rep(bracketVal3()[2] * 1e6, 2), y = c(0, taxRate[3]))
+    extra0 <- cbind.data.frame(x = rep(bracketVal1() * 1e6, 2), y = c(0, taxRate[1]))
+    extra1 <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[1]))
+    extra1b <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[2]))
+    extra2 <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[2]))
+    extra2b <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[3]))
+    extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
     extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
 
     showMargin <- function(x) {
