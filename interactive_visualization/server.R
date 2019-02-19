@@ -120,8 +120,9 @@ server <- function(input, output, session) {
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
 
 
-    xval <- seq(10e6, 10e9 + 1e8, by = 5e6)
-
+    #xval <- seq(10e6, 45e9 , by = 5e6)
+    xval <- 10^seq(log10(10e6),log10(45e9),by=0.001)
+        
 
     idx1 <- xval <= bracketVal2()*1e6
     idx2 <- xval > bracketVal2()*1e6 & xval <= bracketVal3()*1e6
@@ -241,12 +242,14 @@ server <- function(input, output, session) {
       #browser()
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
-      data <- subset(dataInput(), xval < 1e9)
+     # data <- subset(dataInput(), xval < 1e9)
+      data <- dataInput()
       row <- data[data$id == x$id, ]
       paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
     }
 
-    subset(dataInput(), xval < 1e9) %>%
+    #subset(dataInput(), xval < 1e9) %>%
+    dataInput() %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
       layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
@@ -261,6 +264,7 @@ server <- function(input, output, session) {
       layer_paths(data = extra3b, ~x, ~y) %>%
       add_axis("x", title = "Wealth before taxes") %>%
       add_axis("y", title = "Tax rate (%)") %>%
+      scale_numeric("x", trans="log",expand=0) %>%
       set_options(width = 1000, height = 500)
   })
 
@@ -288,7 +292,8 @@ server <- function(input, output, session) {
       paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
     }
 
-    subset(dataInput(), xval >= 1e9) %>%
+    #subset(dataInput(), xval >= 1e9) %>%
+    dataInput() %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
       layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%

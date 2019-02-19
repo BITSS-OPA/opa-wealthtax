@@ -62,7 +62,7 @@ ui <-
       column(
         8,
         ggvisOutput("plot2"),
-        ggvisOutput("plotB"),
+        #ggvisOutput("plotB"),
 
         h3("Total Taxes ($bn)"),
         textOutput("totalTax"),
