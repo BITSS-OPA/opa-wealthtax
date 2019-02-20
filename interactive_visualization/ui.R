@@ -16,19 +16,19 @@ ui <-
         2,
         wellPanel(
           sliderInput("bracket1", "Apply a tax of:",
-            0, 10, 1,
+            0, 10, 0,
             step = 1, post = " %" # , ticks = F
           ),
           sliderInput("bracket2", "Apply a tax of:",
-            0, 10, 1,
+            0, 10, 2,
             step = 1, post = " %" # , ticks = F
           ),
           sliderInput("bracket3", "Apply a tax of:",
-            0, 10, 1,
+            0, 10, 2,
             step = 1, post = " %" # , ticks = F
           ),
           sliderInput("bracket4", "Apply a tax of:",
-            0, 10, 2,
+            0, 10, 3,
             step = 1, post = " %" # , ticks = F
           )
         ),
@@ -57,7 +57,7 @@ ui <-
           ),
           sliderInput("bracketV3",
             label = "to wealth above:", min = 500,
-            max = 1500, step = 5, value = 500, post = " (m)"
+            max = 1500, step = 5, value = 100, post = " (m)"
           ),
           sliderInput("bracketV4",
             label = "to wealth above:", min = 1000,
