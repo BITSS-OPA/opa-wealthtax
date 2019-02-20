@@ -259,7 +259,7 @@ server <- function(input, output, session) {
       layer_paths(data = extra1b, ~x, ~y) %>%
       layer_paths(data = extra2b, ~x, ~y) %>%
       layer_paths(data = extra3b, ~x, ~y) %>%
-      add_axis("x", title = "Wealth before taxes") %>%
+      add_axis("x", title = "Wealth before taxes",grid=F) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
       set_options(width = 1000, height = 500)
