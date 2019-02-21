@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r parameters}
+# Do not run data set on git/github until privacy has been cleared
 ################
 ##### Data  
 #############
