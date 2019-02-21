@@ -215,10 +215,45 @@ We make the classical assumption that the tail of the wealth distribution is Par
 Therefore, the billionaire surtax base is estimated at `r paste("$", round(final_taxbase_b_in/1e3, 2), sep="")` trillion (`r paste("$", round(totax_total_400_in/1e3),"t", sep="")` from those above `r paste("$", round(totax_last_400_in, 1),"b",sep="")` and `r paste("$", round(missing_taxbase_in/1e3,1),"t", sep="")` from those between 1  and `r paste("$", round(totax_total_400_in/1e3) ,"b",sep="")` from those above `r paste("$", round(totax_last_400_in, 1),sep="")`) and hence the billionaire surtax would raise `r paste("$", round(top_tax_base_in), sep="")` billion in 2019 from about `r round(num_billionares_in/100) * 100` billionaire families.
 
 
-### 3.5 Compute tax Brackets: number of hhlds and taxabl wealth [TO DO]
+### 3.5 Compute tax Brackets: number of hhlds and taxable wealth [TO DO]
 
 ```{r tax-brackets, eval=FALSE, include = FALSE}
- grid <- read.csv("taxBaseGrid.csv")  %>% filter(!is.na(gperc))
+
+##### Reproducing do file
+##### 
+yr_val <- 2019
+df_forbes <- read_dta("rawdata/materials/forbes_20112018_bdays.dta")
+df_forbes1 <- df_forbes  %>% filter(forbes_yr == 2018) %>% 
+  mutate("networth" = net_worthmillions * 1e6, 
+           "weight" = 1, 
+           "data" = "FB400") %>%
+  select(weight, data, networth) %>% 
+  filter( !is.na(networth) )
+
+df_scf <- read_dta("rawdata/materials/rscfp2016.dta")
+totw_scf <- sum(df_scf$networth * df_scf$wgt) / 1e12
+
+cat("TOTAL SCF NETWORTH 2016  (Tr)", totw_scf)
+
+df_scf <- df_scf %>% mutate("wgt" = round( wgt * 1.009^(yr_val-2016)))
+totw <- sum(df_scf$networth * df_scf$wgt) / 1e12
+totn <- sum(df_scf$wgt)
+
+local totn=r(sum_w)
+#AQUI VOY
+* Rescaling scf to match total total wealth reported in DINA excluding the f400
+replace networth= networth * ( 94 -`f400tot' )/`totw'
+gen weight=wgt
+gen data="SCF"
+keep weight data networth
+order data networth weight
+save $datawork/scf.dta, replace
+
+######
+
+
+
+grid <- read.csv("taxBaseGrid.csv")  %>% filter(!is.na(gperc))
   # print(head(grid)) ## check that app has access to this file
   
   
@@ -249,7 +284,7 @@ Therefore, the billionaire surtax base is estimated at `r paste("$", round(final
 # Numbers in third bracket differ in 1 hhld 41636 instead of 4637
 # numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
 # 
-
+    
 # - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
 # - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
 
@@ -310,7 +345,7 @@ The combination of the `r paste("%",100*main_tax_po, sep = "")` tax above `r pas
 
 ### 5 - Ten year projections  (talk about removing rounding)
 
-```{r ten-years}
+```{r ten-years} 
 # - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_base_in
 # - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
@@ -350,7 +385,7 @@ if (FALSE) {
 
 To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, at `r paste(100 * discount_rate_mo,"%", sep="")` per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over the 10 years 2019-2028 is `r ten_year_factor_round` times the revenue raised in 2019[^4]. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman[^5] show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is most likely that top wealth would continue to grow at least as fast as the average.  
 
-This 10-year projection implies that revenue raised by the progressive wealth tax would be `r paste(ten_year_factor_round, " * ", round(total_rev_pe), sep="")` = `r paste("$", round(ten_year_revenue_pe), sep = "")` billion, rounded to `r paste("$", round(ten_year_revenue_pe/1e3, 2) - adj_factor1_so, sep = "")` trillion. Out of these `r paste("$", round(ten_year_revenue_pe/1e3, 2) - adj_factor1_so, sep = "")` trillion, the billionaire surtax would raise `r paste(round(top_tax_base_in), " * ", ten_year_factor_round, sep="")` = `r paste("$", round(ten_year_top_tax_pe), sep ="")`, rounded to `r paste("$", round(ten_year_top_tax_pe/1e3,1), sep ="")` trillion.  
+This 10-year projection implies that revenue raised by the progressive wealth tax would be `r paste(ten_year_factor_round, " * ", round(total_rev_pe), sep="")` = `r paste("$", round(ten_year_revenue_pe), sep = "")` billion, rounded to `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion. Out of these `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion, the billionaire surtax would raise `r paste(round(top_tax_base_in), " * ", ten_year_factor_round, sep="")` = `r paste("$", round(ten_year_top_tax_pe), sep ="")`, rounded to `r paste("$", round(ten_year_top_tax_pe/1e3,1), sep ="")` trillion.  
 
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because your proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 

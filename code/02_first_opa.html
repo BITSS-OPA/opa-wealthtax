@@ -1927,8 +1927,8 @@ invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
 <p>We make the classical assumption that the tail of the wealth distribution is Pareto distributed. As the average wealth of the Forbes 400 ($7.2b) is 3.4 times the threshold to belong to the Forbes 400 ($2.1b), the corresponding Pareto parameter is a=3.4/(3.4-1)=1.4. Standard calculations imply that the extra tax base between $1bn and $1.8bn (relative to the tax base above $1.8bn) is [(1.8/1)^(a-1)-1] =0.263 or approximately 26% of the above $2 trillion. The number of families above $1bn is estimated as 400 * (1.8/1)^a=891, or about 900. The important point is that the vast majority of the billionaire surtax base (over three quarters) is in the Forbes 400, for which we have relatively good estimates of net worth.</p>
 <p>Therefore, the billionaire surtax base is estimated at $2.55 trillion ($2t from those above $1.8b and $0.5t from those between 1 and $2b from those above $1.8) and hence the billionaire surtax would raise $26 billion in 2019 from about 900 billionaire families.</p>
 </div>
-<div id="compute-tax-brackets-number-of-hhlds-and-taxabl-wealth-to-do" class="section level3">
-<h3>3.5 Compute tax Brackets: number of hhlds and taxabl wealth [TO DO]</h3>
+<div id="compute-tax-brackets-number-of-hhlds-and-taxable-wealth-to-do" class="section level3">
+<h3>3.5 Compute tax Brackets: number of hhlds and taxable wealth [TO DO]</h3>
 </div>
 <div id="total-tax-revenue-model" class="section level3">
 <h3>4 - Total tax revenue (Model)</h3>
@@ -1937,7 +1937,7 @@ invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
 # Numbers in third bracket differ in 1 hhld 41636 instead of 4637
 # numberTaxpayers &lt;- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
 # 
-
+    
 # - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
 # - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
 
@@ -2026,7 +2026,7 @@ if (FALSE) {
     sapply(ls(pattern = &quot;_pe\\b&quot;), get)
 }</code></pre>
 <p>To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, at 5.5% per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over the 10 years 2019-2028 is 13 times the revenue raised in 2019<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is most likely that top wealth would continue to grow at least as fast as the average.</p>
-<p>This 10-year projection implies that revenue raised by the progressive wealth tax would be 13 * 212 = $2730 billion, rounded to $2.72 trillion. Out of these $2.72 trillion, the billionaire surtax would raise 26 * 13 = $328, rounded to $0.3 trillion.</p>
+<p>This 10-year projection implies that revenue raised by the progressive wealth tax would be 13 * 212 = $2730 billion, rounded to $2.73 trillion. Out of these $2.73 trillion, the billionaire surtax would raise 26 * 13 = $328, rounded to $0.3 trillion.</p>
 <p>It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because your proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.</p>
 <p>The figure below illustrates the distribution the tax burden across the population and, with detailed information on the fraction of households that will pay a wealth tax:</p>
 <pre class="r"><code>wealth_aux &lt;- 10:1000 * 1e6
@@ -2146,27 +2146,27 @@ showMargin &lt;- function(x) {
       add_axis(&quot;x&quot;, title = &quot;Wealth before taxes&quot;) %&gt;%
       add_axis(&quot;y&quot;, title = &quot;Tax rate (%)&quot;) %&gt;%
       set_options(width = 1000, height = 500)</code></pre>
-<div id="plot_id351572342-container" class="ggvis-output-container">
-<div id="plot_id351572342" class="ggvis-output"></div>
+<div id="plot_id152528687-container" class="ggvis-output-container">
+<div id="plot_id152528687" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id351572342_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id351572342" data-renderer="svg">SVG</a>
+<a id="plot_id152528687_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id152528687" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id351572342_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id351572342" data-renderer="canvas">Canvas</a>
+<a id="plot_id152528687_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id152528687" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id351572342_download" class="ggvis-download" data-plot-id="plot_id351572342">Download</a>
+<a id="plot_id152528687_download" class="ggvis-download" data-plot-id="plot_id152528687">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id351572342_spec = {
+var plot_id152528687_spec = {
   "data": [
     {
       "name": ".0",
@@ -2840,7 +2840,7 @@ var plot_id351572342_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id351572342").parseSpec(plot_id351572342_spec);
+ggvis.getPlot("plot_id152528687").parseSpec(plot_id152528687_spec);
 </script>
 <p><a href="https://fhoces.shinyapps.io/demo/">Click here</a> to try different policy proposals.<br />
 <a href="NULL">Click here/ADD URL WHEN ALLOWED</a> to see how the assumptions of the analysis affect the results.</p>
