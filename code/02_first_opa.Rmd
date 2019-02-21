@@ -215,10 +215,94 @@ We make the classical assumption that the tail of the wealth distribution is Par
 Therefore, the billionaire surtax base is estimated at `r paste("$", round(final_taxbase_b_in/1e3, 2), sep="")` trillion (`r paste("$", round(totax_total_400_in/1e3),"t", sep="")` from those above `r paste("$", round(totax_last_400_in, 1),"b",sep="")` and `r paste("$", round(missing_taxbase_in/1e3,1),"t", sep="")` from those between 1  and `r paste("$", round(totax_total_400_in/1e3) ,"b",sep="")` from those above `r paste("$", round(totax_last_400_in, 1),sep="")`) and hence the billionaire surtax would raise `r paste("$", round(top_tax_base_in), sep="")` billion in 2019 from about `r round(num_billionares_in/100) * 100` billionaire families.
 
 
-### 3.5 Compute tax Brackets: number of hhlds and taxabl wealth [TO DO]
+### 3.5 Compute tax Brackets: number of hhlds and taxable wealth [TO DO]
 
 ```{r tax-brackets, eval=FALSE, include = FALSE}
- grid <- read.csv("taxBaseGrid.csv")  %>% filter(!is.na(gperc))
+
+##### Reproducing do file
+##### 
+yr_val <- 2019
+df_forbes <- read_dta("rawdata/materials/forbes_20112018_bdays.dta")
+df_forbes1 <- df_forbes  %>% filter(forbes_yr == 2018) %>% 
+  mutate("networth" = net_worthmillions * 1e6, 
+           "weight" = 1, 
+           "data" = "FB400") %>%
+  select(data, networth, weight) %>% 
+  filter( !is.na(networth) )
+forbesmin <- min(df_forbes1$networth)
+f400tot <- sum(df_forbes1$networth * df_forbes1$weight) / 1e12
+cat("TOTAL FORBES NETWORTH 2018 (Tr) = ", f400tot,  "FORBES MIN WEALTH 2018 = ", forbesmin)
+
+df_scf <- read_dta("rawdata/materials/rscfp2016.dta")
+totw_scf <- sum(df_scf$networth * df_scf$wgt) / 1e12
+
+cat("TOTAL SCF NETWORTH 2016  (Tr)", totw_scf)
+
+df_scf <- df_scf %>% mutate("wgt" = round( wgt * 1.009^(yr_val-2016)))
+totw <- sum(df_scf$networth * df_scf$wgt) / 1e12
+totn <- sum(df_scf$wgt)
+
+
+# Rescaling SCF to match total total wealth reported in DINA excluding the f400
+df_scf1 <- df_scf %>% mutate("networth" = networth * ( 94 - f400tot ) / totw, 
+                            "weight" = wgt, 
+                            "data" = "SCF") %>%
+  select(data, networth, weight)
+
+
+# * DINA 2019 (complete  data  usdina$yr.dta built in usdina project, directory usdina/output/dinafiles)
+
+# use hweal id dweght married using $root/SaezZucman2014/usdina/output/dinafiles/usdina$yr.dta, clear 
+# save "$root/bookwebsite/wealthtaxsim/data/usdina$yr.dta"
+
+df_dina <- read_dta("rawdata/materials/usdina2019.dta")
+df_dina <- df_dina %>% 
+  group_by(id) %>% 
+  summarise("networth" = sum(hweal), 
+            "weight" = mean(dweght) / 1e5 )
+
+totw_dina <- sum(df_dina$networth * df_dina$weight) / 1e12
+cat("TOTAL DINA NETWORTH 2019  (Tr) ", totw_dina)
+
+totn_dina <- sum(df_dina$weight)
+
+df_dina$data <- "DINA"
+
+df_dina <- df_dina %>% 
+  arrange(desc(networth)) 
+
+#AQUI VOY
+df_dina1 <- df_dina %>%
+  mutate("aux_id" = floor((1:dim(df_dina)[1] + 3) / 5)) %>% 
+  group_by(aux_id) %>% 
+  summarise("weight" = sum(weight),
+            "networth" = mean(networth)) %>% View() 
+  mutate("data" = "DINA") %>% 
+  select("data", "networth", "weight")
+
+df <- rbind(df_forbes1, df_scf1, df_dina1)
+
+df$weight <- with(df, ifelse(data=="SCF" | data=="DINA", 
+                               round(weight/2), weight) )
+df %>% 
+  summarise( mean(weight), sd(weight) )
+
+# replace weight=round(weight/2) if data=="SCF" | data=="DINA"
+# drop if networth > `forbesmin' & (data=="SCF" | data=="DINA")
+# sum networth [w=weight]
+# display r(sum)*1e-12
+# sum networth [w=weight] if networth>=1e+9
+# display r(sum)*1e-12
+# gsort -networth
+# save $datawork/wealth.dta, replace
+
+
+
+######
+
+
+
+grid <- read.csv("taxBaseGrid.csv")  %>% filter(!is.na(gperc))
   # print(head(grid)) ## check that app has access to this file
   
   
@@ -249,7 +333,7 @@ Therefore, the billionaire surtax base is estimated at `r paste("$", round(final
 # Numbers in third bracket differ in 1 hhld 41636 instead of 4637
 # numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
 # 
-
+    
 # - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
 # - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
 
@@ -310,7 +394,7 @@ The combination of the `r paste("%",100*main_tax_po, sep = "")` tax above `r pas
 
 ### 5 - Ten year projections  (talk about removing rounding)
 
-```{r ten-years}
+```{r ten-years} 
 # - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_base_in
 # - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
@@ -350,7 +434,7 @@ if (FALSE) {
 
 To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, at `r paste(100 * discount_rate_mo,"%", sep="")` per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over the 10 years 2019-2028 is `r ten_year_factor_round` times the revenue raised in 2019[^4]. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman[^5] show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is most likely that top wealth would continue to grow at least as fast as the average.  
 
-This 10-year projection implies that revenue raised by the progressive wealth tax would be `r paste(ten_year_factor_round, " * ", round(total_rev_pe), sep="")` = `r paste("$", round(ten_year_revenue_pe), sep = "")` billion, rounded to `r paste("$", round(ten_year_revenue_pe/1e3, 2) - adj_factor1_so, sep = "")` trillion. Out of these `r paste("$", round(ten_year_revenue_pe/1e3, 2) - adj_factor1_so, sep = "")` trillion, the billionaire surtax would raise `r paste(round(top_tax_base_in), " * ", ten_year_factor_round, sep="")` = `r paste("$", round(ten_year_top_tax_pe), sep ="")`, rounded to `r paste("$", round(ten_year_top_tax_pe/1e3,1), sep ="")` trillion.  
+This 10-year projection implies that revenue raised by the progressive wealth tax would be `r paste(ten_year_factor_round, " * ", round(total_rev_pe), sep="")` = `r paste("$", round(ten_year_revenue_pe), sep = "")` billion, rounded to `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion. Out of these `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion, the billionaire surtax would raise `r paste(round(top_tax_base_in), " * ", ten_year_factor_round, sep="")` = `r paste("$", round(ten_year_top_tax_pe), sep ="")`, rounded to `r paste("$", round(ten_year_top_tax_pe/1e3,1), sep ="")` trillion.  
 
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because your proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 
