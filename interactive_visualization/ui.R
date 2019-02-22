@@ -66,8 +66,15 @@ ui <-
         ),
         h6("Assisted by:"),
         h6(""),
-        h6("Katie Donnelly Moran,"),
-        h6("get undergrad names"),
+        h6("Katie Donnelly Moran"),
+        h6("and Clancy Green,"),
+ 
+        h6("Deployment help by:"),
+        h6("Akcan Balkir,"),
+        h6("Lindsey Heagy"),
+        h6("Chris Holdgraf, and"),
+        h6("Yuvi Panda"),
+
         tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
       ),
 
