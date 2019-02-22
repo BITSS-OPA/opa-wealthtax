@@ -14,6 +14,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 #knitr::opts_knit$set(root.dir = "/Users/fhoces/Desktop/sandbox/opa-wealthtax")
 library(tidyverse)
+library(haven)
 library(EnvStats)
 library(here)
 library(ggvis)
