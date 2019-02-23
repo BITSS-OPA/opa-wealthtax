@@ -136,6 +136,8 @@ server <- function(input, output, session) {
     getGroup <- unlist(apply(idx, 1, function(x) {
       which(x)[1]
     }))
+    #getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
+
 
     toPlot <- cbind.data.frame(xval, getGroup)
 
@@ -237,28 +239,36 @@ server <- function(input, output, session) {
     extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
     extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
 
-
+## rename to showAvg
     showMargin <- function(x) {
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
       data <- dataInput()
-      row <- data[data$id == x$id, ]
-      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
-    }
+      data$id=1:nrow(data)
+      print(head(x))
+      idx = order(abs(data$id-x$id))
+      row1 <- data[idx[1],]
+      row2 <- data[idx[2],]
 
+      #row <- data[data$id == x$id, ]
+      val <- mean(c(row1$marginalRate,row2$marginalRate),na.rm=T)
+     #print(x) ## sometimes missing id
+      paste0("Average Tax Rate: ", round(val, 2), "%", sep = "")
+    }
+#browser()
     dataInput() %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
       layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
       add_tooltip(showMargin, "hover") %>%
       layer_lines(x = ~xval, y = ~marginalRate, stroke := "red") %>%
-      layer_paths(data = extra1, ~x, ~y) %>%
-      layer_paths(data = extra2, ~x, ~y) %>%
-      layer_paths(data = extra3, ~x, ~y) %>%
-      layer_paths(data = extra0, ~x, ~y) %>%
-      layer_paths(data = extra1b, ~x, ~y) %>%
-      layer_paths(data = extra2b, ~x, ~y) %>%
-      layer_paths(data = extra3b, ~x, ~y) %>%
+      # layer_paths(data = extra1, ~x, ~y) %>%
+      # layer_paths(data = extra2, ~x, ~y) %>%
+      # layer_paths(data = extra3, ~x, ~y) %>%
+      # layer_paths(data = extra0, ~x, ~y) %>%
+      # layer_paths(data = extra1b, ~x, ~y) %>%
+      # layer_paths(data = extra2b, ~x, ~y) %>%
+      # layer_paths(data = extra3b, ~x, ~y) %>%
       add_axis("x", title_offset=80, title = "Wealth before taxes",grid=F,format=",",properties = axis_props(labels = list(angle = 45,  align = "left", baseline = "middle"))) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
