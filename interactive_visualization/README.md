@@ -4,5 +4,7 @@ Choose your brackets and tax rate per bracket and see the overall tax revenue, t
 
 To launch the app, see the runApp.R script.
 
-More capability to tune other parameters to come!
+Improved capabilities and the ability to tune other parameters to come!
+
+
 

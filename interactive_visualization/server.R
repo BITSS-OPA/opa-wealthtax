@@ -240,6 +240,7 @@ server <- function(input, output, session) {
     extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
 
 ## rename to showAvg
+    #https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
     showMargin <- function(x) {
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
@@ -262,13 +263,13 @@ server <- function(input, output, session) {
       layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
       add_tooltip(showMargin, "hover") %>%
       layer_lines(x = ~xval, y = ~marginalRate, stroke := "red") %>%
-      # layer_paths(data = extra1, ~x, ~y) %>%
-      # layer_paths(data = extra2, ~x, ~y) %>%
-      # layer_paths(data = extra3, ~x, ~y) %>%
-      # layer_paths(data = extra0, ~x, ~y) %>%
-      # layer_paths(data = extra1b, ~x, ~y) %>%
-      # layer_paths(data = extra2b, ~x, ~y) %>%
-      # layer_paths(data = extra3b, ~x, ~y) %>%
+      layer_paths(data = extra1, ~x, ~y) %>%
+      layer_paths(data = extra2, ~x, ~y) %>%
+      layer_paths(data = extra3, ~x, ~y) %>%
+      layer_paths(data = extra0, ~x, ~y) %>%
+      layer_paths(data = extra1b, ~x, ~y) %>%
+      layer_paths(data = extra2b, ~x, ~y) %>%
+      layer_paths(data = extra3b, ~x, ~y) %>%
       add_axis("x", title_offset=80, title = "Wealth before taxes",grid=F,format=",",properties = axis_props(labels = list(angle = 45,  align = "left", baseline = "middle"))) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
