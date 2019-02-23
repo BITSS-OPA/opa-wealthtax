@@ -66,8 +66,8 @@ ui <-
         ),
         h6("Assisted by:"),
         h6(""),
-        h6("Katie Donnelly Moran,"),
-        h6("get undergrad names"),
+        h6("Katie Donnelly Moran"),
+        #h6("get undergrad names"),
         tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
       ),
 
@@ -80,9 +80,9 @@ ui <-
         textOutput("totalTax"),
         h4("Total Taxes over 10 years ($t)"),
         textOutput("totalTax_10"),
-        h4("Total Taxpayers (CHECK UNITS)"),
+        h4("Total Taxpayers"), #(CHECK UNITS)
         textOutput("totalTaxpayers"),
-        h4("Percentage of (CHECK UNITS) Affected"),
+        h4("Percentage of Affected"), # (CHECK UNITS)
         textOutput("percentHouseAffected")
       )
     )
