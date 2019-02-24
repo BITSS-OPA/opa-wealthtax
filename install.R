@@ -1,0 +1,5 @@
+install.packages("tidyverse")
+install.packages("EnvStats")
+install.packages("ggvis")
+install.packages("here")
+install.packages("shiny")
