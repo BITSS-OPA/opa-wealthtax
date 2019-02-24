@@ -245,6 +245,7 @@ server <- function(input, output, session) {
     # https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
     showMargin <- function(x) {
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
+      if (sum(grepl("id", names(x))) == 0) return(NULL)
       if (is.null(x)) return(NULL)
       data <- dataInput()
       data$id <- 1:nrow(data)
