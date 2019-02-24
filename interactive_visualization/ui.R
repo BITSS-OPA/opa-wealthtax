@@ -68,7 +68,7 @@ ui <-
         h6(""),
         h6("Katie Donnelly Moran"),
         h6("and Clancy Green,"),
- 
+
         h6("Deployment help by:"),
         h6("Akcan Balkir,"),
         h6("Lindsey Heagy"),
@@ -89,8 +89,8 @@ ui <-
         textOutput("totalTax_10"),
         h4("Total Taxpayers"), ##  (CHECK UNITS)
         textOutput("totalTaxpayers"),
-        h4("Percentage of Affected"), ## (CHECK UNITS)
-        textOutput("percentHouseAffected")
+        h4("Percentage of Tas Units Affected"), ## (CHECK UNITS)
+        textOutput("percentTaxUnits")
       )
     )
   )

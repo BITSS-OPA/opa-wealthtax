@@ -3,7 +3,7 @@ server <- function(input, output, session) {
   # grid <- read.csv("taxBaseGrid.csv")
   grid <- read.csv("taxBaseGridUpdated.csv")
   # print(head(grid)) ## check that app has access to this file
-
+  grid$thres <- (1 - .16) * grid$thres ## evasion, this parameter will be tunable later on
   getTaxBasePerBracket <- function(grid, brackets) {
     ## brackets is lower end of each bracket
     brackets <- c(brackets, 1e10 + 1e6) ## get last bracket
@@ -136,7 +136,7 @@ server <- function(input, output, session) {
     getGroup <- unlist(apply(idx, 1, function(x) {
       which(x)[1]
     }))
-    #getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
+    # getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
 
 
     toPlot <- cbind.data.frame(xval, getGroup)
@@ -214,14 +214,16 @@ server <- function(input, output, session) {
     round(totalTaxpayers)
   })
 
-  output$percentHouseAffected <- renderText({
-    householdsAffected <- sum(householdsTaxed()) / 129.4e6 ## make the denominator updateable later
-
-    round(householdsAffected * 100, 1) ## get to percentage
-  })
+  # output$percentHouseAffected <- renderText({
+  #   #browser()
+  #   householdsAffected <- sum(householdsTaxed()) / 129.4e6 ## make the denominator updateable later
+  #
+  #   round(householdsAffected * 100, 1) ## get to percentage
+  # })
 
   output$percentTaxUnits <- renderText({
-    taxUnits <- sum(householdsTaxed()) / 183460000 ## make the denominator updateable later
+    taxUnits <- sum(householdsTaxed()) / sum(grid$nb)
+    ## double check
 
     round(taxUnits * 100, 2) ## get to percentage
   })
@@ -239,24 +241,24 @@ server <- function(input, output, session) {
     extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
     extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
 
-## rename to showAvg
-    #https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
+    ## rename to showAvg
+    # https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
     showMargin <- function(x) {
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
       if (is.null(x)) return(NULL)
       data <- dataInput()
-      data$id=1:nrow(data)
-      print(head(x))
-      idx = order(abs(data$id-x$id))
-      row1 <- data[idx[1],]
-      row2 <- data[idx[2],]
+      data$id <- 1:nrow(data)
+      # print(head(x))
+      idx <- order(abs(data$id - x$id))
+      row1 <- data[idx[1], ]
+      row2 <- data[idx[2], ]
 
-      #row <- data[data$id == x$id, ]
-      val <- mean(c(row1$marginalRate,row2$marginalRate),na.rm=T)
-     #print(x) ## sometimes missing id
+      # row <- data[data$id == x$id, ]
+      val <- mean(c(row1$marginalRate, row2$marginalRate), na.rm = T)
+      # print(x) ## sometimes missing id
       paste0("Average Tax Rate: ", round(val, 2), "%", sep = "")
     }
-#browser()
+    # browser()
     dataInput() %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
@@ -270,7 +272,7 @@ server <- function(input, output, session) {
       layer_paths(data = extra1b, ~x, ~y) %>%
       layer_paths(data = extra2b, ~x, ~y) %>%
       layer_paths(data = extra3b, ~x, ~y) %>%
-      add_axis("x", title_offset=80, title = "Wealth before taxes",grid=F,format=",",properties = axis_props(labels = list(angle = 45,  align = "left", baseline = "middle"))) %>%
+      add_axis("x", title_offset = 80, title = "Wealth before taxes", grid = F, format = ",", properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
       set_options(width = 1000, height = 500)
