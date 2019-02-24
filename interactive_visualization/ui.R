@@ -17,26 +17,40 @@ ui <-
             0, 10, 0,
             step = .1, post = " %" # , ticks = F
           ),
-          textInput("bracket1T",label="", value = "0"),
-          
+          textInput("bracket1T", label = "", value = "0"),
+
           sliderInput("bracket2", "Apply a tax of:",
             0, 10, 2,
             step = .1, post = " %" # , ticks = F
           ),
-          textInput("bracket2T",label="", value = "2"),
-          
+          textInput("bracket2T", label = "", value = "2"),
+
           sliderInput("bracket3", "Apply a tax of:",
             0, 10, 2,
             step = .1, post = " %" # , ticks = F
           ),
-          textInput("bracket3T",label="", value = "2"),
-          
+          textInput("bracket3T", label = "", value = "2"),
+
           sliderInput("bracket4", "Apply a tax of:",
             0, 10, 3,
             step = .1, post = " %" # , ticks = F
           ),
-          textInput("bracket4T",label="", value = "3")
+          textInput("bracket4T", label = "", value = "3"),
+          checkboxInput("extraBracket1", "Add a bracket?", value = FALSE),
+          conditionalPanel(
+            condition = "input.extraBracket1 == true",
+            sliderInput("bracket5", "Apply a tax of:",
+              0, 10, 3,
+              step = .1, post = " %" # , ticks = F
+            )
+          ),
+          conditionalPanel(
+            condition = "input.extraBracket1 == true",
+            checkboxInput("extraBracket2", "Add a bracket?", value = FALSE)
+          ) ## repeat 3 more times after we get server working
         ),
+
+
 
         h6("Policy Analysis by:"),
         tags$a(href = "https://eml.berkeley.edu/~saez/", "Emmanuel Saez"),
@@ -56,26 +70,36 @@ ui <-
             label = "to wealth above: ", min = 0,
             max = 1000, step = 5, value = 10, post = " (m)"
           ),
-          textInput("bracketV1T",label="", value = "10"),
-          
+          textInput("bracketV1T", label = "", value = "10"),
+
           sliderInput("bracketV2",
             label = "to wealth above: ", min = 0,
             max = 1000, step = 5, value = 50, post = " (m)"
           ),
-          textInput("bracketV2T",label="", value = "50"),
-          
+          textInput("bracketV2T", label = "", value = "50"),
+
           sliderInput("bracketV3",
             label = "to wealth above:", min = 500,
             max = 1500, step = 5, value = 500, post = " (m)"
           ),
-          textInput("bracketV3T",label="", value = "500"),
-          
+          textInput("bracketV3T", label = "", value = "500"),
+
           sliderInput("bracketV4",
             label = "to wealth above:", min = 1000,
             max = 10000, step = 100, value = 1000, post = " (m)"
           ),
-          textInput("bracketV4T",label="", value = "1000")
-          
+          textInput("bracketV4T", label = "", value = "1000"),
+          conditionalPanel(
+            condition = "input.extraBracket1 == true",
+            sliderInput("bracketV5",
+              label = "to wealth above:", min = 1000,
+              max = 10000, step = 100, value = 1000, post = " (m)"
+            )
+          ),
+          conditionalPanel(
+            condition = "input.extraBracket1 == true",
+            textInput("bracketV5T", label = "", value = "1000")
+          )
         ),
         h6("Assisted by:"),
         h6(""),
