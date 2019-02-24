@@ -252,7 +252,7 @@ server <- function(input, output, session) {
 
       row <- data[data$id == x$id, ]
 
-      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", " <br> Wealth ($m): ", round(row$xval / 1e6, 0), sep = "")
+      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", " <br> Wealth ($m): ", round(row$xval / 1e6, 0), "<br> Taxes Paid ($m) ", round(row$marginalInt / 1e6, 2), sep = "") ## dividing by 1e6 may need to change if we do this for xval overall
     }
 
     dataInput()[, -ncol(dataInput())] %>%
