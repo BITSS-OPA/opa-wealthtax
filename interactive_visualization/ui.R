@@ -9,8 +9,6 @@ ui <-
   fluidPage(
     titlePanel("Wealth Tax Explorer"),
 
-
-
     fluidRow(
       column(
         2,
@@ -58,18 +56,26 @@ ui <-
             label = "to wealth above: ", min = 0,
             max = 1000, step = 5, value = 10, post = " (m)"
           ),
+          textInput("bracketV1T",label="", value = "10"),
+          
           sliderInput("bracketV2",
             label = "to wealth above: ", min = 0,
             max = 1000, step = 5, value = 50, post = " (m)"
           ),
+          textInput("bracketV2T",label="", value = "50"),
+          
           sliderInput("bracketV3",
             label = "to wealth above:", min = 500,
-            max = 1500, step = 5, value = 100, post = " (m)"
+            max = 1500, step = 5, value = 500, post = " (m)"
           ),
+          textInput("bracketV3T",label="", value = "500"),
+          
           sliderInput("bracketV4",
             label = "to wealth above:", min = 1000,
             max = 10000, step = 100, value = 1000, post = " (m)"
-          )
+          ),
+          textInput("bracketV4T",label="", value = "1000")
+          
         ),
         h6("Assisted by:"),
         h6(""),

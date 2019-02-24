@@ -53,6 +53,31 @@ server <- function(input, output, session) {
 
     updateSliderInput(session, "bracketV4", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
   })
+  
+  observe({
+    if(bracketVal1T()!=bracketVal1()){
+      updateSliderInput(session, "bracketV1", value = bracketVal1T())
+    }
+  })
+  
+  observe({
+    if(bracketVal2T()!=bracketVal2()){
+      updateSliderInput(session, "bracketV2", value = bracketVal2T())
+    }
+  })
+  
+  observe({
+    if(bracketVal3T()!=bracketVal3()){
+      updateSliderInput(session, "bracketV3", value = bracketVal3T())
+    }
+  })
+  
+  observe({
+    if(bracketVal4T()!=bracketVal4()){
+      updateSliderInput(session, "bracketV4", value = bracketVal4T())
+    }
+  })
+  
 
 
   ### make slider match text, then can keep using slider values throughout
@@ -162,6 +187,19 @@ server <- function(input, output, session) {
   })
   bracketVal4 <- reactive({
     input$bracketV4
+  })
+  
+  bracketVal1T <- reactive({
+    input$bracketV1T
+  })
+  bracketVal2T <- reactive({
+    input$bracketV2T
+  })
+  bracketVal3T <- reactive({
+    input$bracketV3T
+  })
+  bracketVal4T <- reactive({
+    input$bracketV4T
   })
 
   dataInput <- reactive({
