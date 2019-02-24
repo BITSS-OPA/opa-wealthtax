@@ -55,12 +55,44 @@ server <- function(input, output, session) {
   })
 
 
+  ### make slider match text, then can keep using slider values throughout
+  observe({
+    if(bracket1T()!=bracket1()){
+      updateSliderInput(session, "bracket1",
+                        min = 0, value = bracket1T(),
+                        max = 10)
+    }
+  })
+  
+  observe({
+    if(bracket2T()!=bracket2()){
+      updateSliderInput(session, "bracket2",
+                        min = 0, value = bracket2T(),
+                        max = 10)
+    }
+  })
+  
+  observe({
+    if(bracket3T()!=bracket3()){
+      updateSliderInput(session, "bracket3",
+                        min = 0, value = bracket3T(),
+                        max = 10)
+    }
+  })
+  
+  observe({
+    if(bracket4T()!=bracket4()){
+      updateSliderInput(session, "bracket4",
+                        min = 0, value = bracket4T(),
+                        max = 10)
+    }
+  })
   ### marginal tax rate only increasing
   observe({
     if (bracket2() < bracket1()) {
       updateSliderInput(session, "bracket2",
         min = 0, value = bracket1(),
-        max = 10, step = 1
+        max = 10
       )
     }
   })
@@ -69,7 +101,7 @@ server <- function(input, output, session) {
     if (bracket3() < bracket2()) {
       updateSliderInput(session, "bracket3",
         min = 0, value = bracket2(),
-        max = 10, step = 1
+        max = 10
       )
     }
   })
@@ -78,7 +110,7 @@ server <- function(input, output, session) {
     if (bracket4() < bracket3()) {
       updateSliderInput(session, "bracket4",
         min = 0, value = bracket3(),
-        max = 10, step = 1
+        max = 10
       )
     }
   })
@@ -99,6 +131,22 @@ server <- function(input, output, session) {
   })
   bracket5 <- reactive({
     input$bracket5
+  })
+  
+  bracket1T <- reactive({
+    input$bracket1T
+  })
+  bracket2T <- reactive({
+    input$bracket2T
+  })
+  bracket3T <- reactive({
+    input$bracket3T
+  })
+  bracket4T <- reactive({
+    input$bracket4T
+  })
+  bracket5T <- reactive({
+    input$bracket5T
   })
 
 

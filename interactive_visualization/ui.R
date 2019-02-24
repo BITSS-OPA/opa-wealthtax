@@ -19,18 +19,25 @@ ui <-
             0, 10, 0,
             step = .1, post = " %" # , ticks = F
           ),
+          textInput("bracket1T",label="", value = "0"),
+          
           sliderInput("bracket2", "Apply a tax of:",
             0, 10, 2,
             step = .1, post = " %" # , ticks = F
           ),
+          textInput("bracket2T",label="", value = "2"),
+          
           sliderInput("bracket3", "Apply a tax of:",
             0, 10, 2,
             step = .1, post = " %" # , ticks = F
           ),
+          textInput("bracket3T",label="", value = "2"),
+          
           sliderInput("bracket4", "Apply a tax of:",
             0, 10, 3,
             step = .1, post = " %" # , ticks = F
-          )
+          ),
+          textInput("bracket4T",label="", value = "3")
         ),
 
         h6("Policy Analysis by:"),
