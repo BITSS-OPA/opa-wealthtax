@@ -242,29 +242,24 @@ server <- function(input, output, session) {
     extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
 
     ## rename to showAvg
-    # https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
-    showMargin <- function(x) {
+
+    showAvg <- function(x) {
       # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
+      # https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
       if (sum(grepl("id", names(x))) == 0) return(NULL)
       if (is.null(x)) return(NULL)
       data <- dataInput()
-      data$id <- 1:nrow(data)
-      # print(head(x))
-      idx <- order(abs(data$id - x$id))
-      row1 <- data[idx[1], ]
-      row2 <- data[idx[2], ]
 
-      # row <- data[data$id == x$id, ]
-      val <- mean(c(row1$marginalRate, row2$marginalRate), na.rm = T)
-      # print(x) ## sometimes missing id
-      paste0("Average Tax Rate: ", round(val, 2), "%", sep = "")
+      row <- data[data$id == x$id, ]
+
+      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", sep = "")
     }
 
     dataInput()[, -ncol(dataInput())] %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
       layer_points(data = dataInput, x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
-      add_tooltip(showMargin, "hover") %>%
+      add_tooltip(showAvg, "hover") %>%
       layer_lines(x = ~xval, y = ~marginalRate, stroke := "red") %>%
       layer_paths(data = extra1, ~x, ~y) %>%
       layer_paths(data = extra2, ~x, ~y) %>%
