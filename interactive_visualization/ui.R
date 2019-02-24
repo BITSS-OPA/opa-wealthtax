@@ -17,19 +17,19 @@ ui <-
         wellPanel(
           sliderInput("bracket1", "Apply a tax of:",
             0, 10, 0,
-            step = 1, post = " %" # , ticks = F
+            step = .1, post = " %" # , ticks = F
           ),
           sliderInput("bracket2", "Apply a tax of:",
             0, 10, 2,
-            step = 1, post = " %" # , ticks = F
+            step = .1, post = " %" # , ticks = F
           ),
           sliderInput("bracket3", "Apply a tax of:",
             0, 10, 2,
-            step = 1, post = " %" # , ticks = F
+            step = .1, post = " %" # , ticks = F
           ),
           sliderInput("bracket4", "Apply a tax of:",
             0, 10, 3,
-            step = 1, post = " %" # , ticks = F
+            step = .1, post = " %" # , ticks = F
           )
         ),
 
