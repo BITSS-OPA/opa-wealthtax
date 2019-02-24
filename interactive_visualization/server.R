@@ -259,11 +259,11 @@ server <- function(input, output, session) {
       # print(x) ## sometimes missing id
       paste0("Average Tax Rate: ", round(val, 2), "%", sep = "")
     }
-    # browser()
-    dataInput() %>%
+
+    dataInput()[, -ncol(dataInput())] %>%
       ggvis(x = ~xval, y = ~tax) %>%
       layer_points() %>%
-      layer_points(x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
+      layer_points(data = dataInput, x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
       add_tooltip(showMargin, "hover") %>%
       layer_lines(x = ~xval, y = ~marginalRate, stroke := "red") %>%
       layer_paths(data = extra1, ~x, ~y) %>%
