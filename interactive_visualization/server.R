@@ -256,19 +256,19 @@ server <- function(input, output, session) {
     }
 
     dataInput()[, -ncol(dataInput())] %>%
-      ggvis(x = ~xval, y = ~tax) %>%
+      ggvis(x = ~xval/1e6, y = ~tax) %>%
       layer_points() %>%
-      layer_points(data = dataInput, x = ~xval, y = ~marginalRate, stroke := "red", key := ~id) %>%
+      layer_points(data = dataInput, x = ~xval/1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
       add_tooltip(showAvg, "hover") %>%
-      layer_lines(x = ~xval, y = ~marginalRate, stroke := "red") %>%
-      layer_paths(data = extra1, ~x, ~y) %>%
-      layer_paths(data = extra2, ~x, ~y) %>%
-      layer_paths(data = extra3, ~x, ~y) %>%
-      layer_paths(data = extra0, ~x, ~y) %>%
-      layer_paths(data = extra1b, ~x, ~y) %>%
-      layer_paths(data = extra2b, ~x, ~y) %>%
-      layer_paths(data = extra3b, ~x, ~y) %>%
-      add_axis("x", title_offset = 80, title = "Wealth before taxes", grid = F, format = ",", properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))) %>%
+      layer_lines(x = ~xval/1e6, y = ~marginalRate, stroke := "red") %>%
+      layer_paths(data = extra1, ~x/1e6, ~y) %>%
+      layer_paths(data = extra2, ~x/1e6, ~y) %>%
+      layer_paths(data = extra3, ~x/1e6, ~y) %>%
+      layer_paths(data = extra0, ~x/1e6, ~y) %>%
+      layer_paths(data = extra1b, ~x/1e6, ~y) %>%
+      layer_paths(data = extra2b, ~x/1e6, ~y) %>%
+      layer_paths(data = extra3b, ~x/1e6, ~y) %>%
+      add_axis("x", title_offset = 80, title = "Wealth ($m)", grid = F, format = ",", properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
       set_options(width = 1000, height = 500)
