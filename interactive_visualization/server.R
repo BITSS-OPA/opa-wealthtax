@@ -1,5 +1,6 @@
 
 server <- function(input, output, session) {
+  #browser()
   # grid <- read.csv("taxBaseGrid.csv")
   grid <- read.csv("taxBaseGridUpdated.csv")
   # print(head(grid)) ## check that app has access to this file
@@ -90,149 +91,7 @@ server <- function(input, output, session) {
     }
   })
   
-  
 
-  ### match textbox
-  observe({
-    if (bracketVal1T() != bracketVal1()) {
-      updateSliderInput(session, "bracketV1", value = bracketVal1T())
-    }
-  })
-
-  observe({
-    if (bracketVal2T() != bracketVal2()) {
-      updateSliderInput(session, "bracketV2", value = bracketVal2T())
-    }
-  })
-
-  observe({
-    if (bracketVal3T() != bracketVal3()) {
-      updateSliderInput(session, "bracketV3", value = bracketVal3T())
-    }
-  })
-
-  observe({
-    if (bracketVal4T() != bracketVal4()) {
-      updateSliderInput(session, "bracketV4", value = bracketVal4T())
-    }
-  })
-
-  observe({
-    if (input$extraBracket1){
-      if(input$bracketV5T != input$bracketV5){
-        updateSliderInput(session, "bracketV5",
-                           value = input$bracketV5T)
-      }
-    }
-  })
-  
-  observe({
-    if (input$extraBracket2){
-      if(input$bracketV6T != input$bracketV6){
-        updateSliderInput(session, "bracketV6",
-                         value = input$bracketV6T)
-      }
-    }
-  })
-
-  observe({
-    if (input$extraBracket3){
-      if(input$bracketV7T != input$bracketV7){
-        updateSliderInput(session, "bracketV7",
-                         value = input$bracketV7T)
-      }
-    }
-  })
-  
-  observe({
-    if (input$extraBracket4){
-      if(input$bracketV8T != input$bracketV8){
-        updateSliderInput(session, "bracketV8",
-                          value = input$bracketV8T)
-      }
-    }
-  })
-
-
-  ### make slider match text, then can keep using slider values throughout
-  ## if you change slider, then it goes back to text value
-  ## need to deal with precedence
-  observe({
-    if (bracket1T() != bracket1()) {
-      updateSliderInput(session, "bracket1",
-        min = 0, value = bracket1T(),
-        max = 10
-      )
-    }
-  })
-
-  observe({
-    if (bracket2T() != bracket2()) {
-      updateSliderInput(session, "bracket2",
-        min = 0, value = bracket2T(),
-        max = 10
-      )
-    }
-  })
-
-  observe({
-    if (bracket3T() != bracket3()) {
-      updateSliderInput(session, "bracket3",
-        min = 0, value = bracket3T(),
-        max = 10
-      )
-    }
-  })
-
-  observe({
-    if (bracket4T() != bracket4()) {
-      updateSliderInput(session, "bracket4",
-        min = 0, value = bracket4T(),
-        max = 10
-      )
-    }
-  })
-  
-  observe({
-    if (input$extraBracket1){
-     if(input$bracket5T != input$bracket5){
-       updateSliderInput(session, "bracket5",
-                         min = 0, value = input$bracket5T,
-                         max = 10)
-     }
-    }
-  })
-
-  observe({
-    if (input$extraBracket2){
-      if(input$bracket6T != input$bracket6){
-        updateSliderInput(session, "bracket6",
-                          min = 0, value = input$bracket6T,
-                          max = 10)
-      }
-    }
-  })
-
-  observe({
-    if (input$extraBracket3){
-      if(input$bracket7T != input$bracket7){
-        updateSliderInput(session, "bracket7",
-                          min = 0, value = input$bracket7T,
-                          max = 10)
-      }
-    }
-  })
-
-  observe({
-    if (input$extraBracket4){
-      if(input$bracket8T != input$bracket8){
-        updateSliderInput(session, "bracket8",
-                          min = 0, value = input$bracket8T,
-                          max = 10)
-      }
-    }
-  })
-  
   ### marginal tax rate only increasing
   observe({
     if (bracket2() < bracket1()) {
@@ -263,7 +122,7 @@ server <- function(input, output, session) {
   
   observe({
     if (input$extraBracket1){
-      if(input$bracket5< bracket4()){
+      if(bracket5()< bracket4()){
         updateSliderInput(session, "bracket5",
                           min = 0, value = bracket4(),
                           max = 10)
@@ -273,9 +132,9 @@ server <- function(input, output, session) {
 
   observe({
     if (input$extraBracket2){
-      if(input$bracket6< input$bracket5){
+      if(bracket6()< bracket5()){
         updateSliderInput(session, "bracket6",
-                          min = 0, value = input$bracket5,
+                          min = 0, value = bracket5(),
                           max = 10)
       }
     }
@@ -283,9 +142,9 @@ server <- function(input, output, session) {
   
   observe({
     if (input$extraBracket3){
-      if(input$bracket7< input$bracket6){
+      if(bracket7()< bracket6()){
         updateSliderInput(session, "bracket7",
-                          min = 0, value = input$bracket6,
+                          min = 0, value = bracket6(),
                           max = 10)
       }
     }
@@ -293,9 +152,9 @@ server <- function(input, output, session) {
   
   observe({
     if (input$extraBracket4){
-      if(input$bracket8< input$bracket7){
+      if(bracket8()< bracket7()){
         updateSliderInput(session, "bracket8",
-                          min = 0, value = input$bracket7,
+                          min = 0, value = bracket7(),
                           max = 10)
       }
     }
@@ -303,65 +162,58 @@ server <- function(input, output, session) {
   
   ## streamline the input references
   bracket1 <- reactive({
-    input$bracket1
-    # print(input$bracket1) ## make sure doesn't have % included
+    as.numeric(input$bracket1)
+     #print(input$bracket1) ## make sure doesn't have % included
+ 
   })
   bracket2 <- reactive({
-    input$bracket2
+    as.numeric(input$bracket2)
   })
   bracket3 <- reactive({
-    input$bracket3
+    as.numeric(input$bracket3)
   })
   bracket4 <- reactive({
-    input$bracket4
+    as.numeric(input$bracket4)
   })
   bracket5 <- reactive({
-    input$bracket5
+    as.numeric(input$bracket5)
   })
-
-  bracket1T <- reactive({
-    input$bracket1T
+  bracket6 <- reactive({
+    as.numeric(input$bracket6)
   })
-  bracket2T <- reactive({
-    input$bracket2T
+  bracket7 <- reactive({
+    as.numeric(input$bracket7)
   })
-  bracket3T <- reactive({
-    input$bracket3T
+  bracket8 <- reactive({
+    as.numeric(input$bracket8)
   })
-  bracket4T <- reactive({
-    input$bracket4T
-  })
-  bracket5T <- reactive({
-    input$bracket5T
-  })
-
-
 
   bracketVal1 <- reactive({
-    input$bracketV1
+    as.numeric(input$bracketV1)
   })
   bracketVal2 <- reactive({
-    input$bracketV2
+    as.numeric(input$bracketV2)
   })
   bracketVal3 <- reactive({
-    input$bracketV3
+    as.numeric(input$bracketV3)
   })
   bracketVal4 <- reactive({
-    input$bracketV4
+    as.numeric(input$bracketV4)
+  })
+  bracketVal5 <- reactive({
+    as.numeric(input$bracketV5)
+  })
+  bracketVal6 <- reactive({
+    as.numeric(input$bracketV6)
+  })
+  bracketVal7 <- reactive({
+    as.numeric(input$bracketV7)
+  })
+  bracketVal8 <- reactive({
+    as.numeric(input$bracketV8)
   })
 
-  bracketVal1T <- reactive({
-    input$bracketV1T
-  })
-  bracketVal2T <- reactive({
-    input$bracketV2T
-  })
-  bracketVal3T <- reactive({
-    input$bracketV3T
-  })
-  bracketVal4T <- reactive({
-    input$bracketV4T
-  })
+  
 
   dataInput <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
