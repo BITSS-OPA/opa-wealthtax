@@ -36,7 +36,7 @@ ui <-
             step = .1, post = " %" # , ticks = F
           ),
           textInput("bracket4T", label = "", value = "3"),
-          checkboxInput("extraBracket1", "Add a bracket?", value = FALSE),
+          checkboxInput("extraBracket1", "Add a bracket?", value = F),
           conditionalPanel(
             condition = "input.extraBracket1 == true",
             sliderInput("bracket5", "Apply a tax of:",
@@ -93,12 +93,12 @@ ui <-
             condition = "input.extraBracket1 == true",
             sliderInput("bracketV5",
               label = "to wealth above:", min = 1000,
-              max = 10000, step = 100, value = 1000, post = " (m)"
+              max = 10000, step = 100, value = 1500, post = " (m)"
             )
           ),
           conditionalPanel(
             condition = "input.extraBracket1 == true",
-            textInput("bracketV5T", label = "", value = "1000")
+            textInput("bracketV5T", label = "", value = "1500")
           )
         ),
         h6("Assisted by:"),

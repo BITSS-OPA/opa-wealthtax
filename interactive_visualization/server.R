@@ -205,6 +205,9 @@ server <- function(input, output, session) {
   dataInput <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
 
+    if(input$extraBracket1){
+      taxRate <- c(taxRate,input$bracket5)
+    }
 
     xval <- 10^seq(log10(10e6), log10(45e9), by = 0.001) ## get uniform on log scale
 
@@ -212,12 +215,15 @@ server <- function(input, output, session) {
     idx1 <- xval <= bracketVal2() * 1e6
     idx2 <- xval > bracketVal2() * 1e6 & xval <= bracketVal3() * 1e6
     idx3 <- xval > bracketVal3() * 1e6 & xval <= bracketVal4() * 1e6
-    idx4 <- xval > bracketVal4() * 1e6
-
-
-    idx <- cbind.data.frame(idx1, idx2, idx3, idx4)
-
-
+    if(input$extraBracket1){
+      idx4 <- xval > bracketVal4()*1e6 & xval <= input$bracketV5*1e6
+      idx5 <- xval > input$bracketV5*1e6
+      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5)
+    }else{
+      idx4 <- xval > bracketVal4() * 1e6
+      idx <- cbind.data.frame(idx1, idx2, idx3, idx4)
+    }
+   
     # Indicator across income on tax bracke position
     getGroup <- unlist(apply(idx, 1, function(x) {
       which(x)[1]
@@ -227,11 +233,15 @@ server <- function(input, output, session) {
 
     toPlot <- cbind.data.frame(xval, getGroup)
 
-    toMatch <- cbind.data.frame(group = 1:4, tax = taxRate)
+  
+    toMatch <- cbind.data.frame(group = 1:length(taxRate), tax = taxRate)
 
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
     brackets <- c(bracketVal1(), bracketVal2(), bracketVal3(), bracketVal4())
+    if(input$extraBracket1){
+      brackets <- c(brackets,input$bracketV5)
+    }
 
     toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
 
@@ -253,20 +263,38 @@ server <- function(input, output, session) {
     second <- first - (brackets[2] * 1e6 - brackets[1] * 1e6)
     third <- second - (brackets[3] * 1e6 - brackets[2] * 1e6)
     fourth <- third - (brackets[4] * 1e6 - brackets[3] * 1e6)
+    if(length(taxLevels)==5){
+      fifth <- fourth - (brackets[5]*1e6 - brackets[4]*1e6)
+    }
 
     firstChunk <- ifelse(second >= 0, taxLevels[1] * (brackets[2] * 1e6 - brackets[1] * 1e6), taxLevels[1] * max(first, 0))
     secondChunk <- ifelse(third >= 0, taxLevels[2] * (brackets[3] * 1e6 - brackets[2] * 1e6), taxLevels[2] * max(second, 0))
     thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * (brackets[4] * 1e6 - brackets[3] * 1e6), taxLevels[3] * max(third, 0))
-    fourthChunk <- ifelse(fourth >= 0, fourth * taxLevels[4], 0)
 
-    toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk
+    if(length(taxLevels)==5){
+      fourthChunk <- ifelse(fifth>=0, taxLevels[4]*(brackets[5]*1e6-brackets[4]*1e6),taxLevels[4]*max(fourth,0))
+      fifthChunk <- ifelse(fifth >=0, fifth*taxLevels[5],0)
+      toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk + fifthChunk
+      
+    }else{
+      fourthChunk <- ifelse(fourth >= 0, fourth * taxLevels[4], 0)
+      toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk
+      
+    }
+
     return(toReturn)
   }
 
   totalTax <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+    if(input$extraBracket1){
+      taxRate <- c(taxRate, input$bracket5)
+    }
     taxRateP <- taxRate / 100 ## get to percentage
     bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
+    if(input$extraBracket1){
+      bracketStarts <- c(bracketStarts,1e6*input$bracketV5)
+    }
     taxPerBracket <- getTaxBasePerBracket(grid, bracketStarts)
     taxBase <- taxPerBracket$taxBase / 1e9 ## in billions
     tax <- taxBase * taxRateP
@@ -285,9 +313,16 @@ server <- function(input, output, session) {
 
   householdsTaxed <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+    if(input$extraBracket1){
+      taxRate <- c(taxRate, input$bracket5)
+    }
     taxRateP <- taxRate / 100 ## get to percentage
 
     bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
+    if(input$extraBracket1){
+      bracketStarts <- c(bracketStarts,1e6*input$bracketV5)
+    }
+    #browser()
     peoplePerBracket <- getPeoplePerBracket(grid, bracketStarts)
     numberTaxpayers <- peoplePerBracket$totalPeople
     householdsTaxed <- numberTaxpayers * (taxRateP > 0)
@@ -317,6 +352,9 @@ server <- function(input, output, session) {
 
   vis2 <- reactive({
     taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+    if(input$extraBracket1){
+      taxRate <- c(taxRate, input$bracket5)
+    }
 
     # These are mini data set that ggvis needs to create vertical lines
     extra0 <- cbind.data.frame(x = rep(bracketVal1() * 1e6, 2), y = c(0, taxRate[1]))
@@ -326,6 +364,10 @@ server <- function(input, output, session) {
     extra2b <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[3]))
     extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
     extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
+    if(input$extraBracket1){
+    extra4 <- cbind.data.frame(x = rep(input$bracketV5 * 1e6, 2), y = c(0, taxRate[4]))
+    extra4b <- cbind.data.frame(x = rep(input$bracketV5 * 1e6, 2), y = c(0, taxRate[5]))
+    }
 
     ## rename to showAvg
 
@@ -341,7 +383,7 @@ server <- function(input, output, session) {
       paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", " <br> Wealth ($m): ", round(row$xval / 1e6, 0), "<br> Taxes Paid ($m) ", round(row$marginalInt / 1e6, 2), sep = "") ## dividing by 1e6 may need to change if we do this for xval overall
     }
 
-    dataInput()[, -ncol(dataInput())] %>%
+   plot <- dataInput()[, -ncol(dataInput())] %>%
       ggvis(x = ~xval/1e6, y = ~tax) %>%
       layer_points() %>%
       layer_points(data = dataInput, x = ~xval/1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
@@ -358,6 +400,18 @@ server <- function(input, output, session) {
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
       set_options(width = 1000, height = 500)
+   
+   if(input$extraBracket1){
+    plot %>%  
+       layer_paths(data = extra4, ~x/1e6, ~y) %>%
+       layer_paths(data = extra4b, ~x/1e6, ~y) 
+       
+
+   }else{
+     plot
+   }
+   
+
   })
 
 
