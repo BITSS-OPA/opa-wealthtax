@@ -51,8 +51,8 @@ ui <-
           conditionalPanel(
             condition = "input.extraBracket2 == true",
             sliderInput("bracket6", "Apply a tax of:",
-                        0, 10, 3,
-                        step = .1, post = " %" # , ticks = F
+              0, 10, 3,
+              step = .1, post = " %" # , ticks = F
             )
           ),
           conditionalPanel(
@@ -62,13 +62,20 @@ ui <-
           conditionalPanel(
             condition = "input.extraBracket3 == true",
             sliderInput("bracket7", "Apply a tax of:",
-                        0, 10, 3,
-                        step = .1, post = " %" # , ticks = F
+              0, 10, 3,
+              step = .1, post = " %" # , ticks = F
             )
           ),
           conditionalPanel(
             condition = "input.extraBracket3 == true",
             checkboxInput("extraBracket4", "Add a bracket?", value = FALSE)
+          ),
+          conditionalPanel(
+            condition = "input.extraBracket4 == true",
+            sliderInput("bracket8", "Apply a tax of:",
+              0, 10, 3,
+              step = .1, post = " %" # , ticks = F
+            )
           )
         ),
 
@@ -125,8 +132,8 @@ ui <-
           conditionalPanel(
             condition = "input.extraBracket2 == true",
             sliderInput("bracketV6",
-                        label = "to wealth above:", min = 1000,
-                        max = 10000, step = 100, value = 1750, post = " (m)"
+              label = "to wealth above:", min = 1000,
+              max = 10000, step = 100, value = 1750, post = " (m)"
             )
           ),
           conditionalPanel(
@@ -136,13 +143,24 @@ ui <-
           conditionalPanel(
             condition = "input.extraBracket3 == true",
             sliderInput("bracketV7",
-                        label = "to wealth above:", min = 1000,
-                        max = 10000, step = 100, value = 1900, post = " (m)"
+              label = "to wealth above:", min = 1000,
+              max = 10000, step = 100, value = 1900, post = " (m)"
             )
           ),
           conditionalPanel(
-            condition = "input.extraBracket3 == true",
-            textInput("bracketV7T", label = "", value = "1900")
+            condition = "input.extraBracket4 == true",
+            textInput("bracketV8T", label = "", value = "1900")
+          ),
+          conditionalPanel(
+            condition = "input.extraBracket4 == true",
+            sliderInput("bracketV8",
+              label = "to wealth above:", min = 1000,
+              max = 10000, step = 100, value = 2000, post = " (m)"
+            )
+          ),
+          conditionalPanel(
+            condition = "input.extraBracket4 == true",
+            textInput("bracketV8T", label = "", value = "2000")
           )
         ),
         h6("Assisted by:"),
