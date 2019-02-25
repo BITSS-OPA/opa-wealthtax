@@ -143,7 +143,47 @@ server <- function(input, output, session) {
       )
     }
   })
+  
+  observe({
+    if (input$extraBracket1){
+      if(input$bracket5< bracket4()){
+        updateSliderInput(session, "bracket5",
+                          min = 0, value = bracket4(),
+                          max = 10)
+      }
+    }
+  })
 
+  observe({
+    if (input$extraBracket2){
+      if(input$bracket6< input$bracket5){
+        updateSliderInput(session, "bracket6",
+                          min = 0, value = input$bracket5,
+                          max = 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBracket3){
+      if(input$bracket7< input$bracket6){
+        updateSliderInput(session, "bracket7",
+                          min = 0, value = input$bracket6,
+                          max = 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBracket4){
+      if(input$bracket8< input$bracket7){
+        updateSliderInput(session, "bracket8",
+                          min = 0, value = input$bracket7,
+                          max = 10)
+      }
+    }
+  })
+  
   ## streamline the input references
   bracket1 <- reactive({
     input$bracket1
