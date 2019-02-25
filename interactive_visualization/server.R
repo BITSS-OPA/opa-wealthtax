@@ -53,7 +53,46 @@ server <- function(input, output, session) {
 
     updateSliderInput(session, "bracketV4", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
   })
+  
+  observe({
+    if (input$extraBracket1){
+    val <- bracketVal4()
+    val2 <- input$bracketV5
+    
+    updateSliderInput(session, "bracketV5", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
+    }
+  })
+  
+  observe({
+    if (input$extraBracket2){
+      val <- input$bracketV5
+      val2 <- input$bracketV6
+      
+      updateSliderInput(session, "bracketV6", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
+    }
+  })
+  
+  observe({
+    if (input$extraBracket3){
+      val <- input$bracketV6
+      val2 <- input$bracketV7
+      
+      updateSliderInput(session, "bracketV7", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
+    }
+  })
+  
+  observe({
+    if (input$extraBracket4){
+      val <- input$bracketV7
+      val2 <- input$bracketV8
+      
+      updateSliderInput(session, "bracketV8", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
+    }
+  })
+  
+  
 
+  ### match textbox
   observe({
     if (bracketVal1T() != bracketVal1()) {
       updateSliderInput(session, "bracketV1", value = bracketVal1T())
