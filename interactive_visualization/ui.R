@@ -43,6 +43,9 @@ ui <-
               0, 10, 3,
               step = .1, post = " %" # , ticks = F
             )
+          ),conditionalPanel(
+            condition = "input.extraBracket1 == true",
+            textInput("bracket5T", label = "", value = "3")
           ),
           conditionalPanel(
             condition = "input.extraBracket1 == true",
@@ -54,6 +57,9 @@ ui <-
               0, 10, 3,
               step = .1, post = " %" # , ticks = F
             )
+          ),conditionalPanel(
+            condition = "input.extraBracket2 == true",
+            textInput("bracket6T", label = "", value = "3")
           ),
           conditionalPanel(
             condition = "input.extraBracket2 == true",
@@ -65,6 +71,9 @@ ui <-
               0, 10, 3,
               step = .1, post = " %" # , ticks = F
             )
+          ),conditionalPanel(
+            condition = "input.extraBracket3 == true",
+            textInput("bracket7T", label = "", value = "3")
           ),
           conditionalPanel(
             condition = "input.extraBracket3 == true",
@@ -76,6 +85,10 @@ ui <-
               0, 10, 3,
               step = .1, post = " %" # , ticks = F
             )
+          ),
+          conditionalPanel(
+            condition = "input.extraBracket4 == true",
+            textInput("bracket8T", label = "", value = "3")
           )
         ),
 
@@ -148,8 +161,8 @@ ui <-
             )
           ),
           conditionalPanel(
-            condition = "input.extraBracket4 == true",
-            textInput("bracketV8T", label = "", value = "1900")
+            condition = "input.extraBracket3 == true",
+            textInput("bracketV7T", label = "", value = "1900")
           ),
           conditionalPanel(
             condition = "input.extraBracket4 == true",
@@ -170,7 +183,7 @@ ui <-
 
         h6("Deployment help by:"),
         h6("Akcan Balkir,"),
-        h6("Lindsey Heagy"),
+        h6("Lindsey Heagy,"),
         h6("Chris Holdgraf, and"),
         h6("Yuvi Panda"),
 

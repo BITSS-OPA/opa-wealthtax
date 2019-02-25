@@ -78,9 +78,46 @@ server <- function(input, output, session) {
     }
   })
 
+  observe({
+    if (input$extraBracket1){
+      if(input$bracketV5T != input$bracketV5){
+        updateSliderInput(session, "bracketV5",
+                           value = input$bracketV5T)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBracket2){
+      if(input$bracketV6T != input$bracketV6){
+        updateSliderInput(session, "bracketV6",
+                         value = input$bracketV6T)
+      }
+    }
+  })
+
+  observe({
+    if (input$extraBracket3){
+      if(input$bracketV7T != input$bracketV7){
+        updateSliderInput(session, "bracketV7",
+                         value = input$bracketV7T)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBracket4){
+      if(input$bracketV8T != input$bracketV8){
+        updateSliderInput(session, "bracketV8",
+                          value = input$bracketV8T)
+      }
+    }
+  })
 
 
   ### make slider match text, then can keep using slider values throughout
+  ## if you change slider, then it goes back to text value
+  ## need to deal with precedence
   observe({
     if (bracket1T() != bracket1()) {
       updateSliderInput(session, "bracket1",
@@ -116,6 +153,47 @@ server <- function(input, output, session) {
       )
     }
   })
+  
+  observe({
+    if (input$extraBracket1){
+     if(input$bracket5T != input$bracket5){
+       updateSliderInput(session, "bracket5",
+                         min = 0, value = input$bracket5T,
+                         max = 10)
+     }
+    }
+  })
+
+  observe({
+    if (input$extraBracket2){
+      if(input$bracket6T != input$bracket6){
+        updateSliderInput(session, "bracket6",
+                          min = 0, value = input$bracket6T,
+                          max = 10)
+      }
+    }
+  })
+
+  observe({
+    if (input$extraBracket3){
+      if(input$bracket7T != input$bracket7){
+        updateSliderInput(session, "bracket7",
+                          min = 0, value = input$bracket7T,
+                          max = 10)
+      }
+    }
+  })
+
+  observe({
+    if (input$extraBracket4){
+      if(input$bracket8T != input$bracket8){
+        updateSliderInput(session, "bracket8",
+                          min = 0, value = input$bracket8T,
+                          max = 10)
+      }
+    }
+  })
+  
   ### marginal tax rate only increasing
   observe({
     if (bracket2() < bracket1()) {
