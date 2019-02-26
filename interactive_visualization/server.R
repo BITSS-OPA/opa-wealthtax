@@ -166,7 +166,7 @@ server <- function(input, output, session) {
     observe({
       val <- bracketVal1T()
       # val2 <- bracketVal2() ## avoid switching back and forth
-      val2 <- input$bracketV2T
+      val2 <- as.numeric(input$bracketV2T)
       updateSliderInput(session, "bracketV2T",
                         min = val + 5, value = ifelse(val2 > val, val2, val + 50),
                         max = 1000, step = 5
@@ -176,7 +176,7 @@ server <- function(input, output, session) {
     observe({
       val <- bracketVal2T()
       # val2 <- bracketVal3() ## avoid switching back and forth
-      val2 <- input$bracketV3T
+      val2 <- as.numeric(input$bracketV3T)
       
       updateSliderInput(session, "bracketV3T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
     })
@@ -184,7 +184,7 @@ server <- function(input, output, session) {
     observe({
       val <- bracketVal3T()
       # val2 <- bracketVal4() ## avoid switching back and forth
-      val2 <- input$bracketV4T
+      val2 <- as.numeric(input$bracketV4T)
       
       updateSliderInput(session, "bracketV4T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
     })
@@ -192,7 +192,7 @@ server <- function(input, output, session) {
     observe({
       if (input$extraBracket1){
         val <- bracketVal4T()
-        val2 <- input$bracketV5T
+        val2 <- as.numeric(input$bracketV5T)
         
         updateSliderInput(session, "bracketV5T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
       }
@@ -200,8 +200,8 @@ server <- function(input, output, session) {
     
     observe({
       if (input$extraBracket2){
-        val <- input$bracketV5T
-        val2 <- input$bracketV6T
+        val <- as.numeric(input$bracketV5T)
+        val2 <- as.numeric(input$bracketV6T)
         
         updateSliderInput(session, "bracketV6T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
       }
@@ -209,8 +209,8 @@ server <- function(input, output, session) {
     
     observe({
       if (input$extraBracket3){
-        val <- input$bracketV6T
-        val2 <- input$bracketV7T
+        val <- as.numeric(input$bracketV6T)
+        val2 <- as.numeric(input$bracketV7T)
         
         updateSliderInput(session, "bracketV7T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
       }
@@ -218,8 +218,8 @@ server <- function(input, output, session) {
     
     observe({
       if (input$extraBracket4){
-        val <- input$bracketV7T
-        val2 <- input$bracketV8T
+        val <- as.numeric(input$bracketV7T)
+        val2 <- as.numeric(input$bracketV8T)
         
         updateSliderInput(session, "bracketV8T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
       }
@@ -499,49 +499,49 @@ server <- function(input, output, session) {
     taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
     
     if (input$extraBracket1) {
-      taxRate <- c(taxRate, input$bracket5T)
+      taxRate <- c(taxRate, as.numeric(input$bracket5T))
     }
     if (input$extraBracket2) {
-      taxRate <- c(taxRate, input$bracket6T)
+      taxRate <- c(taxRate, as.numeric(input$bracket6T))
     }
     if (input$extraBracket3) {
-      taxRate <- c(taxRate, input$bracket7T)
+      taxRate <- c(taxRate, as.numeric(input$bracket7T))
     }
     if (input$extraBracket4) {
-      taxRate <- c(taxRate, input$bracket8T)
+      taxRate <- c(taxRate, as.numeric(input$bracket8T))
     }
     
     xval <- 10^seq(log10(10e6), log10(45e9), by = 0.001) ## get uniform on log scale
     
     
-    idx1 <- xval <= bracketVal2T() * 1e6
-    idx2 <- xval > bracketVal2T() * 1e6 & xval <= bracketVal3T() * 1e6
-    idx3 <- xval > bracketVal3T() * 1e6 & xval <= bracketVal4T() * 1e6
+    idx1 <- xval <= as.numeric(bracketVal2T()) * 1e6
+    idx2 <- xval > as.numeric(bracketVal2T()) * 1e6 & xval <= as.numeric(bracketVal3T()) * 1e6
+    idx3 <- xval > as.numeric(bracketVal3T()) * 1e6 & xval <= as.numeric(bracketVal4T()) * 1e6
     
     if (input$extraBracket4) { ## since nested, test this one first
-      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
-      idx5 <- xval > input$bracketV5T * 1e6 & xval <= input$bracketV6T * 1e6
-      idx6 <- xval > input$bracketV6T * 1e6 & xval <= input$bracketV7T * 1e6
-      idx7 <- xval > input$bracketV7T * 1e6 & xval <= input$bracketV8T * 1e6
-      idx8 <- xval > input$bracketV8T
+      idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
+      idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
+      idx6 <- xval > as.numeric(input$bracketV6T) * 1e6 & xval <= as.numeric(input$bracketV7T) * 1e6
+      idx7 <- xval > as.numeric(input$bracketV7T) * 1e6 & xval <= as.numeric(input$bracketV8T) * 1e6
+      idx8 <- xval > as.numeric(input$bracketV8T)
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7, idx8)
     } else if (input$extraBracket3) {
-      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
-      idx5 <- xval > input$bracketV5T * 1e6 & xval <= input$bracketV6T * 1e6
-      idx6 <- xval > input$bracketV6T * 1e6 & xval <= input$bracketV7T * 1e6
-      idx7 <- xval > input$bracketV7T * 1e6
+      idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
+      idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
+      idx6 <- xval > as.numeric(input$bracketV6T) * 1e6 & xval <= as.numeric(input$bracketV7T) * 1e6
+      idx7 <- xval > as.numeric(input$bracketV7T) * 1e6
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
     } else if (input$extraBracket2) {
-      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
-      idx5 <- xval > input$bracketV5T * 1e6 & xval <= input$bracketV6T * 1e6
-      idx6 <- xval > input$bracketV6T * 1e6
+      idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
+      idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
+      idx6 <- xval > as.numeric(input$bracketV6T) * 1e6
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6)
     } else if (input$extraBracket1) {
-      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
-      idx5 <- xval > input$bracketV5T * 1e6
+      idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
+      idx5 <- xval > as.numeric(input$bracketV5T) * 1e6
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5)
     } else {
-      idx4 <- xval > bracketVal4T() * 1e6
+      idx4 <- xval > as.numeric(bracketVal4T()) * 1e6
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4)
     }
     
@@ -561,18 +561,18 @@ server <- function(input, output, session) {
     
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
     
-    brackets <- c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T())
+    brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
     if (input$extraBracket1) {
-      brackets <- c(brackets, input$bracketV5T)
+      brackets <- c(brackets, as.numeric(input$bracketV5T))
     }
     if (input$extraBracket2) {
-      brackets <- c(brackets, input$bracketV6T)
+      brackets <- c(brackets, as.numeric(input$bracketV6T))
     }
     if (input$extraBracket3) {
-      brackets <- c(brackets, input$bracketV7T)
+      brackets <- c(brackets, as.numeric(input$bracketV7T))
     }
     if (input$extraBracket4) {
-      brackets <- c(brackets, input$bracketV8T)
+      brackets <- c(brackets, as.numeric(input$bracketV8T))
     }
     
     
@@ -819,16 +819,16 @@ server <- function(input, output, session) {
     if(input$interface==1){
       taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
       if (input$extraBracket1) {
-        taxRate <- c(taxRate, input$bracket5)
+        taxRate <- c(taxRate, as.numeric(input$bracket5))
       }
       if (input$extraBracket2) {
-        taxRate <- c(taxRate, input$bracket6)
+        taxRate <- c(taxRate, as.numeric(input$bracket6))
       }
       if (input$extraBracket3) {
-        taxRate <- c(taxRate, input$bracket7)
+        taxRate <- c(taxRate, as.numeric(input$bracket7))
       }
       if (input$extraBracket4) {
-        taxRate <- c(taxRate, input$bracket8)
+        taxRate <- c(taxRate, as.numeric(input$bracket8))
       }
       
       # These are mini data set that ggvis needs to create vertical lines
@@ -859,41 +859,41 @@ server <- function(input, output, session) {
     }else{
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
       if (input$extraBracket1) {
-        taxRate <- c(taxRate, input$bracket5T)
+        taxRate <- c(taxRate, as.numeric(input$bracket5T))
       }
       if (input$extraBracket2) {
-        taxRate <- c(taxRate, input$bracket6T)
+        taxRate <- c(taxRate, as.numeric(input$bracket6T))
       }
       if (input$extraBracket3) {
-        taxRate <- c(taxRate, input$bracket7T)
+        taxRate <- c(taxRate, as.numeric(input$bracket7T))
       }
       if (input$extraBracket4) {
-        taxRate <- c(taxRate, input$bracket8T)
+        taxRate <- c(taxRate, as.numeric(input$bracket8T))
       }
       
       # These are mini data set that ggvis needs to create vertical lines
-      extra0 <- cbind.data.frame(x = rep(bracketVal1T() * 1e6, 2), y = c(0, taxRate[1]))
-      extra1 <- cbind.data.frame(x = rep(bracketVal2T() * 1e6, 2), y = c(0, taxRate[1]))
-      extra1b <- cbind.data.frame(x = rep(bracketVal2T() * 1e6, 2), y = c(0, taxRate[2]))
-      extra2 <- cbind.data.frame(x = rep(bracketVal3T() * 1e6, 2), y = c(0, taxRate[2]))
-      extra2b <- cbind.data.frame(x = rep(bracketVal3T() * 1e6, 2), y = c(0, taxRate[3]))
-      extra3 <- cbind.data.frame(x = rep(bracketVal4T() * 1e6, 2), y = c(0, taxRate[3]))
-      extra3b <- cbind.data.frame(x = rep(bracketVal4T() * 1e6, 2), y = c(0, taxRate[4]))
+      extra0 <- cbind.data.frame(x = rep(as.numeric(bracketVal1T()) * 1e6, 2), y = c(0, taxRate[1]))
+      extra1 <- cbind.data.frame(x = rep(as.numeric(bracketVal2T()) * 1e6, 2), y = c(0, taxRate[1]))
+      extra1b <- cbind.data.frame(x = rep(as.numeric(bracketVal2T()) * 1e6, 2), y = c(0, taxRate[2]))
+      extra2 <- cbind.data.frame(x = rep(as.numeric(bracketVal3T()) * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(as.numeric(bracketVal3T()) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3 <- cbind.data.frame(x = rep(as.numeric(bracketVal4T()) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3b <- cbind.data.frame(x = rep(as.numeric(bracketVal4T()) * 1e6, 2), y = c(0, taxRate[4]))
       if (input$extraBracket1) {
-        extra4 <- cbind.data.frame(x = rep(input$bracketV5T * 1e6, 2), y = c(0, taxRate[4]))
-        extra4b <- cbind.data.frame(x = rep(input$bracketV5T * 1e6, 2), y = c(0, taxRate[5]))
+        extra4 <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[4]))
+        extra4b <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[5]))
       }
       if (input$extraBracket2) {
-        extra5 <- cbind.data.frame(x = rep(input$bracketV6T * 1e6, 2), y = c(0, taxRate[5]))
-        extra5b <- cbind.data.frame(x = rep(input$bracketV6T * 1e6, 2), y = c(0, taxRate[6]))
+        extra5 <- cbind.data.frame(x = rep(as.numeric(input$bracketV6T) * 1e6, 2), y = c(0, taxRate[5]))
+        extra5b <- cbind.data.frame(x = rep(as.numeric(input$bracketV6T) * 1e6, 2), y = c(0, taxRate[6]))
       }
       if (input$extraBracket3) {
-        extra6 <- cbind.data.frame(x = rep(input$bracketV7T * 1e6, 2), y = c(0, taxRate[6]))
-        extra6b <- cbind.data.frame(x = rep(input$bracketV7T * 1e6, 2), y = c(0, taxRate[7]))
+        extra6 <- cbind.data.frame(x = rep(as.numeric(input$bracketV7T) * 1e6, 2), y = c(0, taxRate[6]))
+        extra6b <- cbind.data.frame(x = rep(as.numeric(input$bracketV7T) * 1e6, 2), y = c(0, taxRate[7]))
       }
       if (input$extraBracket4) {
-        extra7 <- cbind.data.frame(x = rep(input$bracket8T * 1e6, 2), y = c(0, taxRate[7]))
-        extra7b <- cbind.data.frame(x = rep(input$bracketV8T * 1e6, 2), y = c(0, taxRate[8]))
+        extra7 <- cbind.data.frame(x = rep(as.numeric(input$bracket8T) * 1e6, 2), y = c(0, taxRate[7]))
+        extra7b <- cbind.data.frame(x = rep(as.numeric(input$bracketV8T) * 1e6, 2), y = c(0, taxRate[8]))
       }
       
     }
