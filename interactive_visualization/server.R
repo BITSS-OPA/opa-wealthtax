@@ -2,12 +2,18 @@
 server <- function(input, output, session) {
 
   grid <- read.csv("taxBaseGridUpdated.csv")
-  grid$thres <- (1 - .16) * grid$thres ## evasion, this parameter will be tunable later on
+  
+ updateGrid <-reactive({
+    grid$thresNew <- (1 - as.numeric(input$evasion)/100) * grid$thres ## evasion, this parameter will be tunable later on
+    grid$avgNew <- (1-as.numeric(input$evasion)/100)*grid$avg ## I think we need this too, asked Katie to confirm
+return(grid)
+  })
+
   getTaxBasePerBracket <- function(grid, brackets) {
     ## brackets is lower end of each bracket
     brackets <- c(brackets, 1e10 + 1e6) ## get last bracket
-    grid$total <- grid$nb * grid$avg
-    grid$group <- cut(grid$thres, brackets)
+    grid$total <- grid$nb * grid$avgNew
+    grid$group <- cut(grid$thresNew, brackets)
     toReturn <- grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na() %>% complete(group, fill = list(taxBase = 0)) ## avoid dropping levels without any taxBase
 
     # https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
@@ -18,7 +24,7 @@ server <- function(input, output, session) {
   getPeoplePerBracket <- function(grid, brackets) {
     ## brackets is lower end of each bracket
     brackets <- c(brackets, 1e10 + 1e6) ## get last bracket
-    grid$group <- cut(grid$thres, brackets, include.lowest = T)
+    grid$group <- cut(grid$thresNew, brackets, include.lowest = T)
     toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na() %>% complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
 
     # https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
@@ -409,7 +415,7 @@ print(taxRate)
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T), 1e6 * as.numeric(input$bracketV6T),1e6 * as.numeric(input$bracketV7T),1e6 * as.numeric(input$bracketV8T))
       }
     
-    taxPerBracket <- getTaxBasePerBracket(grid, bracketStarts)
+    taxPerBracket <- getTaxBasePerBracket(updateGrid(), bracketStarts)
     taxBase <- taxPerBracket$taxBase / 1e9 ## in billions
     tax <- taxBase * taxRateP
     totalTax <- sum(tax)
@@ -456,7 +462,7 @@ print(taxRate)
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T),1e6 * as.numeric(input$bracketV6T), 1e6 * as.numeric(input$bracketV7T), 1e6 * as.numeric(input$bracketV8T))
       }
     
-    peoplePerBracket <- getPeoplePerBracket(grid, bracketStarts)
+    peoplePerBracket <- getPeoplePerBracket(updateGrid(), bracketStarts)
     numberTaxpayers <- peoplePerBracket$totalPeople
     householdsTaxed <- numberTaxpayers * (taxRateP > 0)
     householdsTaxed
@@ -476,7 +482,7 @@ print(taxRate)
   # })
 
   output$percentTaxUnits <- renderText({
-    taxUnits <- sum(householdsTaxed()) / sum(grid$nb)
+    taxUnits <- sum(householdsTaxed()) / sum(updateGrid()$nb)
     ## double check
 
     round(taxUnits * 100, 2) ## get to percentage

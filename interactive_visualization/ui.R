@@ -10,6 +10,7 @@ ui <-
     titlePanel("Wealth Tax Explorer"),
     #radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
     numericInput("extraBrackets", "Extra Brackets?", 0, min = 0, max = 4),
+    textInput("evasion", label = "Tax Evasion (%)", value = "16"),
     
     fluidRow(
       column(
