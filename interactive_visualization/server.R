@@ -653,32 +653,63 @@ server <- function(input, output, session) {
   }
 
   totalTax <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+    
+    if(input$interface==1){
+      taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+      if (input$extraBracket1) {
+        taxRate <- c(taxRate, input$bracket5)
+      }
+      if (input$extraBracket2) {
+        taxRate <- c(taxRate, input$bracket6)
+      }
+      if (input$extraBracket3) {
+        taxRate <- c(taxRate, input$bracket7)
+      }
+      if (input$extraBracket4) {
+        taxRate <- c(taxRate, input$bracket8)
+      }
+      taxRateP <- taxRate / 100 ## get to percentage
+      bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
+      if (input$extraBracket1) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV5)
+      }
+      if (input$extraBracket2) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV6)
+      }
+      if (input$extraBracket3) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV7)
+      }
+      if (input$extraBracket4) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV8)
+      }
+    }else{
+    taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
     if (input$extraBracket1) {
-      taxRate <- c(taxRate, input$bracket5)
+      taxRate <- c(taxRate, input$bracket5T)
     }
     if (input$extraBracket2) {
-      taxRate <- c(taxRate, input$bracket6)
+      taxRate <- c(taxRate, input$bracket6T)
     }
     if (input$extraBracket3) {
-      taxRate <- c(taxRate, input$bracket7)
+      taxRate <- c(taxRate, input$bracket7T)
     }
     if (input$extraBracket4) {
-      taxRate <- c(taxRate, input$bracket8)
+      taxRate <- c(taxRate, input$bracket8T)
     }
-    taxRateP <- taxRate / 100 ## get to percentage
-    bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
+    taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
+    bracketStarts <- 1e6 * as.numeric(c(input$bracketV1T, input$bracketV2T, input$bracketV3T, input$bracketV4T))
     if (input$extraBracket1) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV5)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T))
     }
     if (input$extraBracket2) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV6)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV6T))
     }
     if (input$extraBracket3) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV7)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV7T))
     }
     if (input$extraBracket4) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV8)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV8T))
+    }
     }
     taxPerBracket <- getTaxBasePerBracket(grid, bracketStarts)
     taxBase <- taxPerBracket$taxBase / 1e9 ## in billions
@@ -697,33 +728,64 @@ server <- function(input, output, session) {
   })
 
   householdsTaxed <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+    if(input$interface==1){
+      taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+      if (input$extraBracket1) {
+        taxRate <- c(taxRate, input$bracket5)
+      }
+      if (input$extraBracket2) {
+        taxRate <- c(taxRate, input$bracket6)
+      }
+      if (input$extraBracket3) {
+        taxRate <- c(taxRate, input$bracket7)
+      }
+      if (input$extraBracket4) {
+        taxRate <- c(taxRate, input$bracket8)
+      }
+      taxRateP <- taxRate / 100 ## get to percentage
+      
+      bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
+      if (input$extraBracket1) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV5)
+      }
+      if (input$extraBracket2) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV6)
+      }
+      if (input$extraBracket3) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV7)
+      }
+      if (input$extraBracket4) {
+        bracketStarts <- c(bracketStarts, 1e6 * input$bracketV8)
+      }
+    }else{
+    taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
     if (input$extraBracket1) {
-      taxRate <- c(taxRate, input$bracket5)
+      taxRate <- c(taxRate, input$bracket5T)
     }
     if (input$extraBracket2) {
-      taxRate <- c(taxRate, input$bracket6)
+      taxRate <- c(taxRate, input$bracket6T)
     }
     if (input$extraBracket3) {
-      taxRate <- c(taxRate, input$bracket7)
+      taxRate <- c(taxRate, input$bracket7T)
     }
     if (input$extraBracket4) {
-      taxRate <- c(taxRate, input$bracket8)
+      taxRate <- c(taxRate, input$bracket8T)
     }
-    taxRateP <- taxRate / 100 ## get to percentage
+    taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
 
-    bracketStarts <- 1e6 * c(input$bracketV1, input$bracketV2, input$bracketV3, input$bracketV4)
+    bracketStarts <- 1e6 * as.numeric(c(input$bracketV1T, input$bracketV2T, input$bracketV3T, input$bracketV4T))
     if (input$extraBracket1) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV5)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T))
     }
     if (input$extraBracket2) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV6)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV6T))
     }
     if (input$extraBracket3) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV7)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV7T))
     }
     if (input$extraBracket4) {
-      bracketStarts <- c(bracketStarts, 1e6 * input$bracketV8)
+      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV8T))
+    }
     }
     peoplePerBracket <- getPeoplePerBracket(grid, bracketStarts)
     numberTaxpayers <- peoplePerBracket$totalPeople
