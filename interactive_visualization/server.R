@@ -348,6 +348,7 @@ server <- function(input, output, session) {
     as.numeric(input$bracketV8)
   })
   
+  ## these aren't showing up as numeric
   bracket1T <- reactive({
     as.numeric(input$bracket1T)
     #print(input$bracket1) ## make sure doesn't have % included
@@ -490,6 +491,98 @@ server <- function(input, output, session) {
 
     toPlot2$id <- 1:nrow(toPlot2)
 
+    toPlot2
+  })
+  
+  dataInputT <- reactive({
+   #browser()
+    taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
+    
+    if (input$extraBracket1) {
+      taxRate <- c(taxRate, input$bracket5T)
+    }
+    if (input$extraBracket2) {
+      taxRate <- c(taxRate, input$bracket6T)
+    }
+    if (input$extraBracket3) {
+      taxRate <- c(taxRate, input$bracket7T)
+    }
+    if (input$extraBracket4) {
+      taxRate <- c(taxRate, input$bracket8T)
+    }
+    
+    xval <- 10^seq(log10(10e6), log10(45e9), by = 0.001) ## get uniform on log scale
+    
+    
+    idx1 <- xval <= bracketVal2T() * 1e6
+    idx2 <- xval > bracketVal2T() * 1e6 & xval <= bracketVal3T() * 1e6
+    idx3 <- xval > bracketVal3T() * 1e6 & xval <= bracketVal4T() * 1e6
+    
+    if (input$extraBracket4) { ## since nested, test this one first
+      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
+      idx5 <- xval > input$bracketV5T * 1e6 & xval <= input$bracketV6T * 1e6
+      idx6 <- xval > input$bracketV6T * 1e6 & xval <= input$bracketV7T * 1e6
+      idx7 <- xval > input$bracketV7T * 1e6 & xval <= input$bracketV8T * 1e6
+      idx8 <- xval > input$bracketV8T
+      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7, idx8)
+    } else if (input$extraBracket3) {
+      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
+      idx5 <- xval > input$bracketV5T * 1e6 & xval <= input$bracketV6T * 1e6
+      idx6 <- xval > input$bracketV6T * 1e6 & xval <= input$bracketV7T * 1e6
+      idx7 <- xval > input$bracketV7T * 1e6
+      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
+    } else if (input$extraBracket2) {
+      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
+      idx5 <- xval > input$bracketV5T * 1e6 & xval <= input$bracketV6T * 1e6
+      idx6 <- xval > input$bracketV6T * 1e6
+      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6)
+    } else if (input$extraBracket1) {
+      idx4 <- xval > bracketVal4T() * 1e6 & xval <= input$bracketV5T * 1e6
+      idx5 <- xval > input$bracketV5T * 1e6
+      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5)
+    } else {
+      idx4 <- xval > bracketVal4T() * 1e6
+      idx <- cbind.data.frame(idx1, idx2, idx3, idx4)
+    }
+    
+    
+    
+    # Indicator across income on tax bracke position
+    getGroup <- unlist(apply(idx, 1, function(x) {
+      which(x)[1]
+    }))
+    # getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
+    
+    
+    toPlot <- cbind.data.frame(xval, getGroup)
+    
+    
+    toMatch <- cbind.data.frame(group = 1:length(taxRate), tax = taxRate)
+    
+    toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
+    
+    brackets <- c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T())
+    if (input$extraBracket1) {
+      brackets <- c(brackets, input$bracketV5T)
+    }
+    if (input$extraBracket2) {
+      brackets <- c(brackets, input$bracketV6T)
+    }
+    if (input$extraBracket3) {
+      brackets <- c(brackets, input$bracketV7T)
+    }
+    if (input$extraBracket4) {
+      brackets <- c(brackets, input$bracketV8T)
+    }
+    
+    
+    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
+    
+    toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
+    
+    
+    toPlot2$id <- 1:nrow(toPlot2)
+    
     toPlot2
   })
 
@@ -660,45 +753,89 @@ server <- function(input, output, session) {
 
 
   vis2 <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
-    if (input$extraBracket1) {
-      taxRate <- c(taxRate, input$bracket5)
+    
+    if(input$interface==1){
+      taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
+      if (input$extraBracket1) {
+        taxRate <- c(taxRate, input$bracket5)
+      }
+      if (input$extraBracket2) {
+        taxRate <- c(taxRate, input$bracket6)
+      }
+      if (input$extraBracket3) {
+        taxRate <- c(taxRate, input$bracket7)
+      }
+      if (input$extraBracket4) {
+        taxRate <- c(taxRate, input$bracket8)
+      }
+      
+      # These are mini data set that ggvis needs to create vertical lines
+      extra0 <- cbind.data.frame(x = rep(bracketVal1() * 1e6, 2), y = c(0, taxRate[1]))
+      extra1 <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[1]))
+      extra1b <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[2]))
+      extra2 <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[3]))
+      extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
+      extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
+      if (input$extraBracket1) {
+        extra4 <- cbind.data.frame(x = rep(input$bracketV5 * 1e6, 2), y = c(0, taxRate[4]))
+        extra4b <- cbind.data.frame(x = rep(input$bracketV5 * 1e6, 2), y = c(0, taxRate[5]))
+      }
+      if (input$extraBracket2) {
+        extra5 <- cbind.data.frame(x = rep(input$bracketV6 * 1e6, 2), y = c(0, taxRate[5]))
+        extra5b <- cbind.data.frame(x = rep(input$bracketV6 * 1e6, 2), y = c(0, taxRate[6]))
+      }
+      if (input$extraBracket3) {
+        extra6 <- cbind.data.frame(x = rep(input$bracketV7 * 1e6, 2), y = c(0, taxRate[6]))
+        extra6b <- cbind.data.frame(x = rep(input$bracketV7 * 1e6, 2), y = c(0, taxRate[7]))
+      }
+      if (input$extraBracket4) {
+        extra7 <- cbind.data.frame(x = rep(input$bracket8 * 1e6, 2), y = c(0, taxRate[7]))
+        extra7b <- cbind.data.frame(x = rep(input$bracketV8 * 1e6, 2), y = c(0, taxRate[8]))
+      }
+      
+    }else{
+      taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
+      if (input$extraBracket1) {
+        taxRate <- c(taxRate, input$bracket5T)
+      }
+      if (input$extraBracket2) {
+        taxRate <- c(taxRate, input$bracket6T)
+      }
+      if (input$extraBracket3) {
+        taxRate <- c(taxRate, input$bracket7T)
+      }
+      if (input$extraBracket4) {
+        taxRate <- c(taxRate, input$bracket8T)
+      }
+      
+      # These are mini data set that ggvis needs to create vertical lines
+      extra0 <- cbind.data.frame(x = rep(bracketVal1T() * 1e6, 2), y = c(0, taxRate[1]))
+      extra1 <- cbind.data.frame(x = rep(bracketVal2T() * 1e6, 2), y = c(0, taxRate[1]))
+      extra1b <- cbind.data.frame(x = rep(bracketVal2T() * 1e6, 2), y = c(0, taxRate[2]))
+      extra2 <- cbind.data.frame(x = rep(bracketVal3T() * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(bracketVal3T() * 1e6, 2), y = c(0, taxRate[3]))
+      extra3 <- cbind.data.frame(x = rep(bracketVal4T() * 1e6, 2), y = c(0, taxRate[3]))
+      extra3b <- cbind.data.frame(x = rep(bracketVal4T() * 1e6, 2), y = c(0, taxRate[4]))
+      if (input$extraBracket1) {
+        extra4 <- cbind.data.frame(x = rep(input$bracketV5T * 1e6, 2), y = c(0, taxRate[4]))
+        extra4b <- cbind.data.frame(x = rep(input$bracketV5T * 1e6, 2), y = c(0, taxRate[5]))
+      }
+      if (input$extraBracket2) {
+        extra5 <- cbind.data.frame(x = rep(input$bracketV6T * 1e6, 2), y = c(0, taxRate[5]))
+        extra5b <- cbind.data.frame(x = rep(input$bracketV6T * 1e6, 2), y = c(0, taxRate[6]))
+      }
+      if (input$extraBracket3) {
+        extra6 <- cbind.data.frame(x = rep(input$bracketV7T * 1e6, 2), y = c(0, taxRate[6]))
+        extra6b <- cbind.data.frame(x = rep(input$bracketV7T * 1e6, 2), y = c(0, taxRate[7]))
+      }
+      if (input$extraBracket4) {
+        extra7 <- cbind.data.frame(x = rep(input$bracket8T * 1e6, 2), y = c(0, taxRate[7]))
+        extra7b <- cbind.data.frame(x = rep(input$bracketV8T * 1e6, 2), y = c(0, taxRate[8]))
+      }
+      
     }
-    if (input$extraBracket2) {
-      taxRate <- c(taxRate, input$bracket6)
-    }
-    if (input$extraBracket3) {
-      taxRate <- c(taxRate, input$bracket7)
-    }
-    if (input$extraBracket4) {
-      taxRate <- c(taxRate, input$bracket8)
-    }
-
-    # These are mini data set that ggvis needs to create vertical lines
-    extra0 <- cbind.data.frame(x = rep(bracketVal1() * 1e6, 2), y = c(0, taxRate[1]))
-    extra1 <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[1]))
-    extra1b <- cbind.data.frame(x = rep(bracketVal2() * 1e6, 2), y = c(0, taxRate[2]))
-    extra2 <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[2]))
-    extra2b <- cbind.data.frame(x = rep(bracketVal3() * 1e6, 2), y = c(0, taxRate[3]))
-    extra3 <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[3]))
-    extra3b <- cbind.data.frame(x = rep(bracketVal4() * 1e6, 2), y = c(0, taxRate[4]))
-    if (input$extraBracket1) {
-      extra4 <- cbind.data.frame(x = rep(input$bracketV5 * 1e6, 2), y = c(0, taxRate[4]))
-      extra4b <- cbind.data.frame(x = rep(input$bracketV5 * 1e6, 2), y = c(0, taxRate[5]))
-    }
-    if (input$extraBracket2) {
-      extra5 <- cbind.data.frame(x = rep(input$bracketV6 * 1e6, 2), y = c(0, taxRate[5]))
-      extra5b <- cbind.data.frame(x = rep(input$bracketV6 * 1e6, 2), y = c(0, taxRate[6]))
-    }
-    if (input$extraBracket3) {
-      extra6 <- cbind.data.frame(x = rep(input$bracketV7 * 1e6, 2), y = c(0, taxRate[6]))
-      extra6b <- cbind.data.frame(x = rep(input$bracketV7 * 1e6, 2), y = c(0, taxRate[7]))
-    }
-    if (input$extraBracket4) {
-      extra7 <- cbind.data.frame(x = rep(input$bracket8 * 1e6, 2), y = c(0, taxRate[7]))
-      extra7b <- cbind.data.frame(x = rep(input$bracketV8 * 1e6, 2), y = c(0, taxRate[8]))
-    }
-
+    
     ## rename to showAvg
 
     showAvg <- function(x) {
@@ -706,17 +843,35 @@ server <- function(input, output, session) {
       # https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
       if (sum(grepl("id", names(x))) == 0) return(NULL)
       if (is.null(x)) return(NULL)
-      data <- dataInput()
+      
+      if(input$interface==1){
+        data <- dataInput()
+      }else{
+        data <- dataInputT()
+        
+      }
+    
 
       row <- data[data$id == x$id, ]
 
       paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", " <br> Wealth ($m): ", round(row$xval / 1e6, 0), "<br> Taxes Paid ($m) ", round(row$marginalInt / 1e6, 2), sep = "") ## dividing by 1e6 may need to change if we do this for xval overall
     }
 
-    plot <- dataInput()[, -ncol(dataInput())] %>%
+   # plot <- dataInput()[, -ncol(dataInput())] %>%
+
+    if(input$interface==1){
+      data <- dataInput()
+    }else{
+      data <- dataInputT()
+      
+    }
+    
+    #browser()
+    rmIdx=ncol(data)
+      plot <- data[,-rmIdx] %>%
       ggvis(x = ~ xval / 1e6, y = ~tax) %>%
       layer_points() %>%
-      layer_points(data = dataInput, x = ~ xval / 1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
+      layer_points(data = data, x = ~ xval / 1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
       add_tooltip(showAvg, "hover") %>%
       layer_lines(x = ~ xval / 1e6, y = ~marginalRate, stroke := "red") %>%
       layer_paths(data = extra1, ~ x / 1e6, ~y) %>%
