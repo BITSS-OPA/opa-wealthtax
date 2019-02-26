@@ -9,6 +9,8 @@ ui <-
   fluidPage(
     titlePanel("Wealth Tax Explorer"),
     #radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
+    numericInput("extraBrackets", "Extra Brackets?:", 0, min = 0, max = 4),
+    
     fluidRow(
       column(
         2,
@@ -24,41 +26,50 @@ ui <-
             textInput("bracket4T", label = "Apply a tax of (%):", value = "3"),
 
 
-          checkboxInput("extraBracket1", "Add a bracket?", value = F),
+          #checkboxInput("extraBracket1", "Add a bracket?", value = F),
 
           conditionalPanel(
-            condition = "input.extraBracket1 == true",
+            condition = "input.extraBrackets == 1",
             textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
           ),
           conditionalPanel(
-            condition = "input.extraBracket1 == true",
-            checkboxInput("extraBracket2", "Add a bracket?", value = FALSE)
+            condition = "input.extraBrackets == 2",
+            textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
           ),
-
-
-           conditionalPanel(
-            condition = "input.extraBracket2 == true ",
+          conditionalPanel(
+            condition = "input.extraBrackets == 2",
             textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
           ),
           conditionalPanel(
-            condition = "input.extraBracket2 == true",
-            checkboxInput("extraBracket3", "Add a bracket?", value = FALSE)
+            condition = "input.extraBrackets == 3",
+            textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
           ),
-
-
-         conditionalPanel(
-            condition = "input.extraBracket3 == true",
+          conditionalPanel(
+            condition = "input.extraBrackets == 3",
+            textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 3",
             textInput("bracket7T", label = "Apply a tax of (%):", value = "3")
           ),
           conditionalPanel(
-            condition = "input.extraBracket3 == true",
-            checkboxInput("extraBracket4", "Add a bracket?", value = FALSE)
+            condition = "input.extraBrackets == 4",
+            textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
           ),
           conditionalPanel(
-            condition = "input.extraBracket4 == true",
+            condition = "input.extraBrackets == 4",
+            textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 4",
+            textInput("bracket7T", label = "Apply a tax of (%):", value = "3")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 4",
             textInput("bracket8T", label = "Apply a tax of (%):", value = "3")
-          )
-        ),
+          )),
+
+        
 
 
 
@@ -93,25 +104,47 @@ ui <-
 
          
           conditionalPanel(
-            condition = "input.extraBracket1 == true",
+            condition = "input.extraBrackets == 1",
+            textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 2",
+            textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 2",
+            textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 3",
+            textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 3",
+            textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 3",
+            textInput("bracketV7T", label = "to wealth above ($m):", value = "1700")
+          ),
+          conditionalPanel(
+            condition = "input.extraBrackets == 4",
             textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
           ),
           
-
           conditionalPanel(
-            condition = "input.extraBracket2 == true",
-            textInput("bracketV6T", label = "to wealth above ($m):", value = "1750")
+            condition = "input.extraBrackets == 4",
+            textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
           ),
-         
           conditionalPanel(
-            condition = "input.extraBracket3 == true",
-            textInput("bracketV7T", label = "to wealth above ($m):", value = "1900")
+            condition = "input.extraBrackets == 4",
+            textInput("bracketV7T", label = "to wealth above ($m):", value = "1700")
           ),
-          
           conditionalPanel(
-            condition = "input.extraBracket4 == true",
-            textInput("bracketV8T", label = "to wealth above ($m):", value = "2000")
+            condition = "input.extraBrackets == 4",
+            textInput("bracketV8T", label = "to wealth above ($m):", value = "1900")
           )
+          
         ),
         h6("Assisted by:"),
         h6(""),
