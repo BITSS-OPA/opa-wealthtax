@@ -35,10 +35,8 @@ server <- function(input, output, session) {
     val <- bracketVal1T()
     # val2 <- bracketVal2() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV2T)
-    updateSliderInput(session, "bracketV2T",
-      min = val + 5, value = ifelse(val2 > val, val2, val + 50),
-      max = 1000, step = 5
-    )
+    updateTextInput(session, "bracketV2T",value=val2)
+    
   })
 
   observe({
@@ -46,7 +44,8 @@ server <- function(input, output, session) {
     # val2 <- bracketVal3() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV3T)
 
-    updateSliderInput(session, "bracketV3T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
+    updateTextInput(session, "bracketV3T",value=val2)
+    
   })
 
   observe({
@@ -54,120 +53,117 @@ server <- function(input, output, session) {
     # val2 <- bracketVal4() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV4T)
 
-    updateSliderInput(session, "bracketV4T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
+    updateTextInput(session, "bracketV4T",value=val2)
+    
   })
 
   observe({
-    if (input$extraBrackets>=1) {
+    #if (input$extraBrackets>=1) {
       val <- bracketVal4T()
       val2 <- as.numeric(input$bracketV5T)
 
-      updateSliderInput(session, "bracketV5T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
-    }
+      updateTextInput(session, "bracketV5T",value=val2)
+      
+    #}
   })
 
   observe({
-    if (input$extraBrackets>=2) {
-      val <- as.numeric(input$bracketV5T)
+    #if (input$extraBrackets>=2) {
+      val <- as.numeric(bracketVal5T())
       val2 <- as.numeric(input$bracketV6T)
 
-      updateSliderInput(session, "bracketV6T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
-    }
+      updateTextInput(session, "bracketV6T",value=val2)
+      
+   # }
   })
 
   observe({
-    if (input$extraBrackets>=3) {
-      val <- as.numeric(input$bracketV6T)
+    #if (input$extraBrackets>=3) {
+      val <- as.numeric(bracketVal6T())
       val2 <- as.numeric(input$bracketV7T)
 
-      updateSliderInput(session, "bracketV7T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
-    }
+      updateTextInput(session, "bracketV7T",value=val2)
+      
+    #}
   })
 
   observe({
-    if (input$extraBrackets>=4) {
-      val <- as.numeric(input$bracketV7T)
+    #if (input$extraBrackets>=4) {
+      val <- as.numeric(bracketVal7T())
       val2 <- as.numeric(input$bracketV8T)
 
-      updateSliderInput(session, "bracketV8T", min = val + 5, value = ifelse(val2 > val, val2, val + 50))
-    }
+      updateTextInput(session, "bracketV8T",value=val2)
+      
+    #}
   })
 
+  ###
 
   ### marginal tax rate only increasing
   observe({
     if (bracket2T() < bracket1T()) {
-      updateSliderInput(session, "bracket2T",
-        min = 0, value = bracket1T(),
-        max = 10
-      )
+      updateTextInput(session, "bracket2T",value=bracket1T())
     }
   })
 
   observe({
     if (bracket3T() < bracket2T()) {
-      updateSliderInput(session, "bracket3T",
-        min = 0, value = bracket2T(),
-        max = 10
-      )
+      updateTextInput(session, "bracket3T",value=bracket2T())
+      
     }
   })
 
   observe({
     if (bracket4T() < bracket3T()) {
-      updateSliderInput(session, "bracket4T",
-        min = 0, value = bracket3T(),
-        max = 10
-      )
+      updateTextInput(session, "bracket4T",value=bracket3T())
+      
     }
   })
 
   observe({
-    if (input$extraBrackets>=1) {
+    #if (input$extraBrackets>=1) {
       if (bracket5T() < bracket4T()) {
-        updateSliderInput(session, "bracket5T",
-          min = 0, value = bracket4T(),
-          max = 10
-        )
+        updateTextInput(session, "bracket5T",value=bracket4T())
+        
       }
-    }
+    #}
   })
 
   observe({
-    if (input$extraBrackets>=2) {
+    #if (input$extraBrackets>=2) {
       if (bracket6T() < bracket5T()) {
-        updateSliderInput(session, "bracket6T",
-          min = 0, value = bracket5T(),
-          max = 10
-        )
+        updateTextInput(session, "bracket6T",value=bracket5T())
+        
       }
-    }
+    #}
   })
 
   observe({
-    if (input$extraBrackets>=3) {
+    #if (input$extraBrackets>=3) {
       if (bracket7T() < bracket6T()) {
-        updateSliderInput(session, "bracket7T",
-          min = 0, value = bracket6T(),
-          max = 10
-        )
+        updateTextInput(session, "bracket7T",value=bracket6T())
+        
       }
-    }
+    #}
   })
 
   observe({
-    if (input$extraBrackets>=4) {
+    #if (input$extraBrackets>=4) {
       if (bracket8T() < bracket7T()) {
-        updateSliderInput(session, "bracket8T",
-          min = 0, value = bracket7T(),
-          max = 10
-        )
+        updateTextInput(session, "bracket8T",value=bracket7T())
+        
       }
-    }
+    #}
   })
 
 
- 
+  
+  observe({
+   
+      updateTextInput(session, "bracket5T",value=bracket5T())
+      
+  
+  })
 
   bracket1T <- reactive({
     as.numeric(input$bracket1T)
@@ -222,96 +218,7 @@ server <- function(input, output, session) {
 
 
 
-  dataInput <- reactive({
-    taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4)
 
-    if (input$extraBrackets==1) {
-      taxRate <- c(taxRate, input$bracket5)
-    }
-    if (input$extraBrackets==2) {
-      taxRate <- c(taxRate, input$bracket5, input$bracket6)
-    }
-    if (input$extraBrackets==3) {
-      taxRate <- c(taxRate, input$bracket5, input$bracket6, input$bracket7)
-    }
-    if (input$extraBrackets==4) {
-      taxRate <- c(taxRate, input$bracket5, input$bracket6, input$bracket7, input$bracket8)
-    }
-
-    xval <- 10^seq(log10(10e6), log10(45e9), by = 0.001) ## get uniform on log scale
-
-
-    idx1 <- xval <= bracketVal2() * 1e6
-    idx2 <- xval > bracketVal2() * 1e6 & xval <= bracketVal3() * 1e6
-    idx3 <- xval > bracketVal3() * 1e6 & xval <= bracketVal4() * 1e6
-
-    if (input$extraBrackets==4) { ## since nested, test this one first
-      idx4 <- xval > bracketVal4() * 1e6 & xval <= input$bracketV5 * 1e6
-      idx5 <- xval > input$bracketV5 * 1e6 & xval <= input$bracketV6 * 1e6
-      idx6 <- xval > input$bracketV6 * 1e6 & xval <= input$bracketV7 * 1e6
-      idx7 <- xval > input$bracketV7 * 1e6 & xval <= input$bracketV8 * 1e6
-      idx8 <- xval > input$bracketV8
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7, idx8)
-    } else if (input$extraBrackets==3) {
-      idx4 <- xval > bracketVal4() * 1e6 & xval <= input$bracketV5 * 1e6
-      idx5 <- xval > input$bracketV5 * 1e6 & xval <= input$bracketV6 * 1e6
-      idx6 <- xval > input$bracketV6 * 1e6 & xval <= input$bracketV7 * 1e6
-      idx7 <- xval > input$bracketV7 * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
-    } else if (input$extraBrackets==2) {
-      idx4 <- xval > bracketVal4() * 1e6 & xval <= input$bracketV5 * 1e6
-      idx5 <- xval > input$bracketV5 * 1e6 & xval <= input$bracketV6 * 1e6
-      idx6 <- xval > input$bracketV6 * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6)
-    } else if (input$extraBrackets==1) {
-      idx4 <- xval > bracketVal4() * 1e6 & xval <= input$bracketV5 * 1e6
-      idx5 <- xval > input$bracketV5 * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5)
-    } else {
-      idx4 <- xval > bracketVal4() * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4)
-    }
-
-
-
-    # Indicator across income on tax bracke position
-    getGroup <- unlist(apply(idx, 1, function(x) {
-      which(x)[1]
-    }))
-    # getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
-
-
-    toPlot <- cbind.data.frame(xval, getGroup)
-
-
-    toMatch <- cbind.data.frame(group = 1:length(taxRate), tax = taxRate)
-
-    toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
-
-    brackets <- c(bracketVal1(), bracketVal2(), bracketVal3(), bracketVal4())
-    if (input$extraBrackets==1) {
-      brackets <- c(brackets, input$bracketV5)
-    }
-    if (input$extraBrackets==2) {
-      brackets <- c(brackets,input$bracketV5, input$bracketV6)
-    }
-    if (input$extraBrackets==3) {
-      brackets <- c(brackets, input$bracketV5, input$bracketV6, input$bracketV7)
-    }
-    if (input$extraBrackets==4) {
-      brackets <- c(brackets, input$bracketV5, input$bracketV6, input$bracketV7, input$bracketV8)
-    }
-
-
-    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
-
-    toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
-
-
-    toPlot2$id <- 1:nrow(toPlot2)
-
-    toPlot2
-  })
 
   dataInputT <- reactive({
 
@@ -329,6 +236,7 @@ server <- function(input, output, session) {
     if (input$extraBrackets==4) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T), as.numeric(input$bracket8T))
     }
+print(taxRate)
 
     xval <- 10^seq(log10(10e6), log10(45e9), by = 0.001) ## get uniform on log scale
 

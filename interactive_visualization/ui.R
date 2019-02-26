@@ -9,7 +9,7 @@ ui <-
   fluidPage(
     titlePanel("Wealth Tax Explorer"),
     #radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
-    numericInput("extraBrackets", "Extra Brackets?:", 0, min = 0, max = 4),
+    numericInput("extraBrackets", "Extra Brackets?", 0, min = 0, max = 4),
     
     fluidRow(
       column(
