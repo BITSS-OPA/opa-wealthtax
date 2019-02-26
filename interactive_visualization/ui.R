@@ -8,71 +8,26 @@ ui <-
 
   fluidPage(
     titlePanel("Wealth Tax Explorer"),
-    radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
+    #radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
     fluidRow(
       column(
         2,
         wellPanel(
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracket1", "Apply a tax of:",
-              0, 10, 0,
-              step = .1, post = " %" # , ticks = F
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracket1T", label = "Apply a tax of (%):", value = "0")
-          ),
+            textInput("bracket1T", label = "Apply a tax of (%):", value = "0"),
 
+            textInput("bracket2T", label = "Apply a tax of (%):", value = "2"),
 
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracket2", "Apply a tax of:",
-              0, 10, 2,
-              step = .1, post = " %" # , ticks = F
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracket2T", label = "Apply a tax of (%):", value = "2")
-          ),
+          
+            textInput("bracket3T", label = "Apply a tax of (%):", value = "2"),
 
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracket3", "Apply a tax of:",
-              0, 10, 2,
-              step = .1, post = " %" # , ticks = F
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracket3T", label = "Apply a tax of (%):", value = "2")
-          ),
-
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracket4", "Apply a tax of:",
-              0, 10, 3,
-              step = .1, post = " %" # , ticks = F
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracket4T", label = "Apply a tax of (%):", value = "3")
-          ),
+          
+            textInput("bracket4T", label = "Apply a tax of (%):", value = "3"),
 
 
           checkboxInput("extraBracket1", "Add a bracket?", value = F),
 
           conditionalPanel(
-            condition = "input.extraBracket1 == true && input.interface ==1",
-            sliderInput("bracket5", "Apply a tax of:",
-              0, 10, 3,
-              step = .1, post = " %" # , ticks = F
-            )
-          ), conditionalPanel(
-            condition = "input.extraBracket1 == true && input.interface == 2",
+            condition = "input.extraBracket1 == true",
             textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
           ),
           conditionalPanel(
@@ -81,14 +36,8 @@ ui <-
           ),
 
 
-          conditionalPanel(
-            condition = "input.extraBracket2 == true && input.interface ==1",
-            sliderInput("bracket6", "Apply a tax of:",
-              0, 10, 3,
-              step = .1, post = " %" # , ticks = F
-            )
-          ), conditionalPanel(
-            condition = "input.extraBracket2 == true && input.interface==2",
+           conditionalPanel(
+            condition = "input.extraBracket2 == true ",
             textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
           ),
           conditionalPanel(
@@ -97,31 +46,16 @@ ui <-
           ),
 
 
-          conditionalPanel(
-            condition = "input.extraBracket3 == true && input.interface==1",
-            sliderInput("bracket7", "Apply a tax of:",
-              0, 10, 3,
-              step = .1, post = " %" # , ticks = F
-            )
-          ), conditionalPanel(
-            condition = "input.extraBracket3 == true && input.interface==2",
+         conditionalPanel(
+            condition = "input.extraBracket3 == true",
             textInput("bracket7T", label = "Apply a tax of (%):", value = "3")
           ),
           conditionalPanel(
             condition = "input.extraBracket3 == true",
             checkboxInput("extraBracket4", "Add a bracket?", value = FALSE)
           ),
-
-
           conditionalPanel(
-            condition = "input.extraBracket4 == true && input.interface==1",
-            sliderInput("bracket8", "Apply a tax of:",
-              0, 10, 3,
-              step = .1, post = " %" # , ticks = F
-            )
-          ),
-          conditionalPanel(
-            condition = "input.extraBracket4 == true && input.interface==2",
+            condition = "input.extraBracket4 == true",
             textInput("bracket8T", label = "Apply a tax of (%):", value = "3")
           )
         ),
@@ -142,98 +76,40 @@ ui <-
       column(
         2,
         wellPanel(
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracketV1",
-              label = "to wealth above: ", min = 0,
-              max = 1000, step = 5, value = 10, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracketV1T", label = "to wealth above ($m):", value = "10")
-          ),
+          
+            textInput("bracketV1T", label = "to wealth above ($m):", value = "10"),
+          
 
 
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracketV2",
-              label = "to wealth above: ", min = 0,
-              max = 1000, step = 5, value = 50, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracketV2T", label = "to wealth above ($m):", value = "50")
-          ),
-
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracketV3",
-              label = "to wealth above:", min = 500,
-              max = 1500, step = 5, value = 500, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracketV3T", label = "to wealth above ($m):", value = "500")
-          ),
+          
+            textInput("bracketV2T", label = "to wealth above ($m):", value = "50"),
+         
+            textInput("bracketV3T", label = "to wealth above ($m):", value = "500"),
 
 
-          conditionalPanel(
-            condition = "input.interface == 1",
-            sliderInput("bracketV4",
-              label = "to wealth above:", min = 1000,
-              max = 10000, step = 100, value = 1000, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.interface == 2",
-            textInput("bracketV4T", label = "to wealth above ($m):", value = "1000")
-          ),
+          
+            textInput("bracketV4T", label = "to wealth above ($m):", value = "1000"),
+         
 
+         
           conditionalPanel(
-            condition = "input.extraBracket1 == true && input.interface==1",
-            sliderInput("bracketV5",
-              label = "to wealth above:", min = 1000,
-              max = 10000, step = 100, value = 1500, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.extraBracket1 == true && input.interface==2",
+            condition = "input.extraBracket1 == true",
             textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
           ),
+          
+
           conditionalPanel(
-            condition = "input.extraBracket2 == true && input.interface==1",
-            sliderInput("bracketV6",
-              label = "to wealth above:", min = 1000,
-              max = 10000, step = 100, value = 1750, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.extraBracket2 == true &&  input.interface==2",
+            condition = "input.extraBracket2 == true",
             textInput("bracketV6T", label = "to wealth above ($m):", value = "1750")
           ),
+         
           conditionalPanel(
-            condition = "input.extraBracket3 == true && input.interface==1",
-            sliderInput("bracketV7 ",
-              label = "to wealth above:", min = 1000,
-              max = 10000, step = 100, value = 1900, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.extraBracket3 == true && input.interface==2",
+            condition = "input.extraBracket3 == true",
             textInput("bracketV7T", label = "to wealth above ($m):", value = "1900")
           ),
+          
           conditionalPanel(
-            condition = "input.extraBracket4 == true && input.interface==1",
-            sliderInput("bracketV8",
-              label = "to wealth above:", min = 1000,
-              max = 10000, step = 100, value = 2000, post = " (m)"
-            )
-          ),
-          conditionalPanel(
-            condition = "input.extraBracket4 == true && input.interface==2",
+            condition = "input.extraBracket4 == true",
             textInput("bracketV8T", label = "to wealth above ($m):", value = "2000")
           )
         ),
