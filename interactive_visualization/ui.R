@@ -2,6 +2,7 @@ library(ggvis)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+
 ## template from here
 ## https://github.com/rstudio/shiny-examples/tree/master/051-movie-explorer
 
@@ -19,15 +20,16 @@ ui <-
       column(
         2,
         wellPanel(
-            textInput("bracket1T", label = "Apply a tax of (%):", value = "0"),
+          # <br/> <br/> # to make line up if we get other side to do an extra line
+            textInput("bracket1T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "0"),
 
-            textInput("bracket2T", label = "Apply a tax of (%):", value = "2"),
-
-          
-            textInput("bracket3T", label = "Apply a tax of (%):", value = "2"),
+            textInput("bracket2T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "2"),
 
           
-            textInput("bracket4T", label = "Apply a tax of (%):", value = "3"),
+            textInput("bracket3T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "2"),
+
+          
+            textInput("bracket4T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
 
 
           

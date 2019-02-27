@@ -4,31 +4,31 @@ server <- function(input, output, session) {
   ##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
   output$myui <- renderUI({
     if(input$extraBrackets == 1){
-      textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
+      textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3")
       
 
     }else if(input$extraBrackets ==2){
       tagList(
-      textInput("bracket5T", label = "Apply a tax of (%):", value = "3"),
+      textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
       
-      textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
+      textInput("bracket6T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3")
       )
       
     }else if(input$extraBrackets ==3){
       tagList(
-      textInput("bracket5T", label = "Apply a tax of (%):", value = "3"),
+      textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
       
-      textInput("bracket6T", label = "Apply a tax of (%):", value = "3"),
-      textInput("bracket7T", label = "Apply a tax of (%):", value = "3")
+      textInput("bracket6T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
+      textInput("bracket7T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3")
       )
       
     }else if(input$extraBrackets==4){
       tagList(
-      textInput("bracket5T", label = "Apply a tax of (%):", value = "3"),
+      textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
       
-      textInput("bracket6T", label = "Apply a tax of (%):", value = "3"),
-      textInput("bracket7T", label = "Apply a tax of (%):", value = "3"),
-      textInput("bracket8T", label = "Apply a tax of (%):", value = "3")
+      textInput("bracket6T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
+      textInput("bracket7T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
+      textInput("bracket8T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3")
       )
       
     }
@@ -108,8 +108,9 @@ return(grid)
   }
 
 
+  #https://github.com/rstudio/shiny/issues/1140
 observe({
-  updateTextInput(session, "bracketV1T",label = paste("Apply a tax of (%):","[Top ",   getPercentile(updateGrid(),bracketVal1T()),"%]",sep=""))
+  updateTextInput(session, "bracketV1T",label =paste("Apply a tax of (%):"," [Top ",   getPercentile(updateGrid(),bracketVal1T()),"%]",sep="") )
 })
 
 observe({
