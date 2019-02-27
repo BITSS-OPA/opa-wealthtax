@@ -621,7 +621,8 @@ if(val>val2)
 
 
 
-  dataInputT <- reactive({
+  dataInputT <- #eventReactive(input$submit,ignoreNULL = FALSE,{
+    reactive({
 
     taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
 
@@ -683,7 +684,6 @@ idx0 <- xval <= as.numeric(bracketVal1T())*1e6
 
 
     toPlot <- cbind.data.frame(xval, getGroup)
-
 
     toMatch <- cbind.data.frame(group = 1:(length(taxRate)+1), tax = c(0,taxRate))
 
@@ -898,7 +898,8 @@ taxPerBracket/1e9 ## in billions
   })
 
 
-  vis2 <- reactive({
+  vis2 <- eventReactive(input$submit,ignoreNULL = FALSE,{
+    #reactive({
     
     req(input$bracket1T)
     req(input$bracket2T)
