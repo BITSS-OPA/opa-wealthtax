@@ -5,7 +5,6 @@ library(ggplot2)
 ## template from here
 ## https://github.com/rstudio/shiny-examples/tree/master/051-movie-explorer
 
-##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
 ui <-
 
   fluidPage(
@@ -14,7 +13,7 @@ ui <-
     numericInput("extraBrackets", "Extra Brackets?", 0, min = 0, max = 4),
     textInput("evasion", label = "Tax Evasion (%)", value = "16"),
  
-   # submitButton("Apply Changes"),
+   # actionButton("apply", "Apply Changes"),
     
     fluidRow(
       column(

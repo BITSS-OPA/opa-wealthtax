@@ -1,7 +1,11 @@
-
+# still need some req some places but doesn't error out
+# Warning in taxBase * taxRateP :
+#   longer object length is not a multiple of shorter object length
+# Warning in numberTaxpayers * (taxRateP > 0) :
+#   longer object length is not a multiple of shorter object length
 server <- function(input, output, session) {
   
-
+  ##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
   output$myui <- renderUI({
     if(input$extraBrackets == 1){
       textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
@@ -311,61 +315,77 @@ observe({
 
 
   bracket1T <- reactive({
+    req(input$bracket1T)
     as.numeric(input$bracket1T)
     # print(input$bracket1) ## make sure doesn't have % included
   })
   bracket2T <- reactive({
+    req(input$bracket2T)
     as.numeric(input$bracket2T)
   })
   bracket3T <- reactive({
+    req(input$bracket3T)
     as.numeric(input$bracket3T)
   })
   bracket4T <- reactive({
+    req(input$bracket4T)
     as.numeric(input$bracket4T)
   })
   bracket5T <- reactive({
     if(input$extraBrackets>=1)
+      req(input$bracket5T)
     as.numeric(input$bracket5T)
   })
   bracket6T <- reactive({
     if(input$extraBrackets>=2)
+      req(input$bracket6T)
     as.numeric(input$bracket6T)
   })
   bracket7T <- reactive({
     if(input$extraBrackets>=3)
+      req(input$bracket7T)
     as.numeric(input$bracket7T)
   })
   bracket8T <- reactive({
     if(input$extraBrackets>=4)
+      req(input$bracket8T)
     as.numeric(input$bracket8T)
   })
 
   bracketVal1T <- reactive({
+    req(input$bracketV1T)
     as.numeric(input$bracketV1T)
   })
   bracketVal2T <- reactive({
+    req(input$bracketV2T)
     as.numeric(input$bracketV2T)
   })
   bracketVal3T <- reactive({
+    req(input$bracketV3T)
     as.numeric(input$bracketV3T)
   })
   bracketVal4T <- reactive({
+    req(input$bracketV4T)
     as.numeric(input$bracketV4T)
   })
   bracketVal5T <- reactive({
     if(input$extraBrackets>=1)
+      req(input$bracketV5T)
     as.numeric(input$bracketV5T)
   })
   bracketVal6T <- reactive({
     if(input$extraBrackets>=2)
+      req(input$bracketV6T)
     as.numeric(input$bracketV6T)
   })
   bracketVal7T <- reactive({
     if(input$extraBrackets>=3)
+      req(input$bracketV7T)
     as.numeric(input$bracketV7T)
   })
   bracketVal8T <- reactive({
     if(input$extraBrackets>=4)
+      req(input$bracketV8T)
     as.numeric(input$bracketV8T)
   })
 
@@ -533,7 +553,10 @@ observe({
   }
 
   totalTax <- reactive({
-    
+    req(input$bracket1T)
+    req(input$bracket2T)
+    req(input$bracket3T)
+    req(input$bracket4T)
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
       if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, input$bracket5T)
@@ -579,7 +602,10 @@ observe({
   })
 
   householdsTaxed <- reactive({
-    
+    req(input$bracket1T)
+    req(input$bracket2T)
+    req(input$bracket3T)
+    req(input$bracket4T)
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
       if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, input$bracket5T)
@@ -637,6 +663,11 @@ observe({
 
 
   vis2 <- reactive({
+    
+    req(input$bracket1T)
+    req(input$bracket2T)
+    req(input$bracket3T)
+    req(input$bracket4T)
     
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
       if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
