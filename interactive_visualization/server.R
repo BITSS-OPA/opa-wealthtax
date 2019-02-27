@@ -774,6 +774,20 @@ observe({
     
       data <- dataInputT()
 
+      brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+      if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
+        brackets <- c(brackets, as.numeric(input$bracketV5T))
+      }
+      if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
+        brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T))
+      }
+      if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
+        brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T),as.numeric(input$bracketV7T))
+      }
+      if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
+        brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T),as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
+      }
+      
 
     rmIdx <- ncol(data)
     plot <- data[, -rmIdx] %>%
@@ -789,7 +803,8 @@ observe({
       layer_paths(data = extra1b, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra3b, ~ x / 1e6, ~y) %>%
-      add_axis("x", title_offset = 80, title = "Wealth ($m)", grid = F, format = ",", properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))) %>%
+      add_axis("x", title_offset = 80, title = "Wealth ($m)", grid = F, format = ",",
+               values = brackets,properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
       set_options(width = 1000, height = 500)
