@@ -1,8 +1,4 @@
-# still need some req some places but doesn't error out
-# Warning in taxBase * taxRateP :
-#   longer object length is not a multiple of shorter object length
-# Warning in numberTaxpayers * (taxRateP > 0) :
-#   longer object length is not a multiple of shorter object length
+
 server <- function(input, output, session) {
   
   ##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
@@ -557,6 +553,10 @@ observe({
     req(input$bracket2T)
     req(input$bracket3T)
     req(input$bracket4T)
+    req(input$bracketV1T)
+    req(input$bracketV2T)
+    req(input$bracketV3T)
+    req(input$bracketV4T)
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
       if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, input$bracket5T)
@@ -606,6 +606,10 @@ observe({
     req(input$bracket2T)
     req(input$bracket3T)
     req(input$bracket4T)
+    req(input$bracketV1T)
+    req(input$bracketV2T)
+    req(input$bracketV3T)
+    req(input$bracketV4T)
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
       if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, input$bracket5T)
