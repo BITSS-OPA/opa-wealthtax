@@ -2,19 +2,20 @@ library(ggvis)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
-
+library(shinyjs) ## binder
 ## template from here
 ## https://github.com/rstudio/shiny-examples/tree/master/051-movie-explorer
 
 ui <-
 
   fluidPage(
+    useShinyjs(),
     titlePanel("Wealth Tax Explorer"),
     #radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
     numericInput("extraBrackets", "Extra Brackets?", 0, min = 0, max = 4),
     textInput("evasion", label = "Tax Evasion (%)", value = "16"),
  
-   # actionButton("apply", "Apply Changes"),
+    actionButton("reset", "Reset"),
     
     fluidRow(
       column(

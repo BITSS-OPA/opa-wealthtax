@@ -1,6 +1,31 @@
 
 server <- function(input, output, session) {
   
+  observeEvent(input$reset,{
+    reset("extraBrackets")
+    reset("evasion")
+    reset("bracket1T")
+    reset("bracket2T")
+    reset("bracket3T")
+    reset("bracket4T")
+    ## not necessary if change extraBrackets back to zero?
+    # reset("bracket5T")
+    # reset("bracket6T")
+    # reset("bracket7T")
+    # reset("bracket8T")
+    
+    reset("bracketV1T")
+    reset("bracketV2T")
+    reset("bracketV3T")
+    reset("bracketV4T")
+    # reset("bracketV5T")
+    # reset("bracketV6T")
+    # reset("bracketV7T")
+    # reset("bracketV8T")
+    
+  
+  })
+  
   ##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
   output$myui <- renderUI({
     if(input$extraBrackets == 1){
