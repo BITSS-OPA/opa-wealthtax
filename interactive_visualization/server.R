@@ -136,25 +136,25 @@ return(grid)
 
   #https://github.com/rstudio/shiny/issues/1140
 observe({
-  updateTextInput(session, "bracketV1T",label =paste("Apply a tax of (%):"," [Top ",   getPercentile(updateGrid(),bracketVal1T()),"%]",sep="") )
+  updateTextInput(session, "bracketV1T",label =paste("to the top ",getPercentile(updateGrid(),bracketVal1T()),"%'s wealth above ($m):",sep="") )
 })
 
 observe({
-  updateTextInput(session, "bracketV2T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal2T()),"%]",sep=""))
+  updateTextInput(session, "bracketV2T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal2T()),"%'s wealth above ($m):",sep=""))
 })
 
 observe({
-  updateTextInput(session, "bracketV3T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal3T()),"%]",sep=""))
+  updateTextInput(session, "bracketV3T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal3T()),"%'s wealth above ($m):",sep=""))
 })
 
 observe({
-  updateTextInput(session, "bracketV4T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal4T()),"%]",sep=""))
+  updateTextInput(session, "bracketV4T",paste("to the top ",getPercentile(updateGrid(),bracketVal4T()),"%'s wealth above ($m):",sep=""))
 })
 
 observe({
   if(input$extraBrackets>=1){
     if(!is.null(input$bracketV5T)){
-  updateTextInput(session, "bracketV5T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal5T()),"%]",sep=""),value=bracketVal5T())
+  updateTextInput(session, "bracketV5T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal5T()),"%'s wealth above ($m):",sep=""),value=bracketVal5T())
     }
   }
 })
@@ -162,7 +162,7 @@ observe({
 observe({
   if(input$extraBrackets>=2){
     if(!is.null(input$bracketV6T)){
-  updateTextInput(session, "bracketV6T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal6T()),"%]",sep=""),value=bracketVal6T())
+  updateTextInput(session, "bracketV6T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal6T()),"%'s wealth above ($m):",sep=""),value=bracketVal6T())
     }
   }
 })
@@ -170,7 +170,7 @@ observe({
 observe({
   if(input$extraBrackets>=3){
     if(!is.null(input$bracketV7T)){
-  updateTextInput(session, "bracketV7T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal7T()),"%]",sep=""),value=bracketVal7T())
+  updateTextInput(session, "bracketV7T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal7T()),"%'s wealth above ($m):",sep=""),value=bracketVal7T())
     }
   }
 })
@@ -178,7 +178,7 @@ observe({
 observe({
   if(input$extraBrackets>=4){
     if(!is.null(input$bracketV8T)){
-  updateTextInput(session, "bracketV8T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal8T()),"%]",sep=""),value=bracketVal8T())
+  updateTextInput(session, "bracketV8T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal8T()),"%'s wealth above ($m):",sep=""),value=bracketVal8T())
     }
   }
 })
