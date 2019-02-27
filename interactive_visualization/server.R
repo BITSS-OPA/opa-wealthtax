@@ -4,10 +4,15 @@ server <- function(input, output, session) {
   grid <- read.csv("taxBaseGridUpdated.csv")
   
  updateGrid <-reactive({
-    grid$thresNew <- (1 - as.numeric(input$evasion)/100) * grid$thres ## evasion, this parameter will be tunable later on
-    grid$avgNew <- (1-as.numeric(input$evasion)/100)*grid$avg ## I think we need this too, asked Katie to confirm
+    grid$thresNew <- (1 - as.numeric(input$evasion)/100) * grid$thres 
+    grid$avgNew <- (1-as.numeric(input$evasion)/100)*grid$avg ## 
 return(grid)
   })
+ 
+ getPercentile <- function(grid,value){
+   perc=grid$gperc[which.min(abs(grid$thresNew-value*1e6))]
+   return(round(100-perc,5))
+ }
 
   getTaxBasePerBracket <- function(grid, brackets) {
     ## brackets is lower end of each bracket
@@ -33,8 +38,43 @@ return(grid)
   }
 
 
+observe({
+  updateTextInput(session, "bracketV1T",label = paste("Apply a tax of (%):","[Top ",   getPercentile(updateGrid(),bracketVal1T()),"%]",sep=""))
+})
 
-  
+observe({
+  updateTextInput(session, "bracketV2T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal2T()),"%]",sep=""))
+})
+
+observe({
+  updateTextInput(session, "bracketV3T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal3T()),"%]",sep=""))
+})
+
+observe({
+  updateTextInput(session, "bracketV4T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal4T()),"%]",sep=""))
+})
+
+observe({
+  updateTextInput(session, "bracketV5T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal5T()),"%]",sep=""))
+})
+
+observe({
+  updateTextInput(session, "bracketV6T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal6T()),"%]",sep=""))
+})
+
+observe({
+  updateTextInput(session, "bracketV7T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal7T()),"%]",sep=""))
+})
+
+observe({
+  updateTextInput(session, "bracketV8T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal8T()),"%]",sep=""))
+})
+
+
+
+
+
+
 
   ### update tax brackets based on previous decisions
   observe({
