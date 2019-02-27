@@ -114,7 +114,7 @@ return(grid)
 
   getTaxBasePerBracket <- function(grid, taxLevels,brackets) {
     ## brackets is lower end of each bracket
-    #browser()
+
    test =unlist(lapply(grid$avgNew,getAverageTax,taxLevels,brackets/1e6))
     
 
@@ -123,8 +123,10 @@ return(grid)
   }
 
   getPeoplePerBracket <- function(grid, brackets) {
+    #browser()
     ## brackets is lower end of each bracket
-    brackets <- c(brackets, 1e10 + 1e6) ## get last bracket
+    brackets <- c(brackets, max(grid$thresNew) + 1e6) ## get last bracket
+    #brackets <- c(brackets, 1e10+1e6)
     grid$group <- cut(grid$thresNew, brackets, include.lowest = T)
     toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na() %>% complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
 
@@ -842,6 +844,7 @@ taxPerBracket/1e9 ## in billions
     req(input$bracketV2T)
     req(input$bracketV3T)
     req(input$bracketV4T)
+  
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
       if (input$extraBrackets==5 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, input$bracket5T)
@@ -897,7 +900,7 @@ taxPerBracket/1e9 ## in billions
     round(taxUnits * 100, 2) ## get to percentage
   })
 
-
+#https://github.com/rstudio/shiny/issues/1125
   vis2 <- eventReactive(input$submit,ignoreNULL = FALSE,{
     #reactive({
     
