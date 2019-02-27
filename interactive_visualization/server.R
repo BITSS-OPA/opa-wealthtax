@@ -106,9 +106,9 @@ return(grid)
  
  getPercentile <- function(grid,value){
    perc=grid$gperc[which.min(abs(grid$thresNew-value*1e6))]
-   return(round(100-perc,5))
+   return(format(round(100-perc,5),scientific = F))
  }
- 
+
  
 
 
@@ -184,6 +184,60 @@ observe({
 })
 
 
+observe({
+  if(bracketVal1T()==bracketVal2T()){
+    updateTextInput(session, "bracketV2T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal1T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal1T()+10)
+  }
+  
+})
+
+observe({
+  if(bracketVal2T()==bracketVal3T()){
+    updateTextInput(session, "bracketV3T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal2T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal2T()+10)
+  }
+  
+})
+
+observe({
+ 
+  if(bracketVal3T()==bracketVal4T()){
+    updateTextInput(session, "bracketV4T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal3T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal3T()+10)
+  }
+  
+})
+
+## need an extra layer of protection here
+observe({
+  if(input$extraBrackets>=1){
+  if(!is.null(input$bracketV5T) & bracketVal4T()==bracketVal5T()){
+    updateTextInput(session, "bracketV5T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal4T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal4T()+10)
+  }
+  }
+})
+
+observe({
+  if(input$extraBrackets>=2){
+  if(!is.null(input$bracketV6T) & bracketVal5T()==bracketVal6T()){
+    updateTextInput(session, "bracketV6T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal5T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal5T()+10)
+  }
+  }
+})
+
+observe({
+  if(input$extraBrackets>=3){
+  if(!is.null(input$bracketV7T) & bracketVal6T()==bracketVal7T()){
+    updateTextInput(session, "bracketV7T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal6T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal6T()+10)
+  }
+  }
+})
+
+observe({
+  if(input$extraBrackets>=4){
+  if(!is.null(input$bracketV8T) & bracketVal7T()==bracketVal8T()){
+    updateTextInput(session, "bracketV8T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal7T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal7T()+10)
+  }
+  }
+})
 
 
 
@@ -612,7 +666,7 @@ observe({
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T), 1e6 * as.numeric(input$bracketV6T),1e6 * as.numeric(input$bracketV7T),1e6 * as.numeric(input$bracketV8T))
       }
     
-    taxPerBracket <- getTaxBasePerBracket(updateGrid(), taxRate,bracketStarts)
+    taxPerBracket <- getTaxBasePerBracket(updateGrid(), as.numeric(taxRate),as.numeric(bracketStarts))
    
 taxPerBracket/1e9 ## in billions
   })
