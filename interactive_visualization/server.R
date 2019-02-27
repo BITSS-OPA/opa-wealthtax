@@ -1,5 +1,75 @@
 
 server <- function(input, output, session) {
+  
+
+  output$myui <- renderUI({
+    if(input$extraBrackets == 1){
+      textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
+      
+
+    }else if(input$extraBrackets ==2){
+      tagList(
+      textInput("bracket5T", label = "Apply a tax of (%):", value = "3"),
+      
+      textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
+      )
+      
+    }else if(input$extraBrackets ==3){
+      tagList(
+      textInput("bracket5T", label = "Apply a tax of (%):", value = "3"),
+      
+      textInput("bracket6T", label = "Apply a tax of (%):", value = "3"),
+      textInput("bracket7T", label = "Apply a tax of (%):", value = "3")
+      )
+      
+    }else if(input$extraBrackets==4){
+      tagList(
+      textInput("bracket5T", label = "Apply a tax of (%):", value = "3"),
+      
+      textInput("bracket6T", label = "Apply a tax of (%):", value = "3"),
+      textInput("bracket7T", label = "Apply a tax of (%):", value = "3"),
+      textInput("bracket8T", label = "Apply a tax of (%):", value = "3")
+      )
+      
+    }
+  })
+  
+  output$myui2 <- renderUI({
+    if(input$extraBrackets == 1){
+      textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
+      
+      
+    }else if(input$extraBrackets ==2){
+      tagList(
+        textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
+        
+        
+        textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
+        
+      )
+      
+    }else if(input$extraBrackets ==3){
+      tagList(
+        textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
+        
+        
+        textInput("bracketV6T", label = "to wealth above ($m):", value = "1600"),
+        textInput("bracketV7T", label = "to wealth above ($m):", value = "1700")
+      )
+      
+    }else if(input$extraBrackets==4){
+      tagList(
+        textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
+        
+        
+        textInput("bracketV6T", label = "to wealth above ($m):", value = "1600"),
+        textInput("bracketV7T", label = "to wealth above ($m):", value = "1700"),
+        textInput("bracketV8T", label = "to wealth above ($m):", value = "1900")
+        
+      )
+      
+    }
+  })
 
   grid <- read.csv("taxBaseGridUpdated.csv")
   
@@ -55,19 +125,35 @@ observe({
 })
 
 observe({
-  updateTextInput(session, "bracketV5T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal5T()),"%]",sep=""))
+  if(input$extraBrackets>=1){
+    if(!is.null(input$bracketV5T)){
+  updateTextInput(session, "bracketV5T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal5T()),"%]",sep=""),value=bracketVal5T())
+    }
+  }
 })
 
 observe({
-  updateTextInput(session, "bracketV6T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal6T()),"%]",sep=""))
+  if(input$extraBrackets>=2){
+    if(!is.null(input$bracketV6T)){
+  updateTextInput(session, "bracketV6T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal6T()),"%]",sep=""),value=bracketVal6T())
+    }
+  }
 })
 
 observe({
-  updateTextInput(session, "bracketV7T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal7T()),"%]",sep=""))
+  if(input$extraBrackets>=3){
+    if(!is.null(input$bracketV7T)){
+  updateTextInput(session, "bracketV7T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal7T()),"%]",sep=""),value=bracketVal7T())
+    }
+  }
 })
 
 observe({
-  updateTextInput(session, "bracketV8T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal8T()),"%]",sep=""))
+  if(input$extraBrackets>=4){
+    if(!is.null(input$bracketV8T)){
+  updateTextInput(session, "bracketV8T",label = paste("Apply a tax of (%): [Top ",   getPercentile(updateGrid(),bracketVal8T()),"%]",sep=""),value=bracketVal8T())
+    }
+  }
 })
 
 
@@ -104,42 +190,50 @@ observe({
   })
 
   observe({
-    #if (input$extraBrackets>=1) {
+    #if (input$extraBrackets>=1) {    
+    if(!is.null(input$bracketV5T) ){
+
       val <- bracketVal4T()
       val2 <- as.numeric(input$bracketV5T)
 
       updateTextInput(session, "bracketV5T",value=val2)
+    }
       
     #}
   })
 
   observe({
     #if (input$extraBrackets>=2) {
+    if(!is.null(input$bracketV5T) & !is.null(input$bracketV6T)){
       val <- as.numeric(bracketVal5T())
       val2 <- as.numeric(input$bracketV6T)
 
       updateTextInput(session, "bracketV6T",value=val2)
-      
+    }
    # }
   })
 
   observe({
     #if (input$extraBrackets>=3) {
+    if(!is.null(input$bracketV6T) & !is.null(input$bracketV7T)){
+      
       val <- as.numeric(bracketVal6T())
       val2 <- as.numeric(input$bracketV7T)
 
       updateTextInput(session, "bracketV7T",value=val2)
-      
+    }
     #}
   })
 
   observe({
     #if (input$extraBrackets>=4) {
+    if(!is.null(input$bracketV7T) & !is.null(input$bracketV8T)){
+      
       val <- as.numeric(bracketVal7T())
       val2 <- as.numeric(input$bracketV8T)
 
       updateTextInput(session, "bracketV8T",value=val2)
-      
+    }
     #}
   })
 
@@ -167,49 +261,54 @@ observe({
   })
 
   observe({
-    #if (input$extraBrackets>=1) {
+  if (input$extraBrackets>=1) {
+    #browser()
+    if(!is.null(input$bracket5T)){
+    #delay(10)
       if (bracket5T() < bracket4T()) {
         updateTextInput(session, "bracket5T",value=bracket4T())
-        
+
       }
-    #}
+    }
+    }
   })
 
   observe({
-    #if (input$extraBrackets>=2) {
+    if (input$extraBrackets>=2) {
+      if(!is.null(input$bracket6T)){
       if (bracket6T() < bracket5T()) {
         updateTextInput(session, "bracket6T",value=bracket5T())
-        
+
       }
-    #}
+      }
+    }
   })
 
   observe({
-    #if (input$extraBrackets>=3) {
+    if (input$extraBrackets>=3) {
+      if(!is.null(input$bracket7T)){
       if (bracket7T() < bracket6T()) {
         updateTextInput(session, "bracket7T",value=bracket6T())
-        
+
       }
-    #}
+      }
+    }
   })
 
   observe({
-    #if (input$extraBrackets>=4) {
+    if (input$extraBrackets>=4) {
+      if(!is.null(input$bracket8T)){
       if (bracket8T() < bracket7T()) {
         updateTextInput(session, "bracket8T",value=bracket7T())
-        
+
       }
-    #}
+      }
+    }
   })
 
 
   
-  observe({
-   
-      updateTextInput(session, "bracket5T",value=bracket5T())
-      
-  
-  })
+
 
   bracket1T <- reactive({
     as.numeric(input$bracket1T)
@@ -225,15 +324,19 @@ observe({
     as.numeric(input$bracket4T)
   })
   bracket5T <- reactive({
+    if(input$extraBrackets>=1)
     as.numeric(input$bracket5T)
   })
   bracket6T <- reactive({
+    if(input$extraBrackets>=2)
     as.numeric(input$bracket6T)
   })
   bracket7T <- reactive({
+    if(input$extraBrackets>=3)
     as.numeric(input$bracket7T)
   })
   bracket8T <- reactive({
+    if(input$extraBrackets>=4)
     as.numeric(input$bracket8T)
   })
 
@@ -250,15 +353,19 @@ observe({
     as.numeric(input$bracketV4T)
   })
   bracketVal5T <- reactive({
+    if(input$extraBrackets>=1)
     as.numeric(input$bracketV5T)
   })
   bracketVal6T <- reactive({
+    if(input$extraBrackets>=2)
     as.numeric(input$bracketV6T)
   })
   bracketVal7T <- reactive({
+    if(input$extraBrackets>=3)
     as.numeric(input$bracketV7T)
   })
   bracketVal8T <- reactive({
+    if(input$extraBrackets>=4)
     as.numeric(input$bracketV8T)
   })
 

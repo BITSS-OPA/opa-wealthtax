@@ -4,6 +4,8 @@ library(dplyr)
 library(ggplot2)
 ## template from here
 ## https://github.com/rstudio/shiny-examples/tree/master/051-movie-explorer
+
+##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
 ui <-
 
   fluidPage(
@@ -29,50 +31,9 @@ ui <-
             textInput("bracket4T", label = "Apply a tax of (%):", value = "3"),
 
 
-          #checkboxInput("extraBracket1", "Add a bracket?", value = F),
+          
 
-          conditionalPanel(
-            condition = "input.extraBrackets == 1",
-            textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 2",
-            textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 2",
-            textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 3",
-            textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 3",
-            textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 3",
-            textInput("bracket7T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracket5T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracket6T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracket7T", label = "Apply a tax of (%):", value = "3")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracket8T", label = "Apply a tax of (%):", value = "3")
-          )),
-
-        
+          uiOutput("myui")),
 
 
 
@@ -106,47 +67,7 @@ ui <-
          
 
          
-          conditionalPanel(
-            condition = "input.extraBrackets == 1",
-            textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 2",
-            textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 2",
-            textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 3",
-            textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 3",
-            textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 3",
-            textInput("bracketV7T", label = "to wealth above ($m):", value = "1700")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
-          ),
-          
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracketV7T", label = "to wealth above ($m):", value = "1700")
-          ),
-          conditionalPanel(
-            condition = "input.extraBrackets == 4",
-            textInput("bracketV8T", label = "to wealth above ($m):", value = "1900")
-          )
+            uiOutput("myui2")
           
         ),
         h6("Assisted by:"),
@@ -165,7 +86,7 @@ ui <-
 
       column(
         8,
-        ggvisOutput("plot2"),
+        #ggvisOutput("plot2"), ## comment out for now until ui is working
         # ggvisOutput("plotB"),
 
         h3("Total Taxes ($bn)"),
