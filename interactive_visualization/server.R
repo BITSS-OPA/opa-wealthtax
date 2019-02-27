@@ -388,7 +388,157 @@ if(val>val2)
     }
   })
 
-
+## don't let negative tax rates
+  observe({
+    if(bracket1T()<0){
+      updateTextInput(session, "bracket1T",value=0)
+      
+    }
+    
+  })
+  
+  observe({
+    if(bracket2T()<0){
+      updateTextInput(session, "bracket2T",value=0)
+      
+    }
+    
+  })
+  observe({
+    if(bracket3T()<0){
+      updateTextInput(session, "bracket3T",value=0)
+      
+    }
+    
+  })
+  
+  observe({
+    if(bracket4T()<0){
+      updateTextInput(session, "bracket4T",value=0)
+      
+    }
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=1) {
+      if(!is.null(input$bracket5T)){
+    if(bracket5T()<0){
+      updateTextInput(session, "bracket5T",value=0)
+      
+    }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=2) {
+      if(!is.null(input$bracket6T)){
+        if(bracket6T()<0){
+          updateTextInput(session, "bracket6T",value=0)
+          
+        }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=3) {
+      if(!is.null(input$bracket7T)){
+        if(bracket7T()<0){
+          updateTextInput(session, "bracket7T",value=0)
+          
+        }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=4) {
+      if(!is.null(input$bracket8T)){
+        if(bracket8T()<0){
+          updateTextInput(session, "bracket8T",value=0)
+          
+        }
+      }}
+    
+  })
+  
+  ## don't let  tax brackets go below 1 million
+  observe({
+    if(  bracketVal1T()<1){
+      updateTextInput(session, "bracketV1T",value=1)
+      
+    }
+    
+  })
+  
+  observe({
+    if(bracketVal2T()<1){
+      updateTextInput(session, "bracketV2T",value=1)
+      
+    }
+    
+  })
+  observe({
+    if(bracketVal3T()<1){
+      updateTextInput(session, "bracketV3T",value=1)
+      
+    }
+    
+  })
+  
+  observe({
+    if(bracketVal4T()<1){
+      updateTextInput(session, "bracketV4T",value=1)
+      
+    }
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=1) {
+      if(!is.null(input$bracketV5T)){
+        if(bracketVal5T()<1){
+          updateTextInput(session, "bracketV5T",value=1)
+          
+        }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=2) {
+      if(!is.null(input$bracketV6T)){
+        if(bracketVal6T()<1){
+          updateTextInput(session, "bracketV6T",value=1)
+          
+        }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=3) {
+      if(!is.null(input$bracketV7T)){
+        if(bracketVal7T()<1){
+          updateTextInput(session, "bracketV7T",value=1)
+          
+        }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=4) {
+      if(!is.null(input$bracketV8T)){
+        if(bracketVal8T()<1){
+          updateTextInput(session, "bracketV8T",value=1)
+          
+        }
+      }}
+    
+  })
   
 
 
