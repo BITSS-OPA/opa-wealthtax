@@ -639,10 +639,10 @@ if(val>val2)
     }
 
 
-    xval <- 10^seq(log10(10e6), log10(45e9), by = 0.001) ## get uniform on log scale
+    xval <- 10^seq(log10(1e6), log10(45e9), by = 0.001) ## get uniform on log scale
 
-
-    idx1 <- xval <= as.numeric(bracketVal2T()) * 1e6
+idx0 <- xval <= as.numeric(bracketVal1T())*1e6
+    idx1 <- xval <= as.numeric(bracketVal2T()) * 1e6 & xval > as.numeric(bracketVal1T())*1e6
     idx2 <- xval > as.numeric(bracketVal2T()) * 1e6 & xval <= as.numeric(bracketVal3T()) * 1e6
     idx3 <- xval > as.numeric(bracketVal3T()) * 1e6 & xval <= as.numeric(bracketVal4T()) * 1e6
 
@@ -670,7 +670,7 @@ if(val>val2)
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5)
     } else {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4)
+      idx <- cbind.data.frame(idx0,idx1, idx2, idx3, idx4)
     }
 
 
@@ -685,7 +685,7 @@ if(val>val2)
     toPlot <- cbind.data.frame(xval, getGroup)
 
 
-    toMatch <- cbind.data.frame(group = 1:length(taxRate), tax = taxRate)
+    toMatch <- cbind.data.frame(group = 1:(length(taxRate)+1), tax = c(0,taxRate))
 
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
@@ -704,6 +704,7 @@ if(val>val2)
     }
 
 
+    # unaffected by new grouping
     toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
 
     toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
