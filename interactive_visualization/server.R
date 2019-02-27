@@ -108,17 +108,18 @@ return(grid)
    perc=grid$gperc[which.min(abs(grid$thresNew-value*1e6))]
    return(round(100-perc,5))
  }
+ 
+ 
 
-  getTaxBasePerBracket <- function(grid, brackets) {
+
+  getTaxBasePerBracket <- function(grid, taxLevels,brackets) {
     ## brackets is lower end of each bracket
-    brackets <- c(brackets, 1e10 + 1e6) ## get last bracket
-    grid$total <- grid$nb * grid$avgNew
-    grid$group <- cut(grid$thresNew, brackets)
-    toReturn <- grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na() %>% complete(group, fill = list(taxBase = 0)) ## avoid dropping levels without any taxBase
+    #browser()
+   test =unlist(lapply(grid$avgNew,getAverageTax,taxLevels,brackets/1e6))
+    
 
-    # https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
 
-    return(toReturn)
+    return(sum(grid$nb*test))
   }
 
   getPeoplePerBracket <- function(grid, brackets) {
@@ -611,10 +612,9 @@ observe({
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T), 1e6 * as.numeric(input$bracketV6T),1e6 * as.numeric(input$bracketV7T),1e6 * as.numeric(input$bracketV8T))
       }
     
-    taxPerBracket <- getTaxBasePerBracket(updateGrid(), bracketStarts)
-    taxBase <- taxPerBracket$taxBase / 1e9 ## in billions
-    tax <- taxBase * taxRateP
-    totalTax <- sum(tax)
+    taxPerBracket <- getTaxBasePerBracket(updateGrid(), taxRate,bracketStarts)
+   
+taxPerBracket/1e9 ## in billions
   })
 
   output$totalTax <- renderText({
