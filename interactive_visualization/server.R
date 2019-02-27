@@ -377,19 +377,19 @@ observe({
 
     taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
 
-    if (input$extraBrackets==1) {
+    if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T))
     }
-    if (input$extraBrackets==2) {
+    if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T))
     }
-    if (input$extraBrackets==3) {
+    if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T))
     }
-    if (input$extraBrackets==4) {
+    if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T), as.numeric(input$bracket8T))
     }
-print(taxRate)
+
 
     xval <- 10^seq(log10(10e6), log10(45e9), by = 0.001) ## get uniform on log scale
 
@@ -398,25 +398,25 @@ print(taxRate)
     idx2 <- xval > as.numeric(bracketVal2T()) * 1e6 & xval <= as.numeric(bracketVal3T()) * 1e6
     idx3 <- xval > as.numeric(bracketVal3T()) * 1e6 & xval <= as.numeric(bracketVal4T()) * 1e6
 
-    if (input$extraBrackets==4) { ## since nested, test this one first
+    if (input$extraBrackets==4 & !is.null(input$bracket8T)) { ## since nested, test this one first
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
       idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
       idx6 <- xval > as.numeric(input$bracketV6T) * 1e6 & xval <= as.numeric(input$bracketV7T) * 1e6
       idx7 <- xval > as.numeric(input$bracketV7T) * 1e6 & xval <= as.numeric(input$bracketV8T) * 1e6
       idx8 <- xval > as.numeric(input$bracketV8T)
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7, idx8)
-    } else if (input$extraBrackets==3) {
+    } else if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
       idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
       idx6 <- xval > as.numeric(input$bracketV6T) * 1e6 & xval <= as.numeric(input$bracketV7T) * 1e6
       idx7 <- xval > as.numeric(input$bracketV7T) * 1e6
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
-    } else if (input$extraBrackets==2) {
+    } else if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
       idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
       idx6 <- xval > as.numeric(input$bracketV6T) * 1e6
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6)
-    } else if (input$extraBrackets==1) {
+    } else if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
       idx5 <- xval > as.numeric(input$bracketV5T) * 1e6
       idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5)
@@ -442,16 +442,16 @@ print(taxRate)
     toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
     brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
-    if (input$extraBrackets==1) {
+    if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
       brackets <- c(brackets, as.numeric(input$bracketV5T))
     }
-    if (input$extraBrackets==2) {
+    if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T))
     }
-    if (input$extraBrackets==3) {
+    if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T),as.numeric(input$bracketV7T))
     }
-    if (input$extraBrackets==4) {
+    if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T),as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
     }
 
@@ -535,30 +535,30 @@ print(taxRate)
   totalTax <- reactive({
     
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
-      if (input$extraBrackets==1) {
+      if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, input$bracket5T)
       }
-      if (input$extraBrackets==2) {
+      if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
         taxRate <- c(taxRate,  input$bracket5T, input$bracket6T)
       }
-      if (input$extraBrackets==3) {
+      if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
         taxRate <- c(taxRate, input$bracket5T, input$bracket6T, input$bracket7T)
       }
-      if (input$extraBrackets==4) {
+      if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
         taxRate <- c(taxRate, input$bracket5T, input$bracket6T, input$bracket7T, input$bracket8T)
       }
       taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
       bracketStarts <- 1e6 * as.numeric(c(input$bracketV1T, input$bracketV2T, input$bracketV3T, input$bracketV4T))
-      if (input$extraBrackets==1) {
+      if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T))
       }
-      if (input$extraBrackets==2) {
+      if (input$extraBrackets==2 &  !is.null(input$bracket6T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T), 1e6 * as.numeric(input$bracketV6T))
       }
-      if (input$extraBrackets==3) {
+      if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T), 1e6 * as.numeric(input$bracketV6T),1e6 * as.numeric(input$bracketV7T))
       }
-      if (input$extraBrackets==4) {
+      if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T), 1e6 * as.numeric(input$bracketV6T),1e6 * as.numeric(input$bracketV7T),1e6 * as.numeric(input$bracketV8T))
       }
     
@@ -581,31 +581,31 @@ print(taxRate)
   householdsTaxed <- reactive({
     
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
-      if (input$extraBrackets==1) {
+      if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, input$bracket5T)
       }
-      if (input$extraBrackets==2) {
+      if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
         taxRate <- c(taxRate, input$bracket5T, input$bracket6T)
       }
-      if (input$extraBrackets==3) {
+      if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
         taxRate <- c(taxRate, input$bracket5T, input$bracket6T, input$bracket7T)
       }
-      if (input$extraBrackets==4) {
+      if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
         taxRate <- c(taxRate, input$bracket5T, input$bracket6T, input$bracket7T,input$bracket8T)
       }
       taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
 
       bracketStarts <- 1e6 * as.numeric(c(input$bracketV1T, input$bracketV2T, input$bracketV3T, input$bracketV4T))
-      if (input$extraBrackets==1) {
+      if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T))
       }
-      if (input$extraBrackets==2) {
+      if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T),1e6 * as.numeric(input$bracketV6T))
       }
-      if (input$extraBrackets==3) {
+      if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T),1e6 * as.numeric(input$bracketV6T), 1e6 * as.numeric(input$bracketV7T))
       }
-      if (input$extraBrackets==4) {
+      if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
         bracketStarts <- c(bracketStarts, 1e6 * as.numeric(input$bracketV5T),1e6 * as.numeric(input$bracketV6T), 1e6 * as.numeric(input$bracketV7T), 1e6 * as.numeric(input$bracketV8T))
       }
     
@@ -639,16 +639,16 @@ print(taxRate)
   vis2 <- reactive({
     
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
-      if (input$extraBrackets==1) {
+      if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         taxRate <- c(taxRate, as.numeric(input$bracket5T))
       }
-      if (input$extraBrackets==2) {
+      if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
         taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T))
       }
-      if (input$extraBrackets==3) {
+      if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
         taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T),as.numeric(input$bracket7T))
       }
-      if (input$extraBrackets==4) {
+      if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
         taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T),as.numeric(input$bracket7T),as.numeric(input$bracket8T))
       }
 
@@ -660,17 +660,17 @@ print(taxRate)
       extra2b <- cbind.data.frame(x = rep(as.numeric(bracketVal3T()) * 1e6, 2), y = c(0, taxRate[3]))
       extra3 <- cbind.data.frame(x = rep(as.numeric(bracketVal4T()) * 1e6, 2), y = c(0, taxRate[3]))
       extra3b <- cbind.data.frame(x = rep(as.numeric(bracketVal4T()) * 1e6, 2), y = c(0, taxRate[4]))
-      if (input$extraBrackets==1) {
+      if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
         extra4 <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[4]))
         extra4b <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[5]))
       }
-      if (input$extraBrackets==2) {
+      if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
         extra4 <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[4]))
         extra4b <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[5]))
         extra5 <- cbind.data.frame(x = rep(as.numeric(input$bracketV6T) * 1e6, 2), y = c(0, taxRate[5]))
         extra5b <- cbind.data.frame(x = rep(as.numeric(input$bracketV6T) * 1e6, 2), y = c(0, taxRate[6]))
       }
-      if (input$extraBrackets==3) {
+      if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
         extra4 <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[4]))
         extra4b <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[5]))
         extra5 <- cbind.data.frame(x = rep(as.numeric(input$bracketV6T) * 1e6, 2), y = c(0, taxRate[5]))
@@ -678,7 +678,7 @@ print(taxRate)
         extra6 <- cbind.data.frame(x = rep(as.numeric(input$bracketV7T) * 1e6, 2), y = c(0, taxRate[6]))
         extra6b <- cbind.data.frame(x = rep(as.numeric(input$bracketV7T) * 1e6, 2), y = c(0, taxRate[7]))
       }
-      if (input$extraBrackets==4) {
+      if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
         extra4 <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[4]))
         extra4b <- cbind.data.frame(x = rep(as.numeric(input$bracketV5T) * 1e6, 2), y = c(0, taxRate[5]))
         extra5 <- cbind.data.frame(x = rep(as.numeric(input$bracketV6T) * 1e6, 2), y = c(0, taxRate[5]))
@@ -732,7 +732,7 @@ print(taxRate)
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
       set_options(width = 1000, height = 500)
-    if (input$extraBrackets==4) {
+    if (input$extraBrackets==4 & !is.null(input$bracket8T)) {
       plot %>%
         layer_paths(data = extra4, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra4b, ~ x / 1e6, ~y) %>%
@@ -742,7 +742,7 @@ print(taxRate)
         layer_paths(data = extra6b, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra7, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra7b, ~ x / 1e6, ~y)
-    } else if (input$extraBrackets==3) {
+    } else if (input$extraBrackets==3 & !is.null(input$bracket7T)) {
       plot %>%
         layer_paths(data = extra4, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra4b, ~ x / 1e6, ~y) %>%
@@ -750,13 +750,13 @@ print(taxRate)
         layer_paths(data = extra5b, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra6, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra6b, ~ x / 1e6, ~y)
-    } else if (input$extraBrackets==2) {
+    } else if (input$extraBrackets==2 & !is.null(input$bracket6T)) {
       plot %>%
         layer_paths(data = extra4, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra4b, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra5, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra5b, ~ x / 1e6, ~y)
-    } else if (input$extraBrackets==1) {
+    } else if (input$extraBrackets==1 & !is.null(input$bracket5T)) {
       plot %>%
         layer_paths(data = extra4, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra4b, ~ x / 1e6, ~y)
