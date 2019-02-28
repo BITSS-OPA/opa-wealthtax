@@ -96,8 +96,10 @@ server <- function(input, output, session) {
     }
   })
 
+
   grid <- read.csv("taxBaseGridUpdated.csv")
   
+  #Explain
  updateGrid <-reactive({
     grid$thresNew <- (1 - as.numeric(input$evasion)/100) * grid$thres 
     grid$avgNew <- (1-as.numeric(input$evasion)/100)*grid$avg
@@ -105,6 +107,7 @@ server <- function(input, output, session) {
 return(grid)
   })
  
+ #Explain
  getPercentile <- function(grid,value){
    perc=grid$gperc[which.min(abs(grid$thresNew-value*1e6))]
    return(round(100-perc,5))
@@ -115,7 +118,11 @@ return(grid)
     brackets <- c(brackets, 1e10 + 1e6) ## get last bracket
     grid$total <- grid$nb * grid$avgNew
     grid$group <- cut(grid$thresNew, brackets)
-    toReturn <- grid %>% group_by(group) %>% summarise(taxBase = sum(total)) %>% drop_na() %>% complete(group, fill = list(taxBase = 0)) ## avoid dropping levels without any taxBase
+    toReturn <- grid %>% 
+      group_by(group) %>% 
+      summarise(taxBase = sum(total)) %>% 
+      drop_na() %>% 
+      complete(group, fill = list(taxBase = 0)) ## avoid dropping levels without any taxBase
 
     # https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
 
@@ -126,7 +133,11 @@ return(grid)
     ## brackets is lower end of each bracket
     brackets <- c(brackets, 1e10 + 1e6) ## get last bracket
     grid$group <- cut(grid$thresNew, brackets, include.lowest = T)
-    toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na() %>% complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
+    toReturn <- grid %>% 
+      group_by(group) %>% 
+      summarise(totalPeople = sum(nb)) %>% 
+      drop_na() %>% 
+      complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
 
     # https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
 
@@ -469,7 +480,6 @@ observe({
     }
 
 
-
     # Indicator across income on tax bracke position
     getGroup <- unlist(apply(idx, 1, function(x) {
       which(x)[1]
@@ -499,16 +509,15 @@ observe({
     }
 
 
-    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
+    toPlot2$averageInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
 
-    toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
+    toPlot2$averageRate <- (toPlot2$averageInt / toPlot2$xval) * 100
 
 
     toPlot2$id <- 1:nrow(toPlot2)
 
     toPlot2
   })
-
 
   # Computes total tax revenue
   getAverageTax <- function(wealth, taxLevels, brackets) {
@@ -574,7 +583,7 @@ observe({
     }
     return(toReturn)
   }
-
+  # Explain
   totalTax <- reactive({
     req(input$bracket1T)
     req(input$bracket2T)
@@ -622,12 +631,14 @@ observe({
     round(totalTax())
   })
 
+  # Need to react to disctount rate
   output$totalTax_10 <- renderText({
     totalTax10 <- totalTax() * 13
 
     round(totalTax10 / 1e3, 2)
   })
 
+  #Explain 
   householdsTaxed <- reactive({
     req(input$bracket1T)
     req(input$bracket2T)
@@ -692,7 +703,7 @@ observe({
     round(taxUnits * 100, 2) ## get to percentage
   })
 
-
+#vis1?
   vis2 <- reactive({
     
     req(input$bracket1T)
@@ -767,7 +778,7 @@ observe({
 
       row <- data[data$id == x$id, ]
 
-      paste0("Average Tax Rate: ", round(row$marginalRate, 2), "%", " <br> Wealth ($m): ", round(row$xval / 1e6, 0),"<br> Top ",getPercentile(updateGrid(),row$xval / 1e6),"%", "<br> Taxes Paid ($m): ", round(row$marginalInt / 1e6, 2), sep = "") ## dividing by 1e6 may need to change if we do this for xval overall
+      paste0("Average Tax Rate: ", round(row$averageRate, 2), "%", " <br> Wealth ($m): ", round(row$xval / 1e6, 0),"<br> Top ",getPercentile(updateGrid(),row$xval / 1e6),"%", "<br> Taxes Paid ($m): ", round(row$averageInt / 1e6, 2), sep = "") ## dividing by 1e6 may need to change if we do this for xval overall
     }
 
     # plot <- dataInput()[, -ncol(dataInput())] %>%
@@ -794,9 +805,9 @@ observe({
     plot <- data[, -rmIdx] %>%
       ggvis(x = ~ xval / 1e6, y = ~tax) %>%
       layer_points() %>%
-      layer_points(data = data, x = ~ xval / 1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
+      layer_points(data = data, x = ~ xval / 1e6, y = ~averageRate, stroke := "red", key := ~id) %>%
       add_tooltip(showAvg, "hover") %>%
-      layer_lines(x = ~ xval / 1e6, y = ~marginalRate, stroke := "red") %>%
+      layer_lines(x = ~ xval / 1e6, y = ~averageRate, stroke := "red") %>%
       layer_paths(data = extra1, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
