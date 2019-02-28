@@ -46,6 +46,8 @@ ui <-
         h6("Interactive Visualization by:"),
         tags$a(href = "https://sastoudt.github.io", "Sara Stoudt"),
         h6(""),
+        h6("This visualization is part of an Open Policy Analysis which follows the guidelines of the Berkeley Initiative for Transparency in the Social Sciences."),
+h6("See all the collaborators here, and become one!"),
         tags$a(href = "https://github.com/fhoces/opa-wealthtax", "Open Policy Analysis by"),
         h6(""),
         tags$a(href = "https://fhoces.github.io/", "Fernando Hoces de la Guardia")
@@ -78,11 +80,9 @@ ui <-
         h6("and Clancy Green,"),
 
         h6("Deployment help by:"),
-        h6("Akcan Balkir,"),
-        h6("Lindsey Heagy,"),
-        h6("Chris Holdgraf, and"),
-        h6("Yuvi Panda"),
-
+        h6("Akcan Balkir"),
+        h6("and the Binder Team"),
+        
         tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
       ),
 
