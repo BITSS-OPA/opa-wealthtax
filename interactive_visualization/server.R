@@ -250,8 +250,10 @@ observe({
     val <- bracketVal1T()
     # val2 <- bracketVal2() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV2T)
-    if(val>val2)
-    updateTextInput(session, "bracketV2T",value=val+10)
+    if(is.na(val2) | is.na(val)){
+      
+    }else if(val>val2)
+      updateTextInput(session, "bracketV2T",value=val+10)
     
   })
 
@@ -259,7 +261,9 @@ observe({
     val <- bracketVal2T()
     # val2 <- bracketVal3() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV3T)
-if(val>val2)
+    if(is.na(val2) | is.na(val)){
+      
+    }else if(val>val2)
     updateTextInput(session, "bracketV3T",value=val+10)
     
   })
@@ -268,7 +272,9 @@ if(val>val2)
     val <- bracketVal3T()
     # val2 <- bracketVal4() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV4T)
-if(val>val2)
+    if(is.na(val2) | is.na(val)){
+      
+    }else if(val>val2)
     updateTextInput(session, "bracketV4T",value=val+10)
     
   })
@@ -279,8 +285,11 @@ if(val>val2)
 
       val <- bracketVal4T()
       val2 <- as.numeric(input$bracketV5T)
-if(val>val2)
-      updateTextInput(session, "bracketV5T",value=val+10)
+      if(is.na(val2) | is.na(val)){
+        
+      }else if(val>val2)
+        updateTextInput(session, "bracketV5T",value=val+10)
+      
     }
       
     #}
@@ -291,8 +300,11 @@ if(val>val2)
     if(!is.null(input$bracketV5T) & !is.null(input$bracketV6T)){
       val <- as.numeric(bracketVal5T())
       val2 <- as.numeric(input$bracketV6T)
-if(val>val2)
+      if(is.na(val2) | is.na(val)){
+        
+      }else if(val>val2)
       updateTextInput(session, "bracketV6T",value=val+10)
+    
     }
    # }
   })
@@ -303,8 +315,10 @@ if(val>val2)
       
       val <- as.numeric(bracketVal6T())
       val2 <- as.numeric(input$bracketV7T)
-if(val>val2)
-      updateTextInput(session, "bracketV7T",value=val+10)
+      if(is.na(val2) | is.na(val)){
+        
+      }else if(val>val2)
+        updateTextInput(session, "bracketV7T",value=val+10)
     }
     #}
   })
@@ -315,8 +329,10 @@ if(val>val2)
       
       val <- as.numeric(bracketVal7T())
       val2 <- as.numeric(input$bracketV8T)
-if(val>val2)
-      updateTextInput(session, "bracketV8T",value=val+10)
+      if(is.na(val2) | is.na(val)){
+        
+      }else if(val>val2)
+        updateTextInput(session, "bracketV8T",value=val+10)
     }
     #}
   })
@@ -876,8 +892,13 @@ taxPerBracket/1e9 ## in billions
     
     peoplePerBracket <- getPeoplePerBracket(updateGrid(), bracketStarts)
     numberTaxpayers <- peoplePerBracket$totalPeople
+  if(length(numberTaxpayers)!=length(taxRateP)){
+    return(NA)
+  }else{
     householdsTaxed <- numberTaxpayers * (taxRateP > 0)
-    householdsTaxed
+    
+    return(householdsTaxed)
+  }
   })
 
   output$totalTaxpayers <- renderText({
