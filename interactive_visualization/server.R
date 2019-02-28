@@ -405,6 +405,22 @@ observe({
       }
     }
   })
+  
+  observe({
+    if(input$evasion!=""){
+    if(as.numeric(input$evasion)<0){
+      updateTextInput(session, "evasion", value = "0")
+    }
+    }
+  })
+  
+  observe({
+    if(input$evasion!=""){
+    if(as.numeric(input$evasion)>50){
+      updateTextInput(session, "evasion", value = "50")
+    }
+    }
+  })
 
 ## don't let negative tax rates
   observe({
