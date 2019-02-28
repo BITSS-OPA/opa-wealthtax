@@ -671,22 +671,22 @@ idx0 <- xval <= as.numeric(bracketVal1T())*1e6
       idx6 <- xval > as.numeric(input$bracketV6T) * 1e6 & xval <= as.numeric(input$bracketV7T) * 1e6
       idx7 <- xval > as.numeric(input$bracketV7T) * 1e6 & xval <= as.numeric(input$bracketV8T) * 1e6
       idx8 <- xval > as.numeric(input$bracketV8T)
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7, idx8)
+      idx <- cbind.data.frame(idx0,idx1, idx2, idx3, idx4, idx5, idx6, idx7, idx8)
     } else if (input$extraBrackets==7 & !is.null(input$bracket7T)) {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
       idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
       idx6 <- xval > as.numeric(input$bracketV6T) * 1e6 & xval <= as.numeric(input$bracketV7T) * 1e6
       idx7 <- xval > as.numeric(input$bracketV7T) * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6, idx7)
+      idx <- cbind.data.frame(idx0,idx1, idx2, idx3, idx4, idx5, idx6, idx7)
     } else if (input$extraBrackets==6 & !is.null(input$bracket6T)) {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
       idx5 <- xval > as.numeric(input$bracketV5T) * 1e6 & xval <= as.numeric(input$bracketV6T) * 1e6
       idx6 <- xval > as.numeric(input$bracketV6T) * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5, idx6)
+      idx <- cbind.data.frame(idx0,idx1, idx2, idx3, idx4, idx5, idx6)
     } else if (input$extraBrackets==5 & !is.null(input$bracket5T)) {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6 & xval <= as.numeric(input$bracketV5T) * 1e6
       idx5 <- xval > as.numeric(input$bracketV5T) * 1e6
-      idx <- cbind.data.frame(idx1, idx2, idx3, idx4, idx5)
+      idx <- cbind.data.frame(idx0,idx1, idx2, idx3, idx4, idx5)
     } else {
       idx4 <- xval > as.numeric(bracketVal4T()) * 1e6
       idx <- cbind.data.frame(idx0,idx1, idx2, idx3, idx4)
