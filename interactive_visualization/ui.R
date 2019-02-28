@@ -14,7 +14,8 @@ ui <-
     #radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
     numericInput("extraBrackets", "Number of Brackets", 5, min = 4, max = 8),
     textInput("evasion", label = "Tax Evasion (%)", value = "16"),
- 
+    #hidden( numericInput( inputId = 'refresh_helper', value = 0,label="" ) ),
+    
     actionButton("reset", "Reset"),
     actionButton("submit", "Recalculate"),
     fluidRow(
@@ -46,8 +47,11 @@ ui <-
         h6("Interactive Visualization by:"),
         tags$a(href = "https://sastoudt.github.io", "Sara Stoudt"),
         h6(""),
-        h6("This visualization is part of an Open Policy Analysis which follows the guidelines of the Berkeley Initiative for Transparency in the Social Sciences."),
-h6("See all the collaborators here, and become one!")
+        h6("This visualization is part of an Open Policy Analysis which follows the guidelines of the"),
+tags$a(href="https://www.bitss.org/opa/","Berkeley Initiative for Transparency in the Social Sciences."),
+h6(""),
+tags$a(href="https://github.com/fhoces/opa-wealthtax/blob/master/credits.md", "See all the collaborators here.")#,
+
       ),
       column(
         2,

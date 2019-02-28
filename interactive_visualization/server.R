@@ -246,14 +246,18 @@ observe({
 
 
   ### update tax brackets based on previous decisions
-  observe({
+  #observeEvent(input$submit,priority=1,{
+observe({
     val <- bracketVal1T()
     # val2 <- bracketVal2() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV2T)
     if(is.na(val2) | is.na(val)){
       
-    }else if(val>val2)
+    }else if(val>val2){
       updateTextInput(session, "bracketV2T",value=val+10)
+    }
+    #updateNumericInput( session = session, inputId = 'refresh_helper', value = input$refresh_helper + 1 )
+    
     
   })
 
@@ -1014,7 +1018,7 @@ taxPerBracket/1e9 ## in billions
 #https://github.com/rstudio/shiny/issues/1125
   vis2 <- eventReactive(input$submit,ignoreNULL = FALSE,{
     #reactive({
-    
+
     req(input$bracket1T)
     req(input$bracket2T)
     req(input$bracket3T)
