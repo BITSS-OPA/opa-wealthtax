@@ -47,10 +47,7 @@ ui <-
         tags$a(href = "https://sastoudt.github.io", "Sara Stoudt"),
         h6(""),
         h6("This visualization is part of an Open Policy Analysis which follows the guidelines of the Berkeley Initiative for Transparency in the Social Sciences."),
-h6("See all the collaborators here, and become one!"),
-        tags$a(href = "https://github.com/fhoces/opa-wealthtax", "Open Policy Analysis by"),
-        h6(""),
-        tags$a(href = "https://fhoces.github.io/", "Fernando Hoces de la Guardia")
+h6("See all the collaborators here, and become one!")
       ),
       column(
         2,
