@@ -82,8 +82,9 @@ tags$a(href="https://github.com/fhoces/opa-wealthtax/blob/master/credits.md", "S
 
         h6("Deployment help by:"),
         h6("Akcan Balkir"),
-        h6("and the Binder Team"),
-        
+        tags$a(href="https://mybinder.readthedocs.io/en/latest/", "and the Binder Team"),
+ 
+        h6(""),
         tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
       ),
 
