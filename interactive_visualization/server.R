@@ -498,11 +498,19 @@ observe({
     
   })
   
-  ## don't let  tax brackets go below 1 million
+  ## don't let  tax brackets go below 1 million or above max wealth after evasion
   observe({
     if(  bracketVal1T()<1){
       updateTextInput(session, "bracketV1T",value=1)
       
+    }
+    
+  })
+  
+  observe({
+    if(  bracketVal1T()>max( updateGrid()$thresNew)/1e6){
+      updateTextInput(session, "bracketV1T",value=round(max(updateGrid()$thresNew)/1e6,0))
+      print(max(updateGrid()$thresNew))
     }
     
   })
@@ -513,11 +521,27 @@ observe({
       
     }
     
+    observe({
+      if(  bracketVal2T()>max( updateGrid()$thresNew)/1e6){
+        updateTextInput(session, "bracketV2T",value=round(max(updateGrid()$thresNew)/1e6,0))
+        print(max(updateGrid()$thresNew))
+      }
+      
+    })
+    
   })
   observe({
     if(bracketVal3T()<1){
       updateTextInput(session, "bracketV3T",value=1)
       
+    }
+    
+  })
+  
+  observe({
+    if(  bracketVal3T()>max( updateGrid()$thresNew)/1e6){
+      updateTextInput(session, "bracketV3T",value=round(max(updateGrid()$thresNew)/1e6,0))
+      print(max(updateGrid()$thresNew))
     }
     
   })
@@ -531,10 +555,29 @@ observe({
   })
   
   observe({
+    if(  bracketVal4T()>max( updateGrid()$thresNew)/1e6){
+      updateTextInput(session, "bracketV4T",value=round(max(updateGrid()$thresNew)/1e6,0))
+     # print(max(updateGrid()$thresNew))
+    }
+    
+  })
+  
+  observe({
     if (input$extraBrackets>=5) {
       if(!is.null(input$bracketV5T)){
         if(bracketVal5T()<1){
           updateTextInput(session, "bracketV5T",value=1)
+          
+        }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=5) {
+      if(!is.null(input$bracketV5T)){
+        if(bracketVal5T()>max( updateGrid()$thresNew)/1e6){
+          updateTextInput(session, "bracketV5T",value=round(max(updateGrid()$thresNew)/1e6,0))
           
         }
       }}
@@ -553,10 +596,32 @@ observe({
   })
   
   observe({
+    if (input$extraBrackets>=6) {
+      if(!is.null(input$bracketV6T)){
+        if(bracketVal6T()>max( updateGrid()$thresNew)/1e6){
+          updateTextInput(session, "bracketV6T",value=round(max(updateGrid()$thresNew)/1e6,0))
+          
+        }
+      }}
+    
+  })
+  
+  observe({
     if (input$extraBrackets>=7) {
       if(!is.null(input$bracketV7T)){
         if(bracketVal7T()<1){
           updateTextInput(session, "bracketV7T",value=1)
+          
+        }
+      }}
+    
+  })
+  
+  observe({
+    if (input$extraBrackets>=7) {
+      if(!is.null(input$bracketV7T)){
+        if(bracketVal7T()>max( updateGrid()$thresNew)/1e6){
+          updateTextInput(session, "bracketV7T",value=round(max(updateGrid()$thresNew)/1e6,0))
           
         }
       }}
@@ -574,7 +639,16 @@ observe({
     
   })
   
-
+  observe({
+    if (input$extraBrackets>=8) {
+      if(!is.null(input$bracketV8T)){
+        if(bracketVal8T()>max( updateGrid()$thresNew)/1e6){
+          updateTextInput(session, "bracketV8T",value=round(max(updateGrid()$thresNew)/1e6,0))
+          
+        }
+      }}
+    
+  })
 
   bracket1T <- reactive({
     req(input$bracket1T)
