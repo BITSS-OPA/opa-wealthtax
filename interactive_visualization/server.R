@@ -100,7 +100,8 @@ server <- function(input, output, session) {
   
  updateGrid <-reactive({
     grid$thresNew <- (1 - as.numeric(input$evasion)/100) * grid$thres 
-    grid$avgNew <- (1-as.numeric(input$evasion)/100)*grid$avg ## 
+    grid$avgNew <- (1-as.numeric(input$evasion)/100)*grid$avg
+    ## 
 return(grid)
   })
  
