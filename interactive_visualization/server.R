@@ -260,8 +260,8 @@ observe({
 
 
   ### update tax brackets based on previous decisions
-  #observeEvent(input$submit,priority=1,{
-observe({
+  observeEvent(input$submit,{
+#observe({
     val <- bracketVal1T()
     # val2 <- bracketVal2() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV2T)
@@ -269,13 +269,14 @@ observe({
       
     }else if(val>val2){
       updateTextInput(session, "bracketV2T",value=val+10)
+      click("submit") 
     }
     #updateNumericInput( session = session, inputId = 'refresh_helper', value = input$refresh_helper + 1 )
     
     
   })
 
-  observe({
+  observeEvent(input$submit,{
     val <- bracketVal2T()
     # val2 <- bracketVal3() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV3T)
@@ -283,10 +284,10 @@ observe({
       
     }else if(val>val2)
     updateTextInput(session, "bracketV3T",value=val+10)
-    
+    click("submit")
   })
 
-  observe({
+  observeEvent(input$submit,{
     val <- bracketVal3T()
     # val2 <- bracketVal4() ## avoid switching back and forth
     val2 <- as.numeric(input$bracketV4T)
@@ -294,10 +295,10 @@ observe({
       
     }else if(val>val2)
     updateTextInput(session, "bracketV4T",value=val+10)
-    
+    click("submit")
   })
 
-  observe({
+  observeEvent(input$submit,{
     if (input$extraBrackets>=5) {  
       req(input$bracketV5T)
     if(!is.null(input$bracketV5T) ){
@@ -308,13 +309,13 @@ observe({
         
       }else if(val>val2)
         updateTextInput(session, "bracketV5T",value=val+10)
-      
+      click("submit")
     }
       
     }
   })
 
-  observe({
+  observeEvent(input$submit,{
     if (input$extraBrackets>=6) {
       req(input$bracketV6T)
     if(!is.null(input$bracketV5T) & !is.null(input$bracketV6T)){
@@ -324,12 +325,12 @@ observe({
         
       }else if(val>val2)
       updateTextInput(session, "bracketV6T",value=val+10)
-    
+    click("submit")
     }
     }
   })
 
-  observe({
+  observeEvent(input$submit,{
     if (input$extraBrackets>=7) {
       req(input$bracketV7T)
     if(!is.null(input$bracketV6T) & !is.null(input$bracketV7T)){
@@ -340,11 +341,12 @@ observe({
         
       }else if(val>val2)
         updateTextInput(session, "bracketV7T",value=val+10)
+      click("submit")
     }
     }
   })
 
-  observe({
+  observeEvent(input$submit,{
   if (input$extraBrackets>=8) {
     req(input$bracketV8T)
     if(!is.null(input$bracketV7T) & !is.null(input$bracketV8T)){
@@ -355,6 +357,7 @@ observe({
         
       }else if(val>val2)
         updateTextInput(session, "bracketV8T",value=val+10)
+      click("submit")
     }
     }
   })
