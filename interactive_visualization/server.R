@@ -158,34 +158,38 @@ observe({
 
 observe({
   if(input$extraBrackets>=5){
-    if(!is.null(input$bracketV5T)){
+    req(input$bracketV5T)
+    #if(!is.null(input$bracketV5T)){
   updateTextInput(session, "bracketV5T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal5T()),"%'s wealth above ($m):",sep=""),value=bracketVal5T())
     }
-  }
+ # }
 })
 
 observe({
   if(input$extraBrackets>=6){
-    if(!is.null(input$bracketV6T)){
+    #if(!is.null(input$bracketV6T)){
+    req(input$bracketV6T)
   updateTextInput(session, "bracketV6T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal6T()),"%'s wealth above ($m):",sep=""),value=bracketVal6T())
-    }
+   # }
   }
 })
 
 observe({
   if(input$extraBrackets>=7){
-    if(!is.null(input$bracketV7T)){
+    #if(!is.null(input$bracketV7T)){
+    req(input$bracketV7T)
   updateTextInput(session, "bracketV7T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal7T()),"%'s wealth above ($m):",sep=""),value=bracketVal7T())
     }
-  }
+  #}
 })
 
 observe({
   if(input$extraBrackets>=8){
-    if(!is.null(input$bracketV8T)){
+    #if(!is.null(input$bracketV8T)){
+    req(input$bracketV8T)
   updateTextInput(session, "bracketV8T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal8T()),"%'s wealth above ($m):",sep=""),value=bracketVal8T())
     }
-  }
+ # }
 })
 
 ## avoid matching
