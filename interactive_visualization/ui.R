@@ -12,7 +12,7 @@ ui <-
     useShinyjs(),
     titlePanel("Wealth Tax Explorer"),
     #radioButtons("interface", "What interface do you prefer?", c("Sliders" = 1, "Manual Input" = 2), selected = 1),
-    numericInput("extraBrackets", "Number of Brackets", 5, min = 4, max = 8),
+    numericInput("extraBrackets", "Number of Brackets", 4, min = 4, max = 8),
     textInput("evasion", label = "Tax Evasion (%)", value = "16"),
     #hidden( numericInput( inputId = 'refresh_helper', value = 0,label="" ) ),
     
