@@ -22,8 +22,10 @@ server <- function(input, output, session) {
     # reset("bracketV6T")
     # reset("bracketV7T")
     # reset("bracketV8T")
-    
-  
+    #print(input$submit)
+  #click("submit") ## doesn't work
+  #invalidateLater(5)
+  #print(input$submit)
   })
   
   ##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
@@ -1030,6 +1032,11 @@ taxPerBracket/1e9 ## in billions
 
     round(taxUnits * 100, 2) ## get to percentage
   })
+  
+  #https://stackoverflow.com/questions/34731975/how-to-listen-for-more-than-one-event-expression-within-a-shiny-eventreactive-ha
+  xxchange <- reactive({
+    paste(input$submit, input$reset)
+  }) ## doesn't work
 
 #https://github.com/rstudio/shiny/issues/1125
   vis2 <- eventReactive(input$submit,ignoreNULL = FALSE,{

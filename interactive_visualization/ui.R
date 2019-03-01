@@ -16,8 +16,8 @@ ui <-
     textInput("evasion", label = "Tax Evasion (%)", value = "16"),
     #hidden( numericInput( inputId = 'refresh_helper', value = 0,label="" ) ),
     
-    actionButton("reset", "Reset"),
-    actionButton("submit", "Recalculate"),
+    actionButton("reset", "Reset Values"),
+    actionButton("submit", "Update Plot"),
     fluidRow(
       column(
         2,
