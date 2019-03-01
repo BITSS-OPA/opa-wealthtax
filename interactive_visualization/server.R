@@ -23,7 +23,7 @@ server <- function(input, output, session) {
     # reset("bracketV7T")
     # reset("bracketV8T")
     #print(input$submit)
-  #click("submit") ## doesn't work
+  click("submit") ## doesn't work
   #invalidateLater(5)
   #print(input$submit)
   })
