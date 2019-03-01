@@ -859,11 +859,45 @@ taxPerBracket/1e9 ## in billions
   #   round(householdsAffected * 100, 1) ## get to percentage
   # })
 
+  ## fix
   output$percentTaxUnits <- renderText({
-    taxUnits <- sum(householdsTaxed()) / sum(updateGrid()$nb)
-    ## double check
-
-    round(taxUnits * 100, 2) ## get to percentage
+    taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
+    
+    if (input$extraBrackets==5 & !is.null(input$bracket5T)) {
+      taxRate <- c(taxRate, as.numeric(input$bracket5T))
+    }
+    if (input$extraBrackets==6 & !is.null(input$bracket6T)) {
+      taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T))
+    }
+    if (input$extraBrackets==7 & !is.null(input$bracket7T)) {
+      taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T))
+    }
+    if (input$extraBrackets==8 & !is.null(input$bracket8T)) {
+      taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T), as.numeric(input$bracket8T))
+    }
+    
+    brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+    if (input$extraBrackets==5 & !is.null(input$bracket5T)) {
+      brackets <- c(brackets, as.numeric(input$bracketV5T))
+    }
+    if (input$extraBrackets==6 & !is.null(input$bracket6T)) {
+      brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T))
+    }
+    if (input$extraBrackets==7 & !is.null(input$bracket7T)) {
+      brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T),as.numeric(input$bracketV7T))
+    }
+    if (input$extraBrackets==8 & !is.null(input$bracket8T)) {
+      brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T),as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
+    }
+    
+    reorderIdx=order(as.numeric(brackets))
+    brackets = brackets[reorderIdx]
+    taxRate=taxRate[reorderIdx]
+    
+    
+    
+    getPercentile(updateGrid(),brackets[which(taxRate>0)[1]])
+    
   })
 
 #https://github.com/rstudio/shiny/issues/1125
