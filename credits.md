@@ -19,6 +19,4 @@
 
 ### Deployment help by:  
  - Akcan Balkir
- - Lindsey Heagy
- - Chris Holdgraf
- - Yuvi Panda
+ - [Binder Team](https://mybinder.readthedocs.io/en/latest/)
