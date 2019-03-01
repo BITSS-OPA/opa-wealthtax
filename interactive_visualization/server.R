@@ -2,6 +2,7 @@
 server <- function(input, output, session) {
   
   observeEvent(input$reset,{
+    click("submit")
     reset("extraBrackets")
     reset("evasion")
     reset("bracket1T")
@@ -23,7 +24,7 @@ server <- function(input, output, session) {
     # reset("bracketV7T")
     # reset("bracketV8T")
     
-  
+
   })
   
   ##https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
