@@ -327,12 +327,18 @@ df_scf1 <- df_scf %>% mutate("networth" = networth * ( 94 - f400tot ) / totw,
 # use hweal id dweght married using $root/SaezZucman2014/usdina/output/dinafiles/usdina$yr.dta, clear 
 # save "$root/bookwebsite/wealthtaxsim/data/usdina$yr.dta"
 
-df_dina <- read_dta("rawdata/materials/usdina2019.dta")
-df_dina <- df_dina %>% 
-  group_by(id) %>% 
-  summarise("networth" = sum(hweal), 
-            "weight" = mean(dweght) / 1e5 )
 
+####### This section uses data that cannot be shared for confidentiality reasons
+####### Below is the code used to aggregate the data. 
+####### To obtain this data please contact ...
+####### The file that you will obtain should have the following signature:
+####### ...
+df_dina_first <- read_dta("rawdata/materials/usdina2019.dta")
+df_dina <- df_dina_first %>% 
+  group_by(id) %>% 
+  summarise("networth" = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
+            "weight" = mean(dweght)/1e5) 
+  
 totw_dina <- sum(df_dina$networth * df_dina$weight) / 1e12
 cat("TOTAL DINA NETWORTH 2019  (Tr) ", totw_dina)
 
@@ -340,37 +346,56 @@ totn_dina <- sum(df_dina$weight)
 
 df_dina$data <- "DINA"
 
-df_dina <- df_dina %>% 
-  arrange(desc(networth)) 
-
-#AQUI VOY
-df_dina1 <- df_dina %>%
-  mutate("aux_id" = floor((1:dim(df_dina)[1] + 3) / 5)) %>% 
-  group_by(aux_id) %>% 
+# Aggregate info to protect confidentiality
+df_dina1 <- df_dina %>% 
+  mutate("aux_id" = 1:dim(df_dina)[1]) %>% 
+  arrange(desc(networth),aux_id) %>% 
+  mutate("group" = floor((1:dim(df_dina)[1] + 3) / 5)) %>% 
+  group_by(group) %>% 
   summarise("weight" = sum(weight),
-            "networth" = mean(networth)) %>% View() 
+            "networth" = mean(networth)) %>% 
   mutate("data" = "DINA") %>% 
   select("data", "networth", "weight")
+write.csv(df_dina1, "dina.csv")
 
+#### End of confidential section
+
+# Combine three data sources
 df <- rbind(df_forbes1, df_scf1, df_dina1)
 
 df$weight <- with(df, ifelse(data=="SCF" | data=="DINA", 
                                round(weight/2), weight) )
-df %>% 
-  summarise( mean(weight), sd(weight) )
+df <- df %>% filter( !(networth > forbesmin & ( data == "SCF" | data == "DINA" ) ) )
 
-# replace weight=round(weight/2) if data=="SCF" | data=="DINA"
-# drop if networth > `forbesmin' & (data=="SCF" | data=="DINA")
-# sum networth [w=weight]
-# display r(sum)*1e-12
-# sum networth [w=weight] if networth>=1e+9
-# display r(sum)*1e-12
-# gsort -networth
+df %>% 
+  summarise( mean(networth), sd(networth) ) 
+
+total_wealth <- df %>% 
+  summarise(sum(networth * weight) / 1e12) %>% 
+  as.numeric()
+billio_wealth <- df %>% 
+  filter(networth >= 1e9) %>% 
+  summarise(sum(networth * weight) / 1e12) %>% 
+  as.numeric()
+
+cat("Total wealth (in trillions) is ", total_wealth, ". Wealth for billionares total wealth is ", billio_wealth) 
+
+# Very small differences with stata output (but it should be zero differences!)
+# wealth <- read_dta("~/Downloads/wealthtaxsim/data/wealth.dta")
+# diff_aux <- abs( df$networth -  wealth$networth )
+# summary(abs(diff_aux))
+#     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+#    0.000    0.000    0.008    0.928    0.174 3328.000 
+
+
 # save $datawork/wealth.dta, replace
 
-
+# Add stata call
+# 
 
 ######
+
+
 
 
 
@@ -473,16 +498,13 @@ toPlot2$id <- 1:nrow(toPlot2)
 #browser()
 #View(toPlot2)
 
-
 #sapply( toPlot2$xval, function(x) getTaxRevenue(wealth_var = x, taxrates_var = tax_rates_po, brackets_var = brackets_po) )
  
-
 ##########
 ##########
 
 #taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
 taxRate <- tax_rates_po *100
-
 
 # These are mini data set that ggvis needs to create vertical lines
 extra0 <- cbind.data.frame(x = rep(10e6, 2), y = c(0, taxRate[1]))
