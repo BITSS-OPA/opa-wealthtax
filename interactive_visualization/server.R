@@ -137,6 +137,7 @@ return(grid)
 
 
   #https://github.com/rstudio/shiny/issues/1140
+  # update percentile
 observe({
   updateTextInput(session, "bracketV1T",label =paste("to the top ",getPercentile(updateGrid(),bracketVal1T()),"%'s wealth above ($m):",sep="") )
 })
@@ -185,7 +186,7 @@ observe({
   }
 })
 
-
+## avoid matching
 observe({
   if(bracketVal1T()==bracketVal2T()){
     updateTextInput(session, "bracketV2T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal1T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal1T()+10)
@@ -211,6 +212,7 @@ observe({
 ## need an extra layer of protection here
 observe({
   if(input$extraBrackets>=5){
+    req(input$bracketV5T)
   if(!is.null(input$bracketV5T) & bracketVal4T()==bracketVal5T()){
     updateTextInput(session, "bracketV5T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal4T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal4T()+10)
   }
@@ -219,14 +221,20 @@ observe({
 
 observe({
   if(input$extraBrackets>=6){
-  if(!is.null(input$bracketV6T) & bracketVal5T()==bracketVal6T()){
-    updateTextInput(session, "bracketV6T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal5T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal5T()+10)
+    #req(input$bracketV5T)
+    req(input$bracketV6T)
+    
+  if(!is.null(input$bracketV6T) & as.numeric(input$bracketV5T)==as.numeric(input$bracketV6T)){
+    updateTextInput(session, "bracketV6T",label = paste("to the top ",getPercentile(updateGrid(),as.numeric(input$bracketV5T)+10),"%'s wealth above ($m):",sep=""),value=as.numeric(input$bracketV5T)+10)
   }
   }
 })
 
 observe({
   if(input$extraBrackets>=7){
+    #req(input$bracketV5T)
+    #req(input$bracketV6T)
+    req(input$bracketV7T)
   if(!is.null(input$bracketV7T) & bracketVal6T()==bracketVal7T()){
     updateTextInput(session, "bracketV7T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal6T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal6T()+10)
   }
@@ -234,7 +242,11 @@ observe({
 })
 
 observe({
-  if(input$extraBrackets>=8){
+  if(input$extraBrackets==8){
+    #req(input$bracketV5T)
+    #req(input$bracketV6T)
+    #req(input$bracketV7T)
+    req(input$bracketV8T)
   if(!is.null(input$bracketV8T) & bracketVal7T()==bracketVal8T()){
     updateTextInput(session, "bracketV8T",label = paste("to the top ",getPercentile(updateGrid(),bracketVal7T()+10),"%'s wealth above ($m):",sep=""),value=bracketVal7T()+10)
   }
