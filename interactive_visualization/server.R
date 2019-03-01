@@ -296,7 +296,8 @@ observe({
   })
 
   observe({
-    #if (input$extraBrackets>=1) {    
+    if (input$extraBrackets>=5) {  
+      req(input$bracketV5T)
     if(!is.null(input$bracketV5T) ){
 
       val <- bracketVal4T()
@@ -308,11 +309,12 @@ observe({
       
     }
       
-    #}
+    }
   })
 
   observe({
-    #if (input$extraBrackets>=2) {
+    if (input$extraBrackets>=6) {
+      req(input$bracketV6T)
     if(!is.null(input$bracketV5T) & !is.null(input$bracketV6T)){
       val <- as.numeric(bracketVal5T())
       val2 <- as.numeric(input$bracketV6T)
@@ -322,11 +324,12 @@ observe({
       updateTextInput(session, "bracketV6T",value=val+10)
     
     }
-   # }
+    }
   })
 
   observe({
-    #if (input$extraBrackets>=3) {
+    if (input$extraBrackets>=7) {
+      req(input$bracketV7T)
     if(!is.null(input$bracketV6T) & !is.null(input$bracketV7T)){
       
       val <- as.numeric(bracketVal6T())
@@ -336,11 +339,12 @@ observe({
       }else if(val>val2)
         updateTextInput(session, "bracketV7T",value=val+10)
     }
-    #}
+    }
   })
 
   observe({
-    #if (input$extraBrackets>=4) {
+  if (input$extraBrackets>=8) {
+    req(input$bracketV8T)
     if(!is.null(input$bracketV7T) & !is.null(input$bracketV8T)){
       
       val <- as.numeric(bracketVal7T())
@@ -350,7 +354,7 @@ observe({
       }else if(val>val2)
         updateTextInput(session, "bracketV8T",value=val+10)
     }
-    #}
+    }
   })
 
   ###
