@@ -174,10 +174,28 @@ server <- function(input, output, session) {
       updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal1T() + 10)
     }
   })
+  
+  observe({
+    if (bracketVal1T() == bracketVal3T()) {
+      updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal1T() + 10)
+    }
+  })
+  
+  observe({
+    if (bracketVal1T() == bracketVal4T()) {
+      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal1T() + 10)
+    }
+  })
 
   observe({
     if (bracketVal2T() == bracketVal3T()) {
       updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal2T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal2T() + 10)
+    }
+  })
+  
+  observe({
+    if (bracketVal2T() == bracketVal4T()) {
+      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal2T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal2T() + 10)
     }
   })
 
@@ -194,6 +212,30 @@ server <- function(input, output, session) {
       }
     }
   })
+  
+  observe({
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T) & bracketVal3T() == bracketVal5T()) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal3T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal3T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T) & bracketVal2T() == bracketVal5T()) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal2T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal2T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T) & bracketVal1T() == bracketVal5T()) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal1T() + 10)
+      }
+    }
+  })
 
   observe({
     if (input$extraBrackets >= 6) {
@@ -202,11 +244,83 @@ server <- function(input, output, session) {
       }
     }
   })
+  
+  observe({
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & bracketVal4T() == bracketVal6T()) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal4T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal4T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & bracketVal3T() == bracketVal6T()) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal3T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal3T() + 10)
+      }
+    }
+  })
 
+  observe({
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & bracketVal2T() == bracketVal6T()) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal2T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal2T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & bracketVal1T() == bracketVal6T()) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal1T() + 10)
+      }
+    }
+  })
+  
   observe({
     if (input$extraBrackets >= 7) {
       if (!is.null(input$bracketV7T) & bracketVal6T() == bracketVal7T()) {
         updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal6T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal6T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & bracketVal5T() == bracketVal7T()) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal5T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal5T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & bracketVal4T() == bracketVal7T()) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal4T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal4T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & bracketVal3T() == bracketVal7T()) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal3T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal3T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & bracketVal2T() == bracketVal7T()) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal2T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal2T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & bracketVal1T() == bracketVal7T()) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal1T() + 10)
       }
     }
   })
@@ -219,6 +333,57 @@ server <- function(input, output, session) {
     }
   })
 
+  observe({
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & bracketVal6T() == bracketVal8T()) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal6T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal6T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & bracketVal5T() == bracketVal8T()) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal5T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal5T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & bracketVal4T() == bracketVal8T()) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal4T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal4T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & bracketVal3T() == bracketVal8T()) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal3T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal3T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & bracketVal2T() == bracketVal8T()) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal2T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal2T() + 10)
+      }
+    }
+  })
+  
+  observe({
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & bracketVal1T() == bracketVal8T()) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T() + 10), "%'s wealth above ($m):", sep = ""), value = bracketVal1T() + 10)
+      }
+    }
+  })
+  
+  
+  
+  
 
 
 
