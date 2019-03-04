@@ -1,7 +1,7 @@
 
 server <- function(input, output, session) {
 
-  ## reset everything when you click rese
+  ## reset everything when you click reset
   observeEvent(input$reset, {
     reset("extraBrackets")
     reset("evasion")
@@ -304,9 +304,11 @@ server <- function(input, output, session) {
   })
 
   ## don't let  tax brackets go below 0 or above max wealth after evasion
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
-    if (bracketVal1T() < 0) {
-      updateTextInput(session, "bracketV1T", value = 1)
+    if (bracketVal1T() < 0.1) {
+      updateTextInput(session, "bracketV1T", value = 0.1)
     }
   })
 
@@ -317,9 +319,11 @@ server <- function(input, output, session) {
     }
   })
 
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
-    if (bracketVal2T() < 0) {
-      updateTextInput(session, "bracketV2T", value = 1)
+    if (bracketVal2T() < 0.1) {
+      updateTextInput(session, "bracketV2T", value = 0.1)
     }
 
     observe({
@@ -329,9 +333,12 @@ server <- function(input, output, session) {
       }
     })
   })
+  
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
-    if (bracketVal3T() < 0) {
-      updateTextInput(session, "bracketV3T", value = 1)
+    if (bracketVal3T() < 0.1) {
+      updateTextInput(session, "bracketV3T", value = 0.1)
     }
   })
 
@@ -342,9 +349,11 @@ server <- function(input, output, session) {
     }
   })
 
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
-    if (bracketVal4T() < 0) {
-      updateTextInput(session, "bracketV4T", value = 1)
+    if (bracketVal4T() < 0.1) {
+      updateTextInput(session, "bracketV4T", value = 0.1)
     }
   })
 
@@ -355,11 +364,13 @@ server <- function(input, output, session) {
     }
   })
 
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
     if (input$extraBrackets >= 5) {
       if (!is.null(input$bracketV5T)) {
-        if (bracketVal5T() < 0) {
-          updateTextInput(session, "bracketV5T", value = 1)
+        if (bracketVal5T() < 0.1) {
+          updateTextInput(session, "bracketV5T", value = 0.1)
         }
       }
     }
@@ -375,11 +386,13 @@ server <- function(input, output, session) {
     }
   })
 
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
     if (input$extraBrackets >= 6) {
       if (!is.null(input$bracketV6T)) {
-        if (bracketVal6T() < 0) {
-          updateTextInput(session, "bracketV6T", value = 1)
+        if (bracketVal6T() < 0.1) {
+          updateTextInput(session, "bracketV6T", value = 0.1)
         }
       }
     }
@@ -395,11 +408,13 @@ server <- function(input, output, session) {
     }
   })
 
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
     if (input$extraBrackets >= 7) {
       if (!is.null(input$bracketV7T)) {
-        if (bracketVal7T() < 0) {
-          updateTextInput(session, "bracketV7T", value = 1)
+        if (bracketVal7T() < 0.1) {
+          updateTextInput(session, "bracketV7T", value = 0.1)
         }
       }
     }
@@ -415,11 +430,13 @@ server <- function(input, output, session) {
     }
   })
 
+  ### KATIE: change 0.1s to whatever matches what you put in xval
+  ### (1e5 in xval, 1e5/1e6=0.1)
   observe({
     if (input$extraBrackets >= 8) {
       if (!is.null(input$bracketV8T)) {
-        if (bracketVal8T() < 0) {
-          updateTextInput(session, "bracketV8T", value = 1)
+        if (bracketVal8T() < 0.1) {
+          updateTextInput(session, "bracketV8T", value = 0.1)
         }
       }
     }
@@ -559,7 +576,8 @@ server <- function(input, output, session) {
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
 
-    xval <- 10^seq(log10(1e6), log10(45e9), by = 0.001) ## get uniform on log scale
+    ### KATIE: change the 1e5 to whatever you want to be the minimum
+    xval <- 10^seq(log10(1e5), log10(45e9), by = 0.001) ## get uniform on log scale
 
     idx0 <- xval <= as.numeric(brackets[1]) * 1e6
     idx1 <- xval <= as.numeric(brackets[2]) * 1e6 & xval > as.numeric(brackets[1]) * 1e6
@@ -850,6 +868,11 @@ server <- function(input, output, session) {
     getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
   })
 
+  
+  # F F no
+  # F T crash
+  # T T crash
+  # T F no
   vis2 <- eventReactive(input$submit, ignoreNULL = FALSE, {
     req(input$bracket1T)
     req(input$bracket2T)
