@@ -406,24 +406,24 @@ server <- function(input, output, session) {
 
   ## don't let negative tax rates
   observe({
-    if (bracket1T() < 0) {
+    if (!is.na(bracket1T()) & bracket1T() < 0) {
       updateTextInput(session, "bracket1T", value = 0)
     }
   })
 
   observe({
-    if (bracket2T() < 0) {
+    if (!is.na(bracket2T()) & bracket2T() < 0) {
       updateTextInput(session, "bracket2T", value = 0)
     }
   })
   observe({
-    if (bracket3T() < 0) {
+    if (!is.na(bracket3T()) & bracket3T() < 0) {
       updateTextInput(session, "bracket3T", value = 0)
     }
   })
 
   observe({
-    if (bracket4T() < 0) {
+    if (!is.na(bracket4T()) & bracket4T() < 0) {
       updateTextInput(session, "bracket4T", value = 0)
     }
   })
@@ -431,7 +431,7 @@ server <- function(input, output, session) {
   observe({
     if (input$extraBrackets >= 5) {
       if (!is.null(input$bracket5T)) {
-        if (bracket5T() < 0) {
+        if (!is.na(bracket5T()) & bracket5T() < 0) {
           updateTextInput(session, "bracket5T", value = 0)
         }
       }
@@ -441,7 +441,7 @@ server <- function(input, output, session) {
   observe({
     if (input$extraBrackets >= 6) {
       if (!is.null(input$bracket6T)) {
-        if (bracket6T() < 0) {
+        if (!is.na(bracket6T()) & bracket6T() < 0) {
           updateTextInput(session, "bracket6T", value = 0)
         }
       }
@@ -451,7 +451,7 @@ server <- function(input, output, session) {
   observe({
     if (input$extraBrackets >= 7) {
       if (!is.null(input$bracket7T)) {
-        if (bracket7T() < 0) {
+        if (!is.na(bracket7T()) & bracket7T() < 0) {
           updateTextInput(session, "bracket7T", value = 0)
         }
       }
@@ -461,7 +461,7 @@ server <- function(input, output, session) {
   observe({
     if (input$extraBrackets >= 8) {
       if (!is.null(input$bracket8T)) {
-        if (bracket8T() < 0) {
+        if (!is.na(bracket8T()) & bracket8T() < 0) {
           updateTextInput(session, "bracket8T", value = 0)
         }
       }
