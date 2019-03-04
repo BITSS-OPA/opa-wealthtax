@@ -398,8 +398,8 @@ server <- function(input, output, session) {
 
   observe({
     if (input$evasion != "") {
-      if (as.numeric(input$evasion) > 50) {
-        updateTextInput(session, "evasion", value = "50")
+      if (as.numeric(input$evasion) > 100) {
+        updateTextInput(session, "evasion", value = "100")
       }
     }
   })
