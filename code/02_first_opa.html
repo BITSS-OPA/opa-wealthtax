@@ -1723,6 +1723,9 @@ $(document).ready(function () {
 <pre class="r"><code># - inputs: none
 # - outputs: all the original source values
 call_params_f &lt;- function(){
+  
+  
+  
     ################  
     ####### Research:
     ################  
@@ -1762,9 +1765,7 @@ call_params_f &lt;- function(){
     ################ 
     hhld_gr_so &lt;- 0.009
     growth_wealth_so &lt;- 0.055
-    #As computed, the response to a 2% tax is a 16% tax elasticity. However the one
-    #used in the report is 15%. Until we understand why, we will adjust by an explicit factor. 
-    adj_factor1_so &lt;- 0.01
+
     return( sapply( ls(pattern= &quot;_so\\b&quot;), function(x) get(x) ) ) 
 }
 invisible( list2env(call_params_f(),.GlobalEnv) )
@@ -1788,6 +1789,9 @@ invisible( list2env(call_params_f(),.GlobalEnv) )
 # - outputs: all the original source values
 #### Policy:  
 policy_f &lt;- function(){
+  
+  
+  
     # brackets_po
     brackets_po &lt;- c(10, 25, 50, 100, 250, 500,  1000) * 1e6
     tax_rates_po &lt;- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03) 
@@ -1795,6 +1799,9 @@ policy_f &lt;- function(){
     next_increase_po &lt;- brackets_po[min(which(tax_rates_po&gt;0.02))]
     main_tax_po &lt;- median(tax_rates_po)
     max_tax_po &lt;- max(tax_rates_po)
+    
+    
+    
     return( sapply( ls(pattern= &quot;_po\\b&quot;), function(x) get(x)) ) 
 }
 invisible( list2env(policy_f(),.GlobalEnv) )
@@ -1899,18 +1906,220 @@ knitr::kable(table_aux)  </code></pre>
 tax_elasticity_in_f &lt;- function(ela1_var = ela1_so, ela2_var = ela2_so, ela3_1_var = ela3_1_so, 
                                 ela3_2_var = ela3_2_so, ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
                                 main_tax_var = main_tax_po){
+  
+  
+  
     final_ela_in &lt;- mean(c(ela1_var, ela2_var, (ela3_1_var + ela3_2_var)/2, (ela4_1_var + ela4_2_var)/2))
     evasion_param_in &lt;- main_tax_var * final_ela_in
+    
+    
+    
     return(list(&quot;final_ela_in&quot; = final_ela_in, 
                 &quot;evasion_param_in&quot; = evasion_param_in))
 }
 invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) ) 
 
-#ls(pattern = &quot;_in\\b|_in_&quot;)</code></pre>
-<p>The final 16% tax avoidance/evasion response to a 2% wealth tax was computed as and average across these four studies (2%*(0.5+0.5+2.5+28.5))</p>
+# ls(pattern = &quot;_in\\b|_in_&quot;) </code></pre>
+<p>The final 16% tax avoidance/evasion response to a 2% wealth tax was computed as and average across these four studies (2%*(0.5+0.5+2.5+28.5)/4)</p>
 </div>
-<div id="number-of-affected-households-and-their-total-tax-base" class="section level3">
-<h3>3 - Number of affected households and their total tax base</h3>
+<div id="data-cleaning-needs-cleaning" class="section level3">
+<h3>3 - Data Cleaning [NEEDS CLEANING]</h3>
+</div>
+<div id="number-of-affected-households-and-their-total-tax-base-needs-cleaning" class="section level3">
+<h3>4 - Number of affected households and their total tax base [NEEDS CLEANING]</h3>
+<pre class="r"><code># tax_base_grid ---&gt; 
+grid &lt;- read.csv(&quot;interactive_visualization/taxBaseGridUpdated.csv&quot;)  %&gt;% 
+  filter(!is.na(gperc))
+# print(head(grid)) ## check that app has access to this file
+
+# Wealth per bin (percentile) after evasion  
+grid$thresNew &lt;- (1 - evasion_param_in) * grid$thres
+grid$avgNew &lt;- (1 - evasion_param_in) * grid$avg 
+ 
+
+
+###### The following section depends on the cleaning data chunk
+if (FALSE){
+#QUESTION: Why counts from original source differ?
+#    df_dina1 %&gt;% filter(networth&gt;50e6) %&gt;% summarise(sum(weight))
+#    grid %&gt;% filter(thresNew&gt;50e6) %&gt;% summarise(sum(nb))
+#    df_scf %&gt;% filter(networth&gt;50e6) %&gt;% summarise(sum(weight))
+target_hhlds_mo &lt;- df %&gt;% 
+  filter(networth&gt;starting_brack_po) %&gt;% 
+  summarise(sum(weight)) %&gt;% 
+  as.numeric()
+target_hhlds_round &lt;- round(target_hhlds_mo/1000) * 1000
+
+target_hhlds_scf_mo &lt;- df_scf1 %&gt;% 
+  filter(networth&gt;starting_brack_po) %&gt;% 
+  summarise(sum(weight)) %&gt;% 
+  as.numeric()
+target_hhlds_round_scf &lt;- round(target_hhlds_scf_mo/1000) * 1000
+
+target_hhlds_dina_mo &lt;- df_dina1 %&gt;% 
+  filter(networth&gt;starting_brack_po) %&gt;% 
+  summarise(sum(weight)) %&gt;% 
+  as.numeric()
+target_hhlds_round_dina &lt;- round(target_hhlds_dina_mo/1000) * 1000
+
+}
+
+### AFTER THIS LINE I NEED TAX REVENUE
+# tax_base_scf_mo  
+# tax_base_dina_mo 
+# tax_base_total_mo
+
+#num of hhlds DONE
+#tatal wealth: before and after evasion
+#
+
+#Billionares num of hhlds DONE
+#tatal wealth: before and after evasion
+#
+
+
+
+##### Num hhlds:
+#no avoidance
+grid %&gt;% filter(thres &gt; starting_brack_po) %&gt;% summarise(sum(nb))
+#with avoidance
+grid %&gt;% filter(thresNew &gt; starting_brack_po) %&gt;% summarise(sum(nb))
+
+### Billionares:
+#no avoidance
+grid %&gt;% filter(thres &gt; next_increase_po) %&gt;% summarise(sum(nb))
+#with avoidance
+grid %&gt;% filter(thresNew &gt; next_increase_po) %&gt;% summarise(sum(nb))
+
+##### Total Taxable Wealth:
+grid %&gt;% filter(thres &gt; starting_brack_po) %&gt;% summarise(sum((avg - starting_brack_po) * nb)/1e12)
+
+#with avoidance
+#2% above 50m
+grid %&gt;% 
+  filter(thresNew &gt; starting_brack_po) %&gt;% 
+  summarise(sum((avgNew-starting_brack_po) * nb)/1e12)
+
+#billionares additional 1%
+grid %&gt;% 
+  filter(thresNew &gt; next_increase_po) %&gt;% 
+  summarise(sum((avgNew - next_increase_po) * nb)/1e12)</code></pre>
+<div id="tax-to-all-wealth-above-50-millions" class="section level4">
+<h4>4.1 - 2% tax to all wealth above $50 millions</h4>
+</div>
+<div id="additional-tax-to-all-wealth-above-1-billion" class="section level4">
+<h4>4.2 - 1% additional tax to all wealth above $1 billion</h4>
+</div>
+</div>
+<div id="total-tax-revenue-1-year-clean-and-understand-dicrepancies" class="section level3">
+<h3>5 - Total tax revenue (1 year) [CLEAN AND UNDERSTAND DICREPANCIES]</h3>
+<pre class="r"><code>#Total tax collected in a year
+#amount from 2%
+#amount from extra 1%
+
+
+
+#This function computes the total tax collected for a tax unit with wealth &quot;wealth_var&quot;, applying &quot;taxrates_var&quot; to &quot;brackets_var&quot;
+# - inputs: wealth, tax rates, brackets to tax
+# - ouputs: total tax collected
+getTaxRevenue &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+                          brackets_var = brackets_po) {
+    ## expecting taxLevels in percentage
+    # taxLevels &lt;- taxLevels / 100
+    if (length(brackets_var) != length(taxrates_var)){
+      stop(&quot;Tax brackets and tax rates do not match&quot;)
+    }
+   # Compute max taxable wealth per bracket
+    max_tax_per_brack &lt;- c(diff(c(0, brackets_var)), 1e100)
+   # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
+   # then assign max taxable wealth to that given bracket
+    to_tax &lt;- ifelse( wealth_var - c(0, brackets_var) &gt; max_tax_per_brack, 
+                      max_tax_per_brack, 
+                      ( wealth_var - c(0,brackets_var) ) )   
+   # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
+    to_tax &lt;- ifelse( to_tax&lt;0, 0, to_tax )
+    # Apply trax rates to each corresponding bracket and all together
+    total_tax &lt;- sum( to_tax * c(0, taxrates_var) )   
+    return(total_tax)
+}
+
+#Assigns evaded wealth to brackets
+getTaxBasePerBracket=function(grid_var = grid,brackets_var = brackets_po, threshold_var = starting_brack_po){
+  ## brackets is lower end of each bracket
+  brackets = c(brackets_var, 1e12) ## get last bracket
+  # adding one dollar as the threshold represents the lower bound
+  grid_var$group=cut(grid_var$thresNew + 1, brackets)
+  toReturn = grid_var %&gt;% 
+    group_by(group) %&gt;% 
+    summarise(taxBase = sum((avgNew - threshold_var) * nb)) %&gt;% 
+    drop_na()
+  return(toReturn)
+}
+  
+taxBase &lt;- getTaxBasePerBracket(brackets = brackets_po, grid = grid)
+
+#NEED TO UNDERSTAND: why getTaxBasePerBracket differs from below
+# computes tax payed by each average wealth per percintile (up to 2%)
+aux_test1 &lt;- sapply(grid$avgNew, 
+                   function(x) getTaxRevenue(wealth_var = x, 
+                                             taxrates_var = c(tax_rates_po[-7], 0.02), 
+                                             brackets_var = brackets_po))
+# computes tax payed by each average wealth per percintile (billionare surtax of 1%)
+aux_test2 &lt;- sapply(grid$avgNew, 
+                   function(x) getTaxRevenue(wealth_var = x, 
+                                             taxrates_var = c(rep(0,6), 0.01), 
+                                             brackets_var = brackets_po))
+# computes tax payed by each average wealth per percintile 
+aux_test3 &lt;- sapply(grid$avgNew, 
+                   function(x) getTaxRevenue(wealth_var = x, 
+                                             taxrates_var = tax_rates_po, 
+                                             brackets_var = brackets_po))
+
+total_tax_base &lt;- sum(grid$nb * aux_test1)/1e9
+total_tax_sur_bill &lt;- sum(grid$nb * aux_test2)/1e9
+total_tax_total &lt;- sum(grid$nb * aux_test3)/1e9
+
+
+
+# The following replicates stata code more closely UNDERSTAND WHY
+#with avoidance
+#2% above 50m
+asd1 &lt;- grid %&gt;% 
+  filter(thresNew &gt; starting_brack_po) %&gt;% 
+  summarise(sum((avgNew-starting_brack_po) * nb * 0.02)/1e9)
+
+#billionares additional 1%
+asd2 &lt;- grid %&gt;% 
+  filter(thresNew &gt; next_increase_po) %&gt;% 
+  summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9)
+
+
+asd1 + asd2
+
+
+
+getPeoplePerBracket=function(grid,brackets){
+  brackets = c(brackets, 1e12) ## get last bracket
+  grid$group=cut(grid$thresNew,brackets)
+  toReturn = grid %&gt;% 
+    group_by(group) %&gt;% 
+    summarise(totalPeople=sum(nb)) %&gt;% 
+    drop_na()
+  return(toReturn)
+}
+  
+
+numberTaxpayers &lt;- getPeoplePerBracket(brackets = brackets_po, grid = grid)
+
+#Revenue
+#From here on: keep
+target_hhlds_mo &lt;- sum( numberTaxpayers$totalPeople[brackets_po&gt;=starting_brack_po] )
+
+#go with wealthperc and highlight discrepe =   
+#tax_base_total_mo &lt;- sum(taxBase$taxBase[brackets_po&gt;=starting_brack_po])/1e12* main_tax_po * 1000
+#tax_rev_init_mo &lt;-   tax_base_total_mo * main_tax_po * 1000
+
+tax_rev_init_mo &lt;- total_tax_base</code></pre>
 <pre class="r"><code># TO DELETE?
 
 # - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
@@ -1975,7 +2184,9 @@ est_billionares_in_f &lt;- function(evasion_param_var = evasion_param_in,
 
 invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
 #rm(list = c(&quot;aux1&quot;, &quot;one_billion&quot;))</code></pre>
-<pre class="r"><code># num_billionares_in &lt;- round(400 * 1.8^1.4)
+<pre class="r"><code>#DELETE?
+
+# num_billionares_in &lt;- round(400 * 1.8^1.4)
 # top_tax_base &lt;- 0.01 * ( 400 * ( (1-0.15) * 7.2 - 1 ) * 1.25 )
 # Numbers in third bracket differ in 1 hhld 41636 instead of 4637
 # numberTaxpayers &lt;- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
@@ -1990,6 +2201,9 @@ tax_revenue_mo_f &lt;- function(cum_numberTaxpayers_dina_var = cum_numberTaxpaye
                              cum_tax_base_dina_var = cum_tax_base_dina_in, cum_tax_base_scf_var =
                                cum_tax_base_scf_in, brackets_var = brackets_po, starting_brack_var = starting_brack_po,
                              main_tax_var = main_tax_po){
+  
+  
+  
     aux1 &lt;- (cum_numberTaxpayers_dina_var + cum_numberTaxpayers_scf_var)/2
     numberTaxpayers_mo &lt;- c(-1 * diff(aux1, lag = 1), num_billionares_var)
     
@@ -2004,13 +2218,16 @@ tax_revenue_mo_f &lt;- function(cum_numberTaxpayers_dina_var = cum_numberTaxpaye
    
     tax_base_total_mo &lt;- sum(tax_base_mo[brackets_var&gt;=starting_brack_var])/1000
     tax_rev_init_mo &lt;-   tax_base_total_mo * main_tax_var * 1000
+    
+    
+    
     return(list(&quot;numberTaxpayers_mo&quot; = numberTaxpayers_mo, &quot;tax_base_mo&quot; = tax_base_mo, &quot;tax_base_dina_mo&quot; =
                   tax_base_dina_mo,  &quot;tax_base_scf_mo&quot; = tax_base_scf_mo, &quot;target_hhlds_mo&quot; = 
                   target_hhlds_mo, &quot;tax_base_total_mo&quot; = tax_base_total_mo, &quot;tax_rev_init_mo&quot; = tax_rev_init_mo))
 }
 invisible( list2env(tax_revenue_mo_f(),.GlobalEnv) )
 
-
+# TO DELETE ONCE CODE CHUNCK ABOVE GO EVAL TRUE
 # Temporary values to be used in next paragraph             
 target_hhlds_round &lt;- format(round( sum( 
   numberTaxpayers_mo[brackets_po&gt;=starting_brack_po] )/1000 
@@ -2023,128 +2240,12 @@ target_hhlds_round_dina &lt;- format(round( sum(
   ) * 1000, scientific=FALSE)</code></pre>
 <p>In 2019, there would be around 75000 households liable to the wealth tax (72000 households according to the SCF data and 78000 tax filers according to the DINA data). In both cases, this would be less than 0.1% of the 130 million US households in 2019. The tax base above $50 million would be $8.2 trillion based on the SCF data and $10.5 trillion based on the DINA data. Hence, the two data sources provide fairly close estimates, which we average as $9.3 trillion, i.e. approximately 10% of the $94 trillion population-wide total household net worth.</p>
 </div>
-<div id="billionaires-and-their-tax-base-over-one-billion" class="section level3">
-<h3>3.1 - Billionaires and their tax base over one billion</h3>
-<p>Therefore, the billionaire surtax base is estimated at $2.55 trillion ($2t from those above $1.8b and $0.5t from those between 1 and $2b from those above $1.8), and it would apply to about 900 billionaire families.</p>
-</div>
-<div id="compute-tax-brackets-number-of-hhlds-and-taxable-wealth-to-do" class="section level3">
-<h3>3.5 - Compute tax Brackets: number of hhlds and taxable wealth [TO DO]</h3>
-</div>
-<div id="total-tax-revenue-model" class="section level3">
-<h3>4 - Total tax revenue (Model)</h3>
-<pre class="r"><code># tax_base_grid ---&gt; 
-# 
-# 
-grid &lt;- read.csv(&quot;interactive_visualization/taxBaseGridUpdated.csv&quot;)  %&gt;% 
-  filter(!is.na(gperc))
-# print(head(grid)) ## check that app has access to this file
-
-# Wealth per bin (percentile) after evasion  
-grid$thresNew &lt;- (1 - evasion_param_in) * grid$thres
-grid$avgNew &lt;- (1 - evasion_param_in) * grid$avg ##
-  
-#Assigns evaded wealth to brackets
-getTaxBasePerBracket=function(grid,brackets){
-  ## brackets is lower end of each bracket
-  brackets = c(brackets, 1e12) ## get last bracket
-  # adding one dollar as the threshold represents the lower bound
-  grid$group=cut(grid$thresNew + 1, brackets)
-  toReturn = grid %&gt;% 
-    group_by(group) %&gt;% 
-    summarise(taxBase = sum(avgNew * nb)) %&gt;% 
-    drop_na()
-  return(toReturn)
-}
-  
-taxBase &lt;- getTaxBasePerBracket(brackets = brackets_po, grid = grid)
-
-#NEED TO UNDERSTAND: why getTaxBasePerBracket differs from below
-# computes tax payed by each average wealth per percintile (up to 2%)
-aux_test1 &lt;- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
-                                             taxrates_var = c(tax_rates_po[-7], 0.02), 
-                                             brackets_var = brackets_po))
-# computes tax payed by each average wealth per percintile (billionare surtax of 1%)
-aux_test2 &lt;- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
-                                             taxrates_var = c(rep(0,6), 0.01), 
-                                             brackets_var = brackets_po))
-total_tax_base &lt;- sum(grid$nb * aux_test1)/1e9
-total_tax_sur_bill &lt;- sum(grid$nb * aux_test2)/1e9
-
-getPeoplePerBracket=function(grid,brackets){
-  brackets = c(brackets, 1e12) ## get last bracket
-  grid$group=cut(grid$thresNew,brackets)
-  toReturn = grid %&gt;% 
-    group_by(group) %&gt;% 
-    summarise(totalPeople=sum(nb)) %&gt;% 
-    drop_na()
-  return(toReturn)
-}
-  
-numberTaxpayers &lt;- getPeoplePerBracket(brackets = brackets_po, grid = grid)
-
-#Revenue
-#From here on: keep
-target_hhlds_mo &lt;- sum( numberTaxpayers$totalPeople[brackets_po&gt;=starting_brack_po] )
-   
-#tax_base_total_mo &lt;- sum(taxBase$taxBase[brackets_po&gt;=starting_brack_po])/1e12* main_tax_po * 1000
-#tax_rev_init_mo &lt;-   tax_base_total_mo * main_tax_po * 1000
-
-tax_rev_init_mo &lt;- total_tax_base
-
-########
-#  grid &lt;- read.csv(&quot;taxBaseGridUpdated.csv&quot;)
-if (FALSE) {
-## gets taxes paid per bracket
-getTaxBasePerBracket &lt;- function(grid, taxLevels, brackets) {
-  test &lt;- unlist(lapply(grid$avgNew, getAverageTax, taxLevels, brackets / 1e6))
-  return(sum(grid$nb * test))
-}
-
-## gets people per bracket
-getPeoplePerBracket &lt;- function(grid, brackets) {
-  brackets &lt;- c(brackets, max(grid$thresNew) + 1e6) ## get last bracket
-  grid$group &lt;- cut(grid$thresNew, brackets, include.lowest = T)
-  toReturn &lt;- grid %&gt;% 
-    group_by(group) %&gt;% 
-    summarise(totalPeople = sum(nb)) %&gt;% 
-    drop_na() %&gt;% 
-    complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
-
-  # https://stackoverflow.com/questions/22523131/dplyr-summarise-equivalent-of-drop-false-to-keep-groups-with-zero-length-in
-
-  return(toReturn)
-}
-
-}
-
-
-wealth_aux &lt;- 10:1000 * 1e6
-
-#This function computes the total tax collected for a tax unit with wealth &quot;wealth_var&quot;, applying &quot;taxrates_var&quot; to &quot;brackets_var&quot;
-# - inputs: wealth, tax rates, brackets to tax
-# - ouputs: total tax collected
-getTaxRevenue &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
-                          brackets_var = brackets_po) {
-    ## expecting taxLevels in percentage
-    # taxLevels &lt;- taxLevels / 100
-    if (length(brackets_var) != length(taxrates_var)){
-      stop(&quot;Tax brackets and tax rates do not match&quot;)
-    }
-   # Compute max taxable wealth per bracket
-    max_tax_per_brack &lt;- c(diff(c(0, brackets_var)), 1e100)
-   # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
-   # then assign max taxable wealth to that given bracket
-    to_tax &lt;- ifelse( wealth_var - c(0, brackets_var) &gt; max_tax_per_brack, 
-                      max_tax_per_brack, 
-                      ( wealth_var - c(0,brackets_var) ) )   
-   # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
-    to_tax &lt;- ifelse( to_tax&lt;0, 0, to_tax )
-    # Apply trax rates to each corresponding bracket and all together
-    total_tax &lt;- sum( to_tax * c(0, taxrates_var) )   
-    return(total_tax)
-}</code></pre>
+<div id="billionaires-and-their-tax-base-over-one-billion-discuss-if-stil-relevant" class="section level3">
+<h3>3.1 - Billionaires and their tax base over one billion [DISCUSS IF STIL RELEVANT]</h3>
+<pre class="r"><code>final_taxbase_b_in
+num_billionares_in</code></pre>
+<p>We estimate that in 2018, there were XXXX households with wealth above 1 billion dollars each, and a combined total wealth of XXXXX. That wealth is already paying a tax of 2% above 50million dollars and, under this proposal, it would pay an additional 1% for wealth above 1 billion dollars.Therefore, the billionaire surtax base is estimated at $2.55 trillion, and it would apply to about 900 billionaire families.</p>
+<p>COMPLETE TOTAL REVENUE.</p>
 <pre class="r"><code># - inputs: tax_rev_init_mo, top_tax_base_in
 # - outputs: total_rev_pe
 total_rev_mo_f &lt;- function(tax_rev_init_var = tax_rev_init_mo, top_tax_base_var = top_tax_base_in) {
@@ -2272,27 +2373,27 @@ showMargin &lt;- function(x) {
       add_axis(&quot;x&quot;, title = &quot;Wealth before taxes&quot;) %&gt;%
       add_axis(&quot;y&quot;, title = &quot;Tax rate (%)&quot;) %&gt;%
       set_options(width = 1000, height = 500)</code></pre>
-<div id="plot_id504291243-container" class="ggvis-output-container">
-<div id="plot_id504291243" class="ggvis-output"></div>
+<div id="plot_id433204457-container" class="ggvis-output-container">
+<div id="plot_id433204457" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id504291243_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id504291243" data-renderer="svg">SVG</a>
+<a id="plot_id433204457_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id433204457" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id504291243_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id504291243" data-renderer="canvas">Canvas</a>
+<a id="plot_id433204457_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id433204457" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id504291243_download" class="ggvis-download" data-plot-id="plot_id504291243">Download</a>
+<a id="plot_id433204457_download" class="ggvis-download" data-plot-id="plot_id433204457">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id504291243_spec = {
+var plot_id433204457_spec = {
   "data": [
     {
       "name": ".0",
@@ -2966,7 +3067,7 @@ var plot_id504291243_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id504291243").parseSpec(plot_id504291243_spec);
+ggvis.getPlot("plot_id433204457").parseSpec(plot_id433204457_spec);
 </script>
 <p><strong><a href="https://fhoces.shinyapps.io/demo/">Click here</a> to explore different policy proposals.</strong></p>
 <p><strong><a href="NULL">Click here/ADD URL WHEN ALLOWED</a> to see how the assumptions of the analysis affect the results.</strong></p>
