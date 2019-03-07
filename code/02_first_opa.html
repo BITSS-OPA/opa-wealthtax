@@ -1917,11 +1917,11 @@ invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) )
 <h3>3 - Data Sources</h3>
 <p>Three data sources were used in this analysis:</p>
 <ul>
-<li>Survey of Consumer Finances (SCF) from the Federal Reserve Board. Latest year available: 2016.<br />
+<li><a href="https://www.federalreserve.gov/econres/scfindex.htm">Survey of Consumer Finances (SCF)</a> from the Federal Reserve Board. Latest year available: 2016.<br />
 </li>
-<li>Distributional National Accounts (DINA): estimates wealth by capitalizing investment income from income tax returns. The year available: 2019.<br />
+<li><a href="http://gabriel-zucman.eu/usdina/">Distributional National Accounts (DINA)</a>: estimates wealth by capitalizing investment income from income tax returns. Latest year available: 2019.<br />
 </li>
-<li>Forbes 400: provides the best estimate of billionares in the US. Last year available: 2018.</li>
+<li><a href="https://www.forbes.com/forbes-400/#4d358acf7e2f">Forbes 400</a>: provides the best estimate of billionares in the US. Last year available: 2018.</li>
 </ul>
 <div id="data-cleanning" class="section level4">
 <h4>3.1 Data cleanning</h4>
@@ -2191,22 +2191,10 @@ get_tax_rev &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
     return(total_tax)
 }
 
-#Assigns evaded wealth to brackets
-getTaxBasePerBracket=function(grid_var = grid,brackets_var = brackets_po, threshold_var = starting_brack_po){
-  ## brackets is lower end of each bracket
-  brackets = c(brackets_var, 1e12) ## get last bracket
-  # adding one dollar as the threshold represents the lower bound
-  grid_var$group=cut(grid_var$thresNew + 1, brackets)
-  toReturn = grid_var %&gt;% 
-    group_by(group) %&gt;% 
-    summarise(taxBase = sum((avgNew - threshold_var) * nb)) %&gt;% 
-    drop_na()
-  return(toReturn)
-}
-  
 taxBase &lt;- getTaxBasePerBracket(brackets = brackets_po, grid = grid)
 
-# NEED TO UNDERSTAND: why getTaxBasePerBracket differs from below
+# IMPORTANT: this (similar to getTaxBasePerBracket) was differing from simple
+# calculation below because this was not subseting to wealth above 50m.
 # computes tax payed by each average wealth per percintile (up to 2%)
 aux_test1 &lt;- sapply(grid$avgNew, 
                    function(x) get_tax_rev(wealth_var = x, 
@@ -2226,7 +2214,18 @@ aux_test3 &lt;- sapply(grid$avgNew,
 total_tax_base &lt;- sum(grid$nb * aux_test1)/1e9
 total_tax_sur_bill &lt;- sum(grid$nb * aux_test2)/1e9
 total_tax_total &lt;- sum(grid$nb * aux_test3)/1e9
+#199.9251
 
+ ## gets taxes paid per bracket
+  getTaxBasePerBracket &lt;- function(grid_var = grid, taxLevels = tax_rates_po, brackets = brackets_po) {
+    grid_var &lt;- grid_var %&gt;% filter(thresNew &gt; starting_brack_po)
+    test &lt;- unlist(lapply(grid_var$avgNew, get_tax_rev, taxLevels, brackets))
+
+    return(sum(grid_var$nb * test))
+  }
+  
+  getTaxBasePerBracket()
+##199.9251
 
 
 # The following replicates stata code more closely UNDERSTAND WHY
@@ -2243,9 +2242,9 @@ asd2 &lt;- grid %&gt;%
 
 asd1 + asd2
 
-getPeoplePerBracket=function(grid,brackets){
+getPeoplePerBracket=function(grid, brackets){
   brackets = c(brackets, 1e12) ## get last bracket
-  grid$group=cut(grid$thresNew,brackets)
+  grid$group=cut(grid$thresNew, brackets)
   toReturn = grid %&gt;% 
     group_by(group) %&gt;% 
     summarise(totalPeople=sum(nb)) %&gt;% 
@@ -2506,27 +2505,27 @@ showMargin &lt;- function(x) {
       add_axis(&quot;x&quot;, title = &quot;Wealth before taxes&quot;) %&gt;%
       add_axis(&quot;y&quot;, title = &quot;Tax rate (%)&quot;) %&gt;%
       set_options(width = 1000, height = 500)</code></pre>
-<div id="plot_id460276307-container" class="ggvis-output-container">
-<div id="plot_id460276307" class="ggvis-output"></div>
+<div id="plot_id795495640-container" class="ggvis-output-container">
+<div id="plot_id795495640" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id460276307_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id460276307" data-renderer="svg">SVG</a>
+<a id="plot_id795495640_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id795495640" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id460276307_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id460276307" data-renderer="canvas">Canvas</a>
+<a id="plot_id795495640_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id795495640" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id460276307_download" class="ggvis-download" data-plot-id="plot_id460276307">Download</a>
+<a id="plot_id795495640_download" class="ggvis-download" data-plot-id="plot_id795495640">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id460276307_spec = {
+var plot_id795495640_spec = {
   "data": [
     {
       "name": ".0",
@@ -3200,7 +3199,7 @@ var plot_id460276307_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id460276307").parseSpec(plot_id460276307_spec);
+ggvis.getPlot("plot_id795495640").parseSpec(plot_id795495640_spec);
 </script>
 <pre class="r"><code>if (FALSE) {        
  #new
@@ -3231,7 +3230,7 @@ ggvis.getPlot("plot_id460276307").parseSpec(plot_id460276307_spec);
 <p><strong><a href="NULL">Click here/ADD URL WHEN ALLOWED</a> to explore different policy proposal and to see how the assumptions of the analysis affect the results.</strong></p>
 <p><strong>There are two ways to edit the code behind this document:</strong><br />
 1 - Download/Clone <a href="https://github.com/fhoces/opa-wealthtax">this repository</a> into your computer. You will need to install <a href="https://cloud.r-project.org/">R</a> and <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio</a>.</p>
-<p>2 - Go to <a href="https://mybinder.org/v2/gh/fhoces/opa-wealthtax/master?urlpath=rstudio">this link</a> and reproduce all the result in a computing enviroment (supported by <a href="mybinder.org">project binder</a>). You will <strong>not</strong> need to install anything in your computer.</p>
+<p>2 - Go to <a href="https://mybinder.org/v2/gh/fhoces/opa-wealthtax/master?urlpath=rstudio">this link</a> and reproduce all the result in a computing enviroment (supported by <a href="https://mybinder.org/">project binder</a>). You will <strong>not</strong> need to install anything in your computer.</p>
 </div>
 <div id="ten-year-projections" class="section level3">
 <h3>5 - Ten year projections</h3>

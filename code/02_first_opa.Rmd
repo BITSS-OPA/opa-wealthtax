@@ -177,9 +177,9 @@ The final `r paste(evasion_param_in * 100,"%", sep="")` tax avoidance/evasion re
 ### 3 - Data Sources
 Three data sources were used in this analysis:   
 
- - Survey of Consumer Finances (SCF) from the Federal Reserve Board. Latest year available: 2016.    
- - Distributional National Accounts (DINA): estimates wealth by capitalizing investment income from income tax returns. The year available: 2019.    
- - Forbes 400:  provides the best estimate of billionares in the US. Last year available: 2018.  
+ - [Survey of Consumer Finances (SCF)](https://www.federalreserve.gov/econres/scfindex.htm) from the Federal Reserve Board. Latest year available: 2016.    
+ - [Distributional National Accounts (DINA)](http://gabriel-zucman.eu/usdina/): estimates wealth by capitalizing investment income from income tax returns. Latest year available: 2019.    
+ - [Forbes 400](https://www.forbes.com/forbes-400/#4d358acf7e2f):  provides the best estimate of billionares in the US. Last year available: 2018.  
 
 
 
@@ -431,7 +431,7 @@ The `r target_hhlds_mo` households with assests above `r paste0("$",starting_bra
 The `r target_hhlds_bn_mo` households with assests above `r paste0("$",next_increase_po/1e9)` billion dollars would have a total taxable wealth (above the `r paste0("$",next_increase_po/1e9, "b")` each) of `r paste("$", round(tax_base_total_surtax_mo, digits = 1), sep="")` trillion,  i.e. approximately `r paste0(round(tax_base_total_surtax_mo/total_wealth_in* 100), "%")`  of the `r paste0("$", round(total_wealth_in))` trillion population-wide total household net worth.
 
 
-### 5 - Total tax revenue (1 year) [CLEAN AND UNDERSTAND DICREPANCIES]
+### 5 - Total tax revenue (1 year) [CLEAN]
 
 ```{r new-tax-rev, eval=FALSE} 
 # Total tax collected in a year
@@ -832,7 +832,7 @@ if (FALSE) {
 **There are two ways to edit the code behind this document:**   
 1 - Download/Clone [this repository](https://github.com/fhoces/opa-wealthtax) into your computer. You will need to install [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download).    
 
-2 - Go to [this link](https://mybinder.org/v2/gh/fhoces/opa-wealthtax/master?urlpath=rstudio) and reproduce all the result in a computing enviroment (supported by [project binder](mybinder.org)). You will **not** need to install anything in your computer.  
+2 - Go to [this link](https://mybinder.org/v2/gh/fhoces/opa-wealthtax/master?urlpath=rstudio) and reproduce all the result in a computing enviroment (supported by [project binder](https://mybinder.org/)). You will **not** need to install anything in your computer.  
 
 ### 5 - Ten year projections
 
