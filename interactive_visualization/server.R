@@ -127,7 +127,13 @@ server <- function(input, output, session) {
   }
 
 
+  getPercentileMarkers <- function(grid) {
 
+    c(grid$thresNew[which(grid$gperc==90)],
+      grid$thresNew[which(grid$gperc==99)],
+      grid$thresNew[which(grid$gperc>=99.9 & grid$gperc<99.99)[1]],
+      grid$thresNew[which(grid$gperc>=99.99 & grid$gperc<99.999)[1]])
+  }
   ## gets taxes paid per bracket
   getTaxBasePerBracket <- function(grid, taxLevels, brackets) {
     test <- unlist(lapply(grid$avgNew, getAverageTax, taxLevels, brackets / 1e6))
@@ -1180,9 +1186,13 @@ server <- function(input, output, session) {
 
 
     data <- dataInputT()
+    
+    markers <- data.frame(a=c(getPercentileMarkers(updateGrid())/1e6),b=rep(0.25,4), c=c("Top 10%", "Top 1%", "Top 0.1%", "Top 0.01%"))
 
-
-
+    ### HERE
+    #browser()
+valuesInt=c(brackets,round(max(updateGrid()$thresNew) / 1e6,2), round(getPercentileMarkers(updateGrid())/1e6,2))
+valuesInt=sort(valuesInt)
     rmIdx <- ncol(data)
     plot <- data[, -rmIdx] %>%
       ggvis(x = ~ xval / 1e6, y = ~tax) %>%
@@ -1197,9 +1207,10 @@ server <- function(input, output, session) {
       layer_paths(data = extra1b, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra3b, ~ x / 1e6, ~y) %>%
+      layer_text(data = markers, ~a, ~b, text := ~c, align:="center", fontWeight:="bold") %>%
       add_axis("x",
         title_offset = 80, title = "Wealth ($m)", grid = F, format = ",",
-        values = brackets, properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))
+        values = valuesInt, properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))
       ) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
