@@ -1043,32 +1043,51 @@ server <- function(input, output, session) {
     req(input$bracket2T)
     req(input$bracket3T)
     req(input$bracket4T)
+    
+    req(input$bracketV1T)
+    req(input$bracketV2T)
+    req(input$bracketV3T)
+    req(input$bracketV4T)
 
     taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
+      req(input$bracket5T)
       taxRate <- c(taxRate, as.numeric(input$bracket5T))
     }
     if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
+      req(input$bracket6T)
+      
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T))
     }
     if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
+      req(input$bracket7T)
+      
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
+      req(input$bracket8T)
+      
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T), as.numeric(input$bracket8T))
     }
 
     brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
+      req(input$bracketV5T)
       brackets <- c(brackets, as.numeric(input$bracketV5T))
     }
     if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
+      req(input$bracketV6T)
+      
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T))
     }
     if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
+      req(input$bracketV7T)
+      
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
+      req(input$bracketV8T)
+      
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
     }
 
