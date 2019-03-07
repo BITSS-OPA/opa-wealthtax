@@ -103,6 +103,7 @@ server <- function(input, output, session) {
 
   ## update data with evasion parameter
   updateGrid <- reactive({
+    req(input$evasion)
     grid$thresNew <- (1 - as.numeric(input$evasion) / 100) * grid$thres
     grid$avgNew <- (1 - as.numeric(input$evasion) / 100) * grid$avg ##
     return(grid)
@@ -428,8 +429,8 @@ server <- function(input, output, session) {
 
   observe({
     if (input$evasion != "") {
-      if (as.numeric(input$evasion) > 100) {
-        updateTextInput(session, "evasion", value = "100")
+      if (as.numeric(input$evasion) > 99) {
+        updateTextInput(session, "evasion", value = "99")
       }
     }
   })
@@ -1073,6 +1074,7 @@ server <- function(input, output, session) {
   # T T crash
   # T F no
   vis2 <- eventReactive(input$submit, ignoreNULL = FALSE, {
+    req(input$evasion)
     req(input$bracket1T)
     req(input$bracket2T)
     req(input$bracket3T)
