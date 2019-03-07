@@ -334,6 +334,142 @@ export excel using "$datawork/wealthperc.xlsx", first(var) replace
 ```
 
 ### 4 - Number of affected households and their total tax base 
+```{r est-billionares-to-delete, eval=TRUE, echo=FALSE}  
+# TO DELETE
+
+# - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
+# cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so,  
+# cum_tax_base_dina_so 
+# - outputs: non_evaded_tax_in, totax_last_400_in, totax_average_400_in, totax_total_400_in, 
+# pareto_scale_in, ratio1_in, missing_fraction_in, missing_taxbase_in, num_billionares_in, 
+# final_taxbase_b_in, top_tax_rev_in, cum_numberTaxpayers_scf_in, cum_numberTaxpayers_dina_in, 
+# cum_tax_base_scf_in, cum_tax_base_dina_in 
+est_billionares_in_f <- function(evasion_param_var = evasion_param_in, 
+                                 wealth_last_400_var = wealth_last_400_so,
+                                 average_wealth_top_400_var = average_wealth_top_400_so,
+                                 cum_numberTaxpayers_scf_var = cum_numberTaxpayers_scf_so,
+                                 cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_so, 
+                                 cum_tax_base_scf_var = cum_tax_base_scf_so, 
+                                 cum_tax_base_dina_var = cum_tax_base_dina_so){
+    non_evaded_tax_in <- (1 - evasion_param_var)
+     
+    # Post evasion taxable wealth
+    totax_last_400_in <- non_evaded_tax_in * wealth_last_400_var/1e9                 
+    totax_average_400_in <- non_evaded_tax_in * average_wealth_top_400_var/1e9       
+    totax_total_400_in <- 400 * (totax_average_400_in - 1)                     # above one billion
+      
+    # Compute pareto scale of wealth distribution
+    aux1 <- average_wealth_top_400_var/wealth_last_400_var
+    pareto_scale_in <- aux1/(aux1-1) 
+    ratio1_in <- round(aux1, 1)
+    
+    # Compute missing fraction of taxable wealth above 1 billion
+    one_billion <- 1 
+    missing_fraction_in <- ( totax_last_400_in / one_billion )^( pareto_scale_in - 1 ) - 1
+
+    # Compute missing wealth (billions of dollars) to tax above one billion dollars
+    missing_taxbase_in <- missing_fraction_in * totax_total_400_in
+
+    # Compute total number of billionares. Extrapolation from forbes 400. 
+    #Diff between original document (911) and below (906) is due to rounding in inputs 
+    num_billionares_in <- 400 * ( totax_last_400_in / 1 ) ^ pareto_scale_in 
+    final_taxbase_b_in <- totax_total_400_in + missing_taxbase_in
+
+    #This is the taxed money (the aboves is the totale taxable) in billions  (minus one is just to match original results)
+    top_tax_rev_in <- final_taxbase_b_in * 0.01                                     # ALERT: Hard coded number
+     
+    #edit the number of billionares
+    cum_numberTaxpayers_scf_in <- c(cum_numberTaxpayers_scf_var[1:6], num_billionares_in)
+    cum_numberTaxpayers_dina_in <- c(cum_numberTaxpayers_dina_var[1:6], num_billionares_in)
+    #edit the tax revenue for billionares    
+    cum_tax_base_scf_in <- c(cum_tax_base_scf_var[1:6], top_tax_rev_in)
+    cum_tax_base_dina_in <- c(cum_tax_base_dina_var[1:6], top_tax_rev_in)
+    
+    return( list( "non_evaded_tax_in" = non_evaded_tax_in, "totax_last_400_in" = totax_last_400_in, 
+                  "totax_average_400_in" = totax_average_400_in, "totax_total_400_in" = 
+                    totax_total_400_in, "pareto_scale_in" = pareto_scale_in, "ratio1_in" = ratio1_in, 
+                  "missing_fraction_in" = missing_fraction_in, "missing_taxbase_in" = 
+                    missing_taxbase_in, "num_billionares_in" = num_billionares_in, 
+                  "final_taxbase_b_in" = final_taxbase_b_in, "top_tax_rev_in" = top_tax_rev_in, 
+                  "cum_numberTaxpayers_scf_in" = cum_numberTaxpayers_scf_in, 
+                  "cum_numberTaxpayers_dina_in" = cum_numberTaxpayers_dina_in, 
+                  "cum_tax_base_scf_in" = cum_tax_base_scf_in, 
+                  "cum_tax_base_dina_in" = cum_tax_base_dina_in ) )
+}
+
+invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
+#rm(list = c("aux1", "one_billion"))
+
+```
+
+
+
+```{r tax-revenue-to-delete, echo=FALSE}   
+#DELETE
+
+# - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
+# - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
+
+#ADD COMMENTS
+tax_revenue_mo_f <- function(cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_var = 
+                               cum_numberTaxpayers_scf_in, num_billionares_var = num_billionares_in, 
+                             cum_tax_base_dina_var = cum_tax_base_dina_in, cum_tax_base_scf_var =
+                               cum_tax_base_scf_in, brackets_var = brackets_po, starting_brack_var = starting_brack_po,
+                             main_tax_var = main_tax_po){
+  
+  
+  
+    aux1 <- (cum_numberTaxpayers_dina_var + cum_numberTaxpayers_scf_var)/2
+    numberTaxpayers_mo <- c(-1 * diff(aux1, lag = 1), num_billionares_var)
+    
+    aux2 <- (cum_tax_base_dina_var + cum_tax_base_scf_var)/2
+    tax_base_mo <- c(-1 * diff(aux2, lag = 1), top_tax_rev_in) * 100
+    
+    tax_base_dina_mo <- cum_tax_base_dina_var[brackets_var == starting_brack_var]
+    tax_base_scf_mo <- cum_tax_base_scf_var[brackets_var == starting_brack_var]
+    
+    #From here on: keep
+    target_hhlds_mo <- sum( numberTaxpayers_mo[brackets_var>=starting_brack_var] )
+   
+    tax_base_total_mo <- sum(tax_base_mo[brackets_var>=starting_brack_var])/1000
+    tax_rev_init_mo <-   tax_base_total_mo * main_tax_var * 1000
+    
+    
+    
+    return(list("numberTaxpayers_mo" = numberTaxpayers_mo, "tax_base_mo" = tax_base_mo, "tax_base_dina_mo" =
+                  tax_base_dina_mo,  "tax_base_scf_mo" = tax_base_scf_mo, "target_hhlds_mo" = 
+                  target_hhlds_mo, "tax_base_total_mo" = tax_base_total_mo, "tax_rev_init_mo" = tax_rev_init_mo))
+}
+invisible( list2env(tax_revenue_mo_f(),.GlobalEnv) )
+
+# TO DELETE ONCE CODE CHUNCK ABOVE GO EVAL TRUE
+# Temporary values to be used in next paragraph             
+target_hhlds_round <- format(round( sum( 
+  numberTaxpayers_mo[brackets_po>=starting_brack_po] )/1000 
+  ) * 1000, scientific = FALSE)
+target_hhlds_round_scf <- format(round( sum( 
+  cum_numberTaxpayers_scf_in[brackets_po==starting_brack_po] )/1000 
+  ) * 1000, scientific=FALSE)
+target_hhlds_round_dina <- format(round( sum( 
+  cum_numberTaxpayers_dina_in[brackets_po==starting_brack_po] )/1000 
+  ) * 1000, scientific=FALSE)
+```
+
+
+```{r total-rev-to-delete, echo=FALSE}
+#TO DELETE
+# - inputs: tax_rev_init_mo, top_tax_rev_in
+# - outputs: total_rev_pe
+total_rev_mo_f <- function(tax_rev_init_var = tax_rev_init_mo, top_tax_base_var = top_tax_rev_in) {
+  
+  
+    total_rev_pe <- tax_rev_init_var + top_tax_base_var #PE
+    
+    
+    return(list("total_rev_pe" = total_rev_pe))
+}
+invisible( list2env(total_rev_mo_f(),.GlobalEnv) )
+```
 
 To compute the relevant universe the evasion parameter of `r paste0(evasion_param_in *100, "%")` is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)
 
@@ -376,7 +512,6 @@ target_hhlds_round_dina <- round(target_hhlds_dina_mo/1000) * 1000
 
 }
 
-
 ##### Num hhlds:
 #no avoidance
 target_hhlds_noav_mo <- grid %>% 
@@ -415,9 +550,14 @@ tax_base_total_mo <- grid %>%
   summarise(sum((avgNew - starting_brack_po) * nb)/1e12)
 
 #billionares additional 1%
+tax_base_total_surtax_noav_mo <- grid %>% 
+  filter(thres > next_increase_po) %>% 
+  summarise(sum((avg - next_increase_po) * nb)/1e12)
 tax_base_total_surtax_mo <- grid %>% 
   filter(thresNew > next_increase_po) %>% 
   summarise(sum((avgNew - next_increase_po) * nb)/1e12)
+
+
 ```
 
 In 2019, there would be around `r  target_hhlds_round` households liable to the wealth tax (`r target_hhlds_noav_round` before accounting for avoidance). This would be less than `r paste0(round(target_hhlds_mo/total_hhlds_so * 100 , digits = 2), "%")` of the `r round(total_hhlds_so/1e7) * 10` million US households in 2019. 
@@ -431,9 +571,9 @@ The `r target_hhlds_mo` households with assests above `r paste0("$",starting_bra
 The `r target_hhlds_bn_mo` households with assests above `r paste0("$",next_increase_po/1e9)` billion dollars would have a total taxable wealth (above the `r paste0("$",next_increase_po/1e9, "b")` each) of `r paste("$", round(tax_base_total_surtax_mo, digits = 1), sep="")` trillion,  i.e. approximately `r paste0(round(tax_base_total_surtax_mo/total_wealth_in* 100), "%")`  of the `r paste0("$", round(total_wealth_in))` trillion population-wide total household net worth.
 
 
-### 5 - Total tax revenue (1 year) [CLEAN]
+### 5 - Total tax revenue in one year
 
-```{r new-tax-rev, eval=FALSE} 
+```{r new-tax-rev, eval=TRUE} 
 # Total tax collected in a year
 # amount from 2%
 # amount from extra 1%
@@ -462,57 +602,44 @@ get_tax_rev <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
     return(total_tax)
 }
 
-taxBase <- getTaxBasePerBracket(brackets = brackets_po, grid = grid)
-
 # IMPORTANT: this (similar to getTaxBasePerBracket) was differing from simple
 # calculation below because this was not subseting to wealth above 50m.
 # computes tax payed by each average wealth per percintile (up to 2%)
-aux_test1 <- sapply(grid$avgNew, 
+
+## gets taxes paid per group (percentile and micropercentile)
+get_tax_rev_per_group <- function(grid_var = grid, taxLevels_var = tax_rates_po, brackets_var1 = brackets_po) {
+  grid_var <- grid_var %>% filter(thresNew > starting_brack_po)
+  aux_var <- sapply(grid_var$avgNew, 
                    function(x) get_tax_rev(wealth_var = x, 
-                                             taxrates_var = c(tax_rates_po[-7], 0.02), 
-                                             brackets_var = brackets_po))
-# computes tax payed by each average wealth per percintile (billionare surtax of 1%)
-aux_test2 <- sapply(grid$avgNew, 
-                   function(x) get_tax_rev(wealth_var = x, 
-                                             taxrates_var = c(rep(0,6), 0.01), 
-                                             brackets_var = brackets_po))
-# computes tax payed by each average wealth per percintile 
-aux_test3 <- sapply(grid$avgNew, 
-                   function(x) get_tax_rev(wealth_var = x, 
-                                             taxrates_var = tax_rates_po, 
-                                             brackets_var = brackets_po))
+                                             taxrates_var = taxLevels_var, 
+                                             brackets_var = brackets_var1))
+  return(sum(grid_var$nb * aux_var) / 1e9)
+}
 
-total_tax_base <- sum(grid$nb * aux_test1)/1e9
-total_tax_sur_bill <- sum(grid$nb * aux_test2)/1e9
-total_tax_total <- sum(grid$nb * aux_test3)/1e9
-#199.9251
+tax_rev_init_mo <- get_tax_rev_per_group(taxLevels = c(tax_rates_po[-7], 0.02))
+top_tax_rev_in <- get_tax_rev_per_group(taxLevels = c(rep(0,6), 0.01))
+total_tax_rev <- get_tax_rev_per_group(taxLevels = tax_rates_po)
+#199.7889
 
- ## gets taxes paid per bracket
-  getTaxBasePerBracket <- function(grid_var = grid, taxLevels = tax_rates_po, brackets = brackets_po) {
-    grid_var <- grid_var %>% filter(thresNew > starting_brack_po)
-    test <- unlist(lapply(grid_var$avgNew, get_tax_rev, taxLevels, brackets))
+# The following replicates stata code more closely and seems more straightforward. 
+# Howevere it differs more from the code in the app. Consider this in both (app and DD)
+# in the future
+if (FALSE){
+    #with avoidance
+    #2% above 50m
+    tax_rev_init_mo <- grid %>% 
+      filter(thresNew > starting_brack_po) %>% 
+      summarise(sum((avgNew - starting_brack_po) * nb * 0.02)/1e9) %>% as.numeric()
+    
+    #billionares additional 1%
+    top_tax_rev_in <- grid %>% 
+      filter(thresNew > next_increase_po) %>% 
+      summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9) %>% as.numeric()
+    
+    total_tax_rev <- total_tax_base + total_tax_sur_bill
+}
 
-    return(sum(grid_var$nb * test))
-  }
-  
-  getTaxBasePerBracket()
-##199.9251
-
-
-# The following replicates stata code more closely UNDERSTAND WHY
-#with avoidance
-#2% above 50m
-asd1 <- grid %>% 
-  filter(thresNew > starting_brack_po) %>% 
-  summarise(sum((avgNew - starting_brack_po) * nb * 0.02)/1e9) %>% as.numeric()
-
-#billionares additional 1%
-asd2 <- grid %>% 
-  filter(thresNew > next_increase_po) %>% 
-  summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9) %>% as.numeric()
-
-asd1 + asd2
-
+# TO DELETE ALL BELOW?
 getPeoplePerBracket=function(grid, brackets){
   brackets = c(brackets, 1e12) ## get last bracket
   grid$group=cut(grid$thresNew, brackets)
@@ -522,7 +649,6 @@ getPeoplePerBracket=function(grid, brackets){
     drop_na()
   return(toReturn)
 }
-  
 
 numberTaxpayers <- getPeoplePerBracket(brackets = brackets_po, grid = grid)
 
@@ -530,298 +656,163 @@ numberTaxpayers <- getPeoplePerBracket(brackets = brackets_po, grid = grid)
 #From here on: keep
 target_hhlds_mo <- sum( numberTaxpayers$totalPeople[brackets_po>=starting_brack_po] )
 
+# tax_base_total_mo
+# tax_rev_init_mo
+# final_taxbase_b_in tax_base_total_noav_mo
+# num_billionares_in
+# top_tax_rev_in
+# total_rev_pe
 #go with wealthperc and highlight discrepe =   
 #tax_base_total_mo <- sum(taxBase$taxBase[brackets_po>=starting_brack_po])/1e12* main_tax_po * 1000
 #tax_rev_init_mo <-   tax_base_total_mo * main_tax_po * 1000
-
-tax_rev_init_mo <- total_tax_base
 ```
 
-```{r est-billionares-to-delete, eval=TRUE}  
-# TO DELETE
+Starting with the `r paste0("$", round(tax_base_total_mo, digits = 1))` trillion tax base of wealth above `r paste0("$", starting_brack_po/1e6)` million (`r paste0("$", round(tax_base_total_noav_mo, digits = 1))` with no avoidance), a two percent tax would raise `r paste0("$", round(tax_rev_init_mo))` billion in 2019. The billionaire surtax is estimated to apply to a base of `r paste0("$", round(tax_base_total_surtax_mo, 1))` trillion (`r paste0("$", round(tax_base_total_surtax_noav_mo, digits = 1))` with no avoidance) from about `r round(target_hhlds_bn_mo / 100) * 100 ` billionaire families (`r round(target_hhlds_bn_noav_mo / 100) * 100 `  with no avoidance). Thus the billionaire surtax would raise `r paste0("$", round(top_tax_rev_in))` billion in 2019. The combination of the `r paste0(100*main_tax_po, "%")` tax above `r paste0("$",starting_brack_po/1e6)` million and the billionaire surtax would raise `r paste0(round(tax_rev_init_mo)," + ", round(top_tax_rev_in))` = `r round(total_tax_rev)` billion in 2019. 
 
-# - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
-# cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so,  
-# cum_tax_base_dina_so 
-# - outputs: non_evaded_tax_in, totax_last_400_in, totax_average_400_in, totax_total_400_in, 
-# pareto_scale_in, ratio1_in, missing_fraction_in, missing_taxbase_in, num_billionares_in, 
-# final_taxbase_b_in, top_tax_base_in, cum_numberTaxpayers_scf_in, cum_numberTaxpayers_dina_in, 
-# cum_tax_base_scf_in, cum_tax_base_dina_in 
-est_billionares_in_f <- function(evasion_param_var = evasion_param_in, 
-                                 wealth_last_400_var = wealth_last_400_so,
-                                 average_wealth_top_400_var = average_wealth_top_400_so,
-                                 cum_numberTaxpayers_scf_var = cum_numberTaxpayers_scf_so,
-                                 cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_so, 
-                                 cum_tax_base_scf_var = cum_tax_base_scf_so, 
-                                 cum_tax_base_dina_var = cum_tax_base_dina_so){
-    non_evaded_tax_in <- (1 - evasion_param_var)
-     
-    # Post evasion taxable wealth
-    totax_last_400_in <- non_evaded_tax_in * wealth_last_400_var/1e9                 
-    totax_average_400_in <- non_evaded_tax_in * average_wealth_top_400_var/1e9       
-    totax_total_400_in <- 400 * (totax_average_400_in - 1)                     # above one billion
-      
-    # Compute pareto scale of wealth distribution
-    aux1 <- average_wealth_top_400_var/wealth_last_400_var
-    pareto_scale_in <- aux1/(aux1-1) 
-    ratio1_in <- round(aux1, 1)
-    
-    # Compute missing fraction of taxable wealth above 1 billion
-    one_billion <- 1 
-    missing_fraction_in <- ( totax_last_400_in / one_billion )^( pareto_scale_in - 1 ) - 1
-
-    # Compute missing wealth (billions of dollars) to tax above one billion dollars
-    missing_taxbase_in <- missing_fraction_in * totax_total_400_in
-
-    # Compute total number of billionares. Extrapolation from forbes 400. 
-    #Diff between original document (911) and below (906) is due to rounding in inputs 
-    num_billionares_in <- 400 * ( totax_last_400_in / 1 ) ^ pareto_scale_in 
-    final_taxbase_b_in <- totax_total_400_in + missing_taxbase_in
-
-    #This is the taxed money (the aboves is the totale taxable) in billions  (minus one is just to match original results)
-    top_tax_base_in <- final_taxbase_b_in * 0.01                                     # ALERT: Hard coded number
-     
-    #edit the number of billionares
-    cum_numberTaxpayers_scf_in <- c(cum_numberTaxpayers_scf_var[1:6], num_billionares_in)
-    cum_numberTaxpayers_dina_in <- c(cum_numberTaxpayers_dina_var[1:6], num_billionares_in)
-    #edit the tax revenue for billionares    
-    cum_tax_base_scf_in <- c(cum_tax_base_scf_var[1:6], top_tax_base_in)
-    cum_tax_base_dina_in <- c(cum_tax_base_dina_var[1:6], top_tax_base_in)
-    
-    return( list( "non_evaded_tax_in" = non_evaded_tax_in, "totax_last_400_in" = totax_last_400_in, 
-                  "totax_average_400_in" = totax_average_400_in, "totax_total_400_in" = 
-                    totax_total_400_in, "pareto_scale_in" = pareto_scale_in, "ratio1_in" = ratio1_in, 
-                  "missing_fraction_in" = missing_fraction_in, "missing_taxbase_in" = 
-                    missing_taxbase_in, "num_billionares_in" = num_billionares_in, 
-                  "final_taxbase_b_in" = final_taxbase_b_in, "top_tax_base_in" = top_tax_base_in, 
-                  "cum_numberTaxpayers_scf_in" = cum_numberTaxpayers_scf_in, 
-                  "cum_numberTaxpayers_dina_in" = cum_numberTaxpayers_dina_in, 
-                  "cum_tax_base_scf_in" = cum_tax_base_scf_in, 
-                  "cum_tax_base_dina_in" = cum_tax_base_dina_in ) )
-}
-
-invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
-#rm(list = c("aux1", "one_billion"))
-
-```
-
-```{r tax-revenue-to-delete}   
-#DELETE
-
-# - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
-# - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
-
-#ADD COMMENTS
-tax_revenue_mo_f <- function(cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_var = 
-                               cum_numberTaxpayers_scf_in, num_billionares_var = num_billionares_in, 
-                             cum_tax_base_dina_var = cum_tax_base_dina_in, cum_tax_base_scf_var =
-                               cum_tax_base_scf_in, brackets_var = brackets_po, starting_brack_var = starting_brack_po,
-                             main_tax_var = main_tax_po){
-  
-  
-  
-    aux1 <- (cum_numberTaxpayers_dina_var + cum_numberTaxpayers_scf_var)/2
-    numberTaxpayers_mo <- c(-1 * diff(aux1, lag = 1), num_billionares_var)
-    
-    aux2 <- (cum_tax_base_dina_var + cum_tax_base_scf_var)/2
-    tax_base_mo <- c(-1 * diff(aux2, lag = 1), top_tax_base_in) * 100
-    
-    tax_base_dina_mo <- cum_tax_base_dina_var[brackets_var == starting_brack_var]
-    tax_base_scf_mo <- cum_tax_base_scf_var[brackets_var == starting_brack_var]
-    
-    #From here on: keep
-    target_hhlds_mo <- sum( numberTaxpayers_mo[brackets_var>=starting_brack_var] )
-   
-    tax_base_total_mo <- sum(tax_base_mo[brackets_var>=starting_brack_var])/1000
-    tax_rev_init_mo <-   tax_base_total_mo * main_tax_var * 1000
-    
-    
-    
-    return(list("numberTaxpayers_mo" = numberTaxpayers_mo, "tax_base_mo" = tax_base_mo, "tax_base_dina_mo" =
-                  tax_base_dina_mo,  "tax_base_scf_mo" = tax_base_scf_mo, "target_hhlds_mo" = 
-                  target_hhlds_mo, "tax_base_total_mo" = tax_base_total_mo, "tax_rev_init_mo" = tax_rev_init_mo))
-}
-invisible( list2env(tax_revenue_mo_f(),.GlobalEnv) )
-
-# TO DELETE ONCE CODE CHUNCK ABOVE GO EVAL TRUE
-# Temporary values to be used in next paragraph             
-target_hhlds_round <- format(round( sum( 
-  numberTaxpayers_mo[brackets_po>=starting_brack_po] )/1000 
-  ) * 1000, scientific = FALSE)
-target_hhlds_round_scf <- format(round( sum( 
-  cum_numberTaxpayers_scf_in[brackets_po==starting_brack_po] )/1000 
-  ) * 1000, scientific=FALSE)
-target_hhlds_round_dina <- format(round( sum( 
-  cum_numberTaxpayers_dina_in[brackets_po==starting_brack_po] )/1000 
-  ) * 1000, scientific=FALSE)
-```
-
-
-COMPLETE TOTAL REVENUE. 
-
-```{r total-rev-to-delete}
-#TO DELETE
-# - inputs: tax_rev_init_mo, top_tax_base_in
-# - outputs: total_rev_pe
-total_rev_mo_f <- function(tax_rev_init_var = tax_rev_init_mo, top_tax_base_var = top_tax_base_in) {
-  
-  
-    total_rev_pe <- tax_rev_init_var + top_tax_base_var #PE
-    
-    
-    return(list("total_rev_pe" = total_rev_pe))
-}
-invisible( list2env(total_rev_mo_f(),.GlobalEnv) )
-```
-
-
-Starting with the `r paste("$", round(tax_base_total_mo, digits = 1), sep="")` trillion tax base of wealth above `r paste0("$", starting_brack_po/1e6)` million, a two percent tax would raise `r paste("$", round(tax_rev_init_mo), sep="")` billion in 2019. The billionaire surtax is estimated to apply to a base of `r paste("$", round(final_taxbase_b_in/1e3, 2), sep="")` trillion from about `r round(num_billionares_in/100) * 100` billionaire families. Thus the billionaire surtax would raise `r paste("$", round(top_tax_base_in), sep="")` billion in 2019. The combination of the `r paste(100*main_tax_po, "%", sep = "")` tax above `r paste("$",starting_brack_po/1e6, sep = "")` million and the billionaire surtax would raise `r paste(round(tax_rev_init_mo)," + ", round(top_tax_base_in), sep="")` = `r round(total_rev_pe)` billion in 2019. 
-
-### 4.1 - Visualization
+### 5.1 - Visualization
 
 The figure below illustrates the distribution of wealth tax across the population:
 
 ```{r figure, warning=FALSE} 
-wealth_aux <- 10:1000 * 1e6
+#new
+## 0, 2,2, 3
+## 10,50, 500, 1000
+#taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
+#brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
 
-bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$500m", "$500m-$1bn", "1bn+")
-#This function computes the total tax collected for a tax unit with wealth "wealth_var", applying "taxrates_var" to "brackets_var"
-# - inputs: wealth, tax rates, brackets to tax
-# - ouputs: total tax collected
-get_tax_rev <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
-                          brackets_var = brackets_po) {
-    ## expecting taxLevels in percentage
-    # taxLevels <- taxLevels / 100
-    if (length(brackets_var) != length(taxrates_var)){
-      stop("Tax brackets and tax rates do not match")
-    }
-   # Compute max taxable wealth per bracket
-    max_tax_per_brack <- c(diff(c(0, brackets_var)), 1e100)
-   # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
-   # then assign max taxable wealth to that given bracket
-    to_tax <- ifelse( wealth_var - c(0, brackets_var) > max_tax_per_brack, 
-                      max_tax_per_brack, 
-                      ( wealth_var - c(0,brackets_var) ) )   
-   # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
-    to_tax <- ifelse( to_tax<0, 0, to_tax )
-    # Apply trax rates to each corresponding bracket and all together
-    total_tax <- sum( to_tax * c(0, taxrates_var) )   
-    return(total_tax)
+taxRate <- c(0, 2, 2, 3) 
+brackets <- c(10, 50, 500, 1000)
+#this section sorts the tax brackets. Not needed outside the app    
+if (FALSE){          
+    ## reshuffle to make sure brackets are increasing
+    ## tax rates not forced to be monotonic
+    reorderIdx <- order(as.numeric(brackets))
+    brackets <- brackets[reorderIdx]
+    taxRate <- taxRate[reorderIdx]
 }
-  
-
-xval <- seq(10e6, 1e9 + 1e8, by = 1e6)
     
-#brackets_po <- c(0, 25, 50, 100, 250, 500, 1000) * 1e6
-getGroup <- as.numeric(cut(xval, c(brackets_po, 1e12), include.lowest = TRUE))
+    
+### KATIE: change the 1e5 to whatever you want to be the minimum
+xval <- 10^seq(log10(1e5), log10(45e9), by = 0.001) ## get uniform on log scale
+ 
+if(FALSE){
+    idx0 <- xval <= as.numeric(brackets[1]) * 1e6
+    idx1 <- xval <= as.numeric(brackets[2]) * 1e6 & xval > as.numeric(brackets[1]) * 1e6
+    idx2 <- xval > as.numeric(brackets[2]) * 1e6 & xval <= as.numeric(brackets[3]) * 1e6
+    idx3 <- xval > as.numeric(brackets[3]) * 1e6 & xval <= as.numeric(brackets[4]) * 1e6
+    idx4 <- xval > as.numeric(brackets[4]) * 1e6
+    idx <- cbind.data.frame(idx0, idx1, idx2, idx3, idx4)
+   # Indicator across income on tax bracket position
+    getGroup <- unlist(apply(idx, 1, function(x) {
+      which(x)[1]
+    }))
 
-toPlot <- cbind.data.frame(xval, getGroup)
+    toPlot <- cbind.data.frame(xval, getGroup)  
+}
+    #brackets_po <- c(0, 25, 50, 100, 250, 500, 1000) * 1e6
+getGroup <- as.numeric(cut(xval, c(0, brackets * 1e6, 1e12), include.lowest = TRUE))
 
-toMatch <- cbind.data.frame(group = 1:7, tax = tax_rates_po)
+    toPlot <- cbind.data.frame(xval, getGroup)  
+#summary(toPlot)
+#toMatch <- cbind.data.frame(group = 1:7, tax = tax_rates_po)
+toMatch <- cbind.data.frame(group = 1:(length(taxRate) + 1), tax = c(0, taxRate))
 
 toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
 #lapply(x = 1:5, f(x,y), y = 6:10) = (1, 6:10); (2, 6:10);... ;(5, 6:10)  
 toPlot2$averageInt <- sapply( toPlot2$xval, 
                               function(x) get_tax_rev(wealth_var = x, 
-                                                        taxrates_var = tax_rates_po, 
-                                                        brackets_var = brackets_po) )
+                                                        taxrates_var = taxRate/100, 
+                                                        brackets_var = brackets * 1e6) )
 
-# Here is where the total tax payed by each individuals is transform into marginal tax rates
+# Here is where the total tax payed by each individuals is transform into average tax rates
 toPlot2$averageRate <- (toPlot2$averageInt / toPlot2$xval) * 100
 
 toPlot2$id <- 1:nrow(toPlot2)
 #browser()
-#View(toPlot2)
+if(FALSE) {
+    # unaffected by new grouping
+    toPlot2$marginalInt <- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
 
-#sapply( toPlot2$xval, function(x) get_tax_rev(wealth_var = x, taxrates_var = tax_rates_po, brackets_var = brackets_po) )
- 
-##########
-##########
+    toPlot2$marginalRate <- (toPlot2$marginalInt / toPlot2$xval) * 100
 
-#taxRate <- c(input$bracket1, input$bracket2, input$bracket3, input$bracket4, input$bracket5, input$bracket6, input$bracket7)
-taxRate <- tax_rates_po *100
 
-# These are mini data set that ggvis needs to create vertical lines
-extra0 <- cbind.data.frame(x = rep(10e6, 2), y = c(0, taxRate[1]))
-extra1 <- cbind.data.frame(x = rep(25e6, 2), y = c(0, taxRate[1]))
-extra1b <- cbind.data.frame(x = rep(25e6, 2), y = c(0, taxRate[2]))
-extra2 <- cbind.data.frame(x = rep(50e6, 2), y = c(0, taxRate[2]))
-extra2b <- cbind.data.frame(x = rep(50e6, 2), y = c(0, taxRate[3]))
-
-extra3 <- cbind.data.frame(x = rep(100e6, 2), y = c(0, taxRate[3]))
-extra3b <- cbind.data.frame(x = rep(100e6, 2), y = c(0, taxRate[4]))
-
-extra4 <- cbind.data.frame(x = rep(250e6, 2), y = c(0, taxRate[4]))
-extra4b <- cbind.data.frame(x = rep(250e6, 2), y = c(0, taxRate[5]))
-extra5 <- cbind.data.frame(x = rep(500e6, 2), y = c(0, taxRate[5]))
-extra5b <- cbind.data.frame(x = rep(500e6, 2), y = c(0, taxRate[6]))
-extra6 <- cbind.data.frame(x = rep(1e9, 2), y = c(0, taxRate[6]))
-extra6b <- cbind.data.frame(x = rep(1e9, 2), y = c(0, taxRate[7]))
-
-    
-showMargin <- function(x) {
-  # Walk through?
-  # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
-  if (is.null(x)) return(NULL)
-  data = toPlot2
-  row <- data[data$id == x$id, ]
-  paste0("Average Tax Rate: ", round(row$averageRate, 2), "%", sep = "")
+    toPlot2$id <- 1:nrow(toPlot2)
 }
-    
-    toPlot2$tax100 <- toPlot2$tax * 100
-    
-    toPlot2 %>%
-      ggvis(x = ~xval, y = ~ tax100 ) %>%                                        # marginal tax
-      layer_points() %>%
-      layer_points(x = ~xval, y = ~averageRate, stroke := "red", key := ~id) %>%
-      add_tooltip(showMargin, "hover") %>%
-      layer_lines(x = ~xval, y = ~averageRate, stroke := "red") %>%
-      layer_paths(data = extra1, ~x, ~y) %>%
-      layer_paths(data = extra2, ~x, ~y) %>%
-      layer_paths(data = extra3, ~x, ~y) %>%
-      layer_paths(data = extra4, ~x, ~y) %>%
-      layer_paths(data = extra5, ~x, ~y) %>%
-      layer_paths(data = extra6, ~x, ~y) %>%
-      layer_paths(data = extra0, ~x, ~y) %>%
-      layer_paths(data = extra1b, ~x, ~y) %>%
-      layer_paths(data = extra2b, ~x, ~y) %>%
-      layer_paths(data = extra3b, ~x, ~y) %>%
-      layer_paths(data = extra4b, ~x, ~y) %>%
-      layer_paths(data = extra5b, ~x, ~y) %>%
-      layer_paths(data = extra6b, ~x, ~y) %>%
-      add_axis("x", title = "Wealth before taxes") %>%
-      add_axis("y", title = "Tax rate (%)") %>%
-      set_options(width = 1000, height = 500)
+#summary(toPlot2)
+#end of dataInputT
+       
+ #  
+ #      getGroup          xval                tax         marginalInt         marginalRate          id      
+ # Min.   :1.000   Min.   :1.000e+05   Min.   :0.000   Min.   :0.000e+00   Min.   :0.0000   Min.   :   1  
+ # 1st Qu.:1.000   1st Qu.:2.590e+06   1st Qu.:0.000   1st Qu.:0.000e+00   1st Qu.:0.0000   1st Qu.:1414  
+ # Median :3.000   Median :6.707e+07   Median :2.000   Median :3.413e+05   Median :0.5089   Median :2828  
+ # Mean   :2.807   Mean   :3.459e+09   Mean   :1.338   Mean   :9.947e+07   Mean   :1.1090   Mean   :2828  
+ # 3rd Qu.:5.000   3rd Qu.:1.737e+09   3rd Qu.:3.000   3rd Qu.:4.110e+07   3rd Qu.:2.3667   3rd Qu.:4241  
+ # Max.   :5.000   Max.   :4.498e+10   Max.   :3.000   Max.   :1.338e+09   Max.   :2.9755   Max.   :5654 
+ #  
+  
+  
+# These are mini data set that ggvis needs to create vertical lines
+extra0 <- cbind.data.frame(x = rep(as.numeric(brackets[1]) * 1e6, 2), y = c(0, taxRate[1]))
+extra1 <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[1]))
+extra1b <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[2]))
+extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
+extra2b <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
+extra3 <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[3]))
+extra3b <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[4]))
+
+showAvg <- function(x) {
+  # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
+  # https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
+  if (sum(grepl("id", names(x))) == 0) return(NULL)
+  if (is.null(x)) return(NULL)
+  
+  data <- toPlot2
+
+  row <- data[data$id == x$id, ]
+
+  #The following section does not work in the static plot
+  if(FALSE){
+  paste0("Average Tax Rate: ", round(row$averageRate, 2), "%", 
+         " <br> Wealth ($m): ", round(row$xval / 1e6, 0), 
+         "<br> Top ", getPercentile(updateGrid(), row$xval / 1e6), 
+         "%", "<br> Taxes Paid ($m): ", round(row$averageInt / 1e6, 2), 
+         sep = "") ## dividing by 1e6 may need to change if we do this for xval overall
+  }
+}
 
 
-if (FALSE) {        
- #new
-  data <- dataInputT()
+data <- toPlot2
 
- rmIdx <- ncol(data)   
- plot <- data[, -rmIdx] %>%
-      ggvis(x = ~ xval / 1e6, y = ~tax) %>%
-      layer_points() %>%
-      layer_points(data = data, x = ~ xval / 1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
-      add_tooltip(showAvg, "hover") %>%
-      layer_lines(x = ~ xval / 1e6, y = ~marginalRate, stroke := "red") %>%
-      layer_paths(data = extra1, ~ x / 1e6, ~y) %>%
-      layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
-      layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
-      layer_paths(data = extra0, ~ x / 1e6, ~y) %>%
-      layer_paths(data = extra1b, ~ x / 1e6, ~y) %>%
-      layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
-      layer_paths(data = extra3b, ~ x / 1e6, ~y) %>%
-      add_axis("x",
-        title_offset = 80, title = "Wealth ($m)", grid = F, format = ",",
-        values = brackets, properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))
-      ) %>%
-      add_axis("y", title = "Tax rate (%)") %>%
-      scale_numeric("x", trans = "log", expand = 0) %>%
-      set_options(width = 1000, height = 500)    
-}    
-    
+rmIdx <- ncol(data)
+plot <- data[, -rmIdx] %>%
+  ggvis(x = ~ xval / 1e6, y = ~tax) %>%
+  layer_points() %>%
+  layer_points(data = data, x = ~ xval / 1e6, y = ~averageRate, stroke := "red", key := ~id) %>%
+  add_tooltip(showAvg, "hover") %>%
+  layer_lines(x = ~ xval / 1e6, y = ~averageRate, stroke := "red") %>%
+  layer_paths(data = extra1, ~ x / 1e6, ~y) %>%
+  layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
+  layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
+  layer_paths(data = extra0, ~ x / 1e6, ~y) %>%
+  layer_paths(data = extra1b, ~ x / 1e6, ~y) %>%
+  layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
+  layer_paths(data = extra3b, ~ x / 1e6, ~y) %>%
+  add_axis("x",
+           title_offset = 80, title = "Wealth ($m)", grid = F, format = ",",
+           values = brackets, properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))
+  ) %>%
+  add_axis("y", title = "Tax rate (%)") %>%
+  scale_numeric("x", trans = "log", expand = 0) %>%
+  set_options(width = 1000, height = 500)
+
+
+plot
+
+
+
+
     
 ```
 
@@ -837,11 +828,11 @@ if (FALSE) {
 ### 5 - Ten year projections
 
 ```{r ten-years} 
-# - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_base_in
+# - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_rev_in
 # - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
                            real_growth_var = real_growth_so, total_rev_var = total_rev_pe, 
-                           top_tax_base_var = top_tax_base_in){
+                           top_tax_base_var = top_tax_rev_in){
   
   
   
@@ -882,7 +873,7 @@ if (FALSE) {
 
 To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, at `r paste(100 * discount_rate_mo,"%", sep="")` per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over the 10 years 2019-2028 is `r ten_year_factor_round` times the revenue raised in 2019[^4]. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman[^5] show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is most likely that top wealth would continue to grow at least as fast as the average.  
 
-This 10-year projection implies that revenue raised by the progressive wealth tax would be `r paste(ten_year_factor_round, " * ", round(total_rev_pe), sep="")` = `r paste("$", round(ten_year_revenue_pe), sep = "")` billion, rounded to `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion. Out of these `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion, the billionaire surtax would raise `r paste(round(top_tax_base_in), " * ", ten_year_factor_round, sep="")` = `r paste("$", round(ten_year_top_tax_pe), sep ="")`, rounded to `r paste("$", round(ten_year_top_tax_pe/1e3,1), sep ="")` trillion.  
+This 10-year projection implies that revenue raised by the progressive wealth tax would be `r paste(ten_year_factor_round, " * ", round(total_rev_pe), sep="")` = `r paste("$", round(ten_year_revenue_pe), sep = "")` billion, rounded to `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion. Out of these `r paste("$", round(ten_year_revenue_pe/1e3, 2), sep = "")` trillion, the billionaire surtax would raise `r paste(round(top_tax_rev_in), " * ", ten_year_factor_round, sep="")` = `r paste("$", round(ten_year_top_tax_pe), sep ="")`, rounded to `r paste("$", round(ten_year_top_tax_pe/1e3,1), sep ="")` trillion.  
 
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because your proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 
