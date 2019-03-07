@@ -871,7 +871,7 @@ server <- function(input, output, session) {
   }
 
   ## total tax helper
-  totalTax <- reactive({
+  totalTax <- eventReactive(input$submit, ignoreNULL = FALSE, {
     ## wait for brackets to be ready
     req(input$bracket1T)
     req(input$bracket2T)
@@ -931,7 +931,7 @@ server <- function(input, output, session) {
   })
 
   ## total number of households taxed helper
-  householdsTaxed <- reactive({
+  householdsTaxed <- eventReactive(input$submit, ignoreNULL = FALSE, {
     ## wait for things to be ready
     req(input$bracket1T)
     req(input$bracket2T)
@@ -992,11 +992,10 @@ server <- function(input, output, session) {
 
     round(totalTaxpayers)
   })
-
-  ## use percentile affected
-  output$percentTaxUnits <- renderText({
+  
+  taxUnitesHelper <- eventReactive(input$submit, ignoreNULL = FALSE, {
     taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
-
+    
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T))
     }
@@ -1009,7 +1008,7 @@ server <- function(input, output, session) {
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T), as.numeric(input$bracket8T))
     }
-
+    
     brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
       brackets <- c(brackets, as.numeric(input$bracketV5T))
@@ -1023,14 +1022,19 @@ server <- function(input, output, session) {
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
     }
-
+    
     reorderIdx <- order(as.numeric(brackets))
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
-
-
-
+    
+    
+    
     getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
+  })
+
+  ## use percentile affected
+  output$percentTaxUnits <- renderText({
+    taxUnitesHelper()
   })
 
   
