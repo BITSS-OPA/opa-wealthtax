@@ -16,6 +16,24 @@ server <- function(input, output, session) {
     reset("bracketV3T")
     reset("bracketV4T")
 
+    if(!is.null(input$bracketV5T)){
+      reset("bracketV5T")
+      reset("bracket5T")
+    }
+    
+    if(!is.null(input$bracketV6T)){
+      reset("bracketV6T")
+      reset("bracket6T")
+    }
+    if(!is.null(input$bracketV7T)){
+      reset("bracketV7T")
+      reset("bracket7T")
+    }
+    
+    if(!is.null(input$bracketV8T)){
+      reset("bracketV8T")
+      reset("bracket8T")
+    }
 
     click("submit") ## Not working
   })
