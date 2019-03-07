@@ -106,6 +106,8 @@ server <- function(input, output, session) {
     req(input$evasion)
     grid$thresNew <- (1 - as.numeric(input$evasion) / 100) * grid$thres
     grid$avgNew <- (1 - as.numeric(input$evasion) / 100) * grid$avg ##
+    #browser()
+    grid=rbind(grid,c(100,0,NA,NA,NA,grid$thresNew[nrow(grid)]+1,0)) ## fake extra row with nobody in it
     return(grid)
   })
 
@@ -513,26 +515,27 @@ server <- function(input, output, session) {
     }
   })
 
-  observe({
-    if (bracketVal1T() > max(updateGrid()$thresNew) / 1e6) {
-      updateTextInput(session, "bracketV1T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-      print(max(updateGrid()$thresNew))
-    }
-  })
+  # observe({
+  #   if (bracketVal1T() > max(updateGrid()$thresNew) / 1e6) {
+  #     updateTextInput(session, "bracketV1T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+  #     print(max(updateGrid()$thresNew))
+  #   }
+  # })
 
 
   observe({
     if (bracketVal2T() < 0) {
       updateTextInput(session, "bracketV2T", value = 0)
     }
-
-    observe({
-      if (bracketVal2T() > max(updateGrid()$thresNew) / 1e6) {
-        updateTextInput(session, "bracketV2T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-        print(max(updateGrid()$thresNew))
-      }
     })
-  })
+# 
+#     observe({
+#       if (bracketVal2T() > max(updateGrid()$thresNew) / 1e6) {
+#         updateTextInput(session, "bracketV2T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+#         print(max(updateGrid()$thresNew))
+#       }
+#     })
+#   })
   
   
   observe({
@@ -541,12 +544,12 @@ server <- function(input, output, session) {
     }
   })
 
-  observe({
-    if (bracketVal3T() > max(updateGrid()$thresNew) / 1e6) {
-      updateTextInput(session, "bracketV3T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-      print(max(updateGrid()$thresNew))
-    }
-  })
+  # observe({
+  #   if (bracketVal3T() > max(updateGrid()$thresNew) / 1e6) {
+  #     updateTextInput(session, "bracketV3T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+  #     print(max(updateGrid()$thresNew))
+  #   }
+  # })
 
  
   observe({
@@ -555,13 +558,13 @@ server <- function(input, output, session) {
     }
   })
 
-  observe({
-    if (bracketVal4T() > max(updateGrid()$thresNew) / 1e6) {
-      updateTextInput(session, "bracketV4T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-      # print(max(updateGrid()$thresNew))
-    }
-  })
-
+  # observe({
+  #   if (bracketVal4T() > max(updateGrid()$thresNew) / 1e6) {
+  #     updateTextInput(session, "bracketV4T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+  #     # print(max(updateGrid()$thresNew))
+  #   }
+  # })
+  # 
 
   observe({
     if (input$extraBrackets >= 5) {
@@ -573,15 +576,15 @@ server <- function(input, output, session) {
     }
   })
 
-  observe({
-    if (input$extraBrackets >= 5) {
-      if (!is.null(input$bracketV5T)) {
-        if (bracketVal5T() > max(updateGrid()$thresNew) / 1e6) {
-          updateTextInput(session, "bracketV5T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-        }
-      }
-    }
-  })
+  # observe({
+  #   if (input$extraBrackets >= 5) {
+  #     if (!is.null(input$bracketV5T)) {
+  #       if (bracketVal5T() > max(updateGrid()$thresNew) / 1e6) {
+  #         updateTextInput(session, "bracketV5T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+  #       }
+  #     }
+  #   }
+  # })
 
  
   observe({
@@ -594,15 +597,15 @@ server <- function(input, output, session) {
     }
   })
 
-  observe({
-    if (input$extraBrackets >= 6) {
-      if (!is.null(input$bracketV6T)) {
-        if (bracketVal6T() > max(updateGrid()$thresNew) / 1e6) {
-          updateTextInput(session, "bracketV6T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-        }
-      }
-    }
-  })
+  # observe({
+  #   if (input$extraBrackets >= 6) {
+  #     if (!is.null(input$bracketV6T)) {
+  #       if (bracketVal6T() > max(updateGrid()$thresNew) / 1e6) {
+  #         updateTextInput(session, "bracketV6T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+  #       }
+  #     }
+  #   }
+  # })
 
 
   observe({
@@ -615,15 +618,15 @@ server <- function(input, output, session) {
     }
   })
 
-  observe({
-    if (input$extraBrackets >= 7) {
-      if (!is.null(input$bracketV7T)) {
-        if (bracketVal7T() > max(updateGrid()$thresNew) / 1e6) {
-          updateTextInput(session, "bracketV7T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-        }
-      }
-    }
-  })
+  # observe({
+  #   if (input$extraBrackets >= 7) {
+  #     if (!is.null(input$bracketV7T)) {
+  #       if (bracketVal7T() > max(updateGrid()$thresNew) / 1e6) {
+  #         updateTextInput(session, "bracketV7T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+  #       }
+  #     }
+  #   }
+  # })
 
   
   observe({
@@ -636,15 +639,15 @@ server <- function(input, output, session) {
     }
   })
 
-  observe({
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T)) {
-        if (bracketVal8T() > max(updateGrid()$thresNew) / 1e6) {
-          updateTextInput(session, "bracketV8T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
-        }
-      }
-    }
-  })
+  # observe({
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T)) {
+  #       if (bracketVal8T() > max(updateGrid()$thresNew) / 1e6) {
+  #         updateTextInput(session, "bracketV8T", value = round(max(updateGrid()$thresNew) / 1e6, 0))
+  #       }
+  #     }
+  #   }
+  # })
 
 
   ## helpers to call these values
@@ -749,6 +752,8 @@ server <- function(input, output, session) {
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
       taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T), as.numeric(input$bracket8T))
     }
+    
+    #taxRate <- c(taxRate, 0) ## fake large bracket
 
     brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
@@ -764,13 +769,19 @@ server <- function(input, output, session) {
       brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
     }
 
+    #brackets <- c(brackets,1e100) ## fake large bracket
+    
     ## reshuffle to make sure brackets are increasing
     ## tax rates not forced to be monotonic
     reorderIdx <- order(as.numeric(brackets))
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
 
-    xval <- 10^seq(log10(1e5), log10(45e9), by = 0.001) ## get uniform on log scale
+    xval <- 10^seq(log10(1e5), log10(max(updateGrid()$thresNew) ), by = 0.001) ## get uniform on log scale
+    
+    if(brackets[length(brackets)]>max(updateGrid()$thresNew) / 1e6){
+      xval <- 10^seq(log10(1e5), log10(brackets[length(brackets)]*1e6), by = 0.001) ## get uniform on log scale
+    }
 
     idx0 <- xval <= as.numeric(brackets[1]) * 1e6
     idx1 <- xval <= as.numeric(brackets[2]) * 1e6 & xval > as.numeric(brackets[1]) * 1e6
@@ -1176,7 +1187,7 @@ server <- function(input, output, session) {
 
       data <- dataInputT()
 
-
+#data = subset(data,data$xval<=45000)
 
       row <- data[data$id == x$id, ]
 
@@ -1187,7 +1198,7 @@ server <- function(input, output, session) {
 
     data <- dataInputT()
     
-    markers <- data.frame(a=c(getPercentileMarkers(updateGrid())/1e6),b=rep(0.25,4), c=c("Top 10%", "Top 1%", "Top 0.1%", "Top 0.01%"))
+    markers <- data.frame(a=c(getPercentileMarkers(updateGrid())/1e6,max(updateGrid()$thresNew) / 1e6),b=rep(0.25,5), c=c("Top 10%", "Top 1%", "Top 0.1%", "Top 0.01%","Maximum"))
 
     ### HERE
     #browser()
@@ -1197,9 +1208,9 @@ valuesInt=sort(valuesInt)
     plot <- data[, -rmIdx] %>%
       ggvis(x = ~ xval / 1e6, y = ~tax) %>%
       layer_points() %>%
-      layer_points(data = data, x = ~ xval / 1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
+      layer_points(data = subset(data,xval/1e6<=max(updateGrid()$thresNew) / 1e6), x = ~ xval / 1e6, y = ~marginalRate, stroke := "red", key := ~id) %>%
       add_tooltip(showAvg, "hover") %>%
-      layer_lines(x = ~ xval / 1e6, y = ~marginalRate, stroke := "red") %>%
+      #layer_lines(data = subset(data,xval/1e6<=45000),x = ~ xval / 1e6, y = ~marginalRate, stroke := "red") %>%
       layer_paths(data = extra1, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
       layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
