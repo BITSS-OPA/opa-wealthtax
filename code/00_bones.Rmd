@@ -1,8 +1,16 @@
 ---
 title: "Template"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     code_folding: hide
+    collapsed: yes
+    keep_md: yes
+    number_sections: yes
+    smooth_scroll: no
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
   word_document: default
   pdf_document: default
 editor_options:

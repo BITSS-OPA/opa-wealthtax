@@ -1,10 +1,17 @@
 ---
 title: "OPA for Wealth Tax"
 author: ''
-date: "1/28/2019"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     code_folding: hide
+    collapsed: yes
+    keep_md: yes
+    number_sections: no
+    smooth_scroll: no
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
   pdf_document: default
 editor_options:
   chunk_output_type: console
@@ -29,7 +36,7 @@ library(ggvis)
 ```
 
 
-# Wealth tax analysis
+Wealth tax analysis
 
 
 ```{r params, echo=TRUE, message=FALSE, warning=FALSE}
@@ -674,12 +681,7 @@ Starting with the `r paste0("$", round(tax_base_total_mo, digits = 1))` trillion
 The figure below illustrates the distribution of wealth tax across the population:
 
 ```{r figure, warning=FALSE} 
-#new
-## 0, 2,2, 3
-## 10,50, 500, 1000
-#taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
-#brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
-
+# Clean up the code (but do not make changes). 
 taxRate <- c(0, 2, 2, 3) 
 brackets <- c(10, 50, 500, 1000)
 #this section sorts the tax brackets. Not needed outside the app    
@@ -690,7 +692,6 @@ if (FALSE){
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
 }
-    
     
 ### KATIE: change the 1e5 to whatever you want to be the minimum
 xval <- 10^seq(log10(1e5), log10(45e9), by = 0.001) ## get uniform on log scale
@@ -712,7 +713,7 @@ if(FALSE){
     #brackets_po <- c(0, 25, 50, 100, 250, 500, 1000) * 1e6
 getGroup <- as.numeric(cut(xval, c(0, brackets * 1e6, 1e12), include.lowest = TRUE))
 
-    toPlot <- cbind.data.frame(xval, getGroup)  
+toPlot <- cbind.data.frame(xval, getGroup)  
 #summary(toPlot)
 #toMatch <- cbind.data.frame(group = 1:7, tax = tax_rates_po)
 toMatch <- cbind.data.frame(group = 1:(length(taxRate) + 1), tax = c(0, taxRate))
@@ -807,13 +808,7 @@ plot <- data[, -rmIdx] %>%
   scale_numeric("x", trans = "log", expand = 0) %>%
   set_options(width = 1000, height = 500)
 
-
 plot
-
-
-
-
-    
 ```
 
 
@@ -825,7 +820,7 @@ plot
 
 2 - Go to [this link](https://mybinder.org/v2/gh/fhoces/opa-wealthtax/master?urlpath=rstudio) and reproduce all the result in a computing enviroment (supported by [project binder](https://mybinder.org/)). You will **not** need to install anything in your computer.  
 
-### 5 - Ten year projections
+### 6 - Ten year projections
 
 ```{r ten-years} 
 # - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_rev_in
@@ -877,12 +872,12 @@ This 10-year projection implies that revenue raised by the progressive wealth ta
 
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because your proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 
-### 6 - Wealth inequality
+### 7 - Wealth inequality
 One of the key motivations for introducing a progressive wealth tax is to curb the
 growing concentration of wealth. The top 0.1% wealth share has increased dramatically from about 7% in the late 1970s to around 20% in recent years. Conversely, the wealth share of the bottom 90% of families has declined from about 35% in the late 1970s to about 25% today. This fall has been primarily the consequence of increased debt for the bottom 90% (through mortgage refinance, consumer credit, and student loans). As a result, the top 0.1% today owns almost as much wealth as the bottom 90% of US families, which includes the vast majority of US families. 
 
 
-### 7 - Tax burden on the wealthiest 0.1%
+### 8 - Tax burden on the wealthiest 0.1%
 
 The estimates of Piketty, Saez, and Zucman (2018) show that the total burden (including all taxes both at the federal, state, and local levels) of the wealthiest 0.1% families is projected to be 3.2% of their wealth in 2019 (they have on average \$116 million in wealth, and pay total taxes of \$3.68 million). The proposed progressive wealth tax would add an extra \$1.27 million (or 1.1% of wealth) to their tax burden for a total tax burden (relative to wealth) of 4.3%.
 
