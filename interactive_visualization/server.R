@@ -500,11 +500,10 @@ server <- function(input, output, session) {
   })
 
   ## don't let  tax brackets go below 0 or above max wealth after evasion
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+
   observe({
-    if (bracketVal1T() < 0.1) {
-      updateTextInput(session, "bracketV1T", value = 0.1)
+    if (bracketVal1T() < 0) {
+      updateTextInput(session, "bracketV1T", value = 0)
     }
   })
 
@@ -515,11 +514,10 @@ server <- function(input, output, session) {
     }
   })
 
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+
   observe({
-    if (bracketVal2T() < 0.1) {
-      updateTextInput(session, "bracketV2T", value = 0.1)
+    if (bracketVal2T() < 0) {
+      updateTextInput(session, "bracketV2T", value = 0)
     }
 
     observe({
@@ -530,11 +528,10 @@ server <- function(input, output, session) {
     })
   })
   
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+  
   observe({
-    if (bracketVal3T() < 0.1) {
-      updateTextInput(session, "bracketV3T", value = 0.1)
+    if (bracketVal3T() < 0) {
+      updateTextInput(session, "bracketV3T", value = 0)
     }
   })
 
@@ -545,11 +542,10 @@ server <- function(input, output, session) {
     }
   })
 
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+ 
   observe({
-    if (bracketVal4T() < 0.1) {
-      updateTextInput(session, "bracketV4T", value = 0.1)
+    if (bracketVal4T() < 0) {
+      updateTextInput(session, "bracketV4T", value = 0)
     }
   })
 
@@ -560,13 +556,12 @@ server <- function(input, output, session) {
     }
   })
 
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+
   observe({
     if (input$extraBrackets >= 5) {
       if (!is.null(input$bracketV5T)) {
-        if (bracketVal5T() < 0.1) {
-          updateTextInput(session, "bracketV5T", value = 0.1)
+        if (bracketVal5T() < 0) {
+          updateTextInput(session, "bracketV5T", value = 0)
         }
       }
     }
@@ -582,13 +577,12 @@ server <- function(input, output, session) {
     }
   })
 
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+ 
   observe({
     if (input$extraBrackets >= 6) {
       if (!is.null(input$bracketV6T)) {
-        if (bracketVal6T() < 0.1) {
-          updateTextInput(session, "bracketV6T", value = 0.1)
+        if (bracketVal6T() < 0) {
+          updateTextInput(session, "bracketV6T", value = 0)
         }
       }
     }
@@ -604,13 +598,12 @@ server <- function(input, output, session) {
     }
   })
 
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+
   observe({
     if (input$extraBrackets >= 7) {
       if (!is.null(input$bracketV7T)) {
-        if (bracketVal7T() < 0.1) {
-          updateTextInput(session, "bracketV7T", value = 0.1)
+        if (bracketVal7T() < 0) {
+          updateTextInput(session, "bracketV7T", value = 0)
         }
       }
     }
@@ -626,13 +619,12 @@ server <- function(input, output, session) {
     }
   })
 
-  ### KATIE: change 0.1s to whatever matches what you put in xval
-  ### (1e5 in xval, 1e5/1e6=0.1)
+  
   observe({
     if (input$extraBrackets >= 8) {
       if (!is.null(input$bracketV8T)) {
-        if (bracketVal8T() < 0.1) {
-          updateTextInput(session, "bracketV8T", value = 0.1)
+        if (bracketVal8T() < 0) {
+          updateTextInput(session, "bracketV8T", value = 0)
         }
       }
     }
@@ -772,7 +764,6 @@ server <- function(input, output, session) {
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
 
-    ### KATIE: change the 1e5 to whatever you want to be the minimum
     xval <- 10^seq(log10(1e5), log10(45e9), by = 0.001) ## get uniform on log scale
 
     idx0 <- xval <= as.numeric(brackets[1]) * 1e6
@@ -1133,7 +1124,7 @@ server <- function(input, output, session) {
     taxRate <- taxRate[reorderIdx]
 
     # These are mini data set that ggvis needs to create vertical lines
-    extra0 <- cbind.data.frame(x = rep(as.numeric(brackets[1]) * 1e6, 2), y = c(0, taxRate[1]))
+    extra0 <- cbind.data.frame(x = rep(max(as.numeric(brackets[1])*1e6,1e5) , 2), y = c(0, taxRate[1]))
     extra1 <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[1]))
     extra1b <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[2]))
     extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
