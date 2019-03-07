@@ -2068,8 +2068,8 @@ export excel using &quot;$datawork/wealthperc.xlsx&quot;, first(var) replace
 *export delimited using &quot;/Users/fhoces/Desktop/sandbox/opa-wealthtax/analysis_data/tax_grid.csv&quot;, replace</code></pre>
 </div>
 </div>
-<div id="number-of-affected-households-and-their-total-tax-base-needs-cleaning" class="section level3">
-<h3>4 - Number of affected households and their total tax base [NEEDS CLEANING]</h3>
+<div id="number-of-affected-households-and-their-total-tax-base" class="section level3">
+<h3>4 - Number of affected households and their total tax base</h3>
 <p>To compute the relevant universe the evasion parameter of 16% is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)</p>
 <pre class="r"><code># tax_base_grid ---&gt; 
 # Change the following line at the end.
@@ -2163,16 +2163,14 @@ tax_base_total_surtax_mo &lt;- grid %&gt;%
 </div>
 <div id="total-tax-revenue-1-year-clean-and-understand-dicrepancies" class="section level3">
 <h3>5 - Total tax revenue (1 year) [CLEAN AND UNDERSTAND DICREPANCIES]</h3>
-<pre class="r"><code>#Total tax collected in a year
-#amount from 2%
-#amount from extra 1%
-
-
+<pre class="r"><code># Total tax collected in a year
+# amount from 2%
+# amount from extra 1%
 
 #This function computes the total tax collected for a tax unit with wealth &quot;wealth_var&quot;, applying &quot;taxrates_var&quot; to &quot;brackets_var&quot;
 # - inputs: wealth, tax rates, brackets to tax
 # - ouputs: total tax collected
-getTaxRevenue &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+get_tax_rev &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
                           brackets_var = brackets_po) {
     ## expecting taxLevels in percentage
     # taxLevels &lt;- taxLevels / 100
@@ -2208,20 +2206,20 @@ getTaxBasePerBracket=function(grid_var = grid,brackets_var = brackets_po, thresh
   
 taxBase &lt;- getTaxBasePerBracket(brackets = brackets_po, grid = grid)
 
-#NEED TO UNDERSTAND: why getTaxBasePerBracket differs from below
+# NEED TO UNDERSTAND: why getTaxBasePerBracket differs from below
 # computes tax payed by each average wealth per percintile (up to 2%)
 aux_test1 &lt;- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
+                   function(x) get_tax_rev(wealth_var = x, 
                                              taxrates_var = c(tax_rates_po[-7], 0.02), 
                                              brackets_var = brackets_po))
 # computes tax payed by each average wealth per percintile (billionare surtax of 1%)
 aux_test2 &lt;- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
+                   function(x) get_tax_rev(wealth_var = x, 
                                              taxrates_var = c(rep(0,6), 0.01), 
                                              brackets_var = brackets_po))
 # computes tax payed by each average wealth per percintile 
 aux_test3 &lt;- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
+                   function(x) get_tax_rev(wealth_var = x, 
                                              taxrates_var = tax_rates_po, 
                                              brackets_var = brackets_po))
 
@@ -2236,17 +2234,14 @@ total_tax_total &lt;- sum(grid$nb * aux_test3)/1e9
 #2% above 50m
 asd1 &lt;- grid %&gt;% 
   filter(thresNew &gt; starting_brack_po) %&gt;% 
-  summarise(sum((avgNew-starting_brack_po) * nb * 0.02)/1e9)
+  summarise(sum((avgNew - starting_brack_po) * nb * 0.02)/1e9) %&gt;% as.numeric()
 
 #billionares additional 1%
 asd2 &lt;- grid %&gt;% 
   filter(thresNew &gt; next_increase_po) %&gt;% 
-  summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9)
-
+  summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9) %&gt;% as.numeric()
 
 asd1 + asd2
-
-
 
 getPeoplePerBracket=function(grid,brackets){
   brackets = c(brackets, 1e12) ## get last bracket
@@ -2270,7 +2265,7 @@ target_hhlds_mo &lt;- sum( numberTaxpayers$totalPeople[brackets_po&gt;=starting_
 #tax_rev_init_mo &lt;-   tax_base_total_mo * main_tax_po * 1000
 
 tax_rev_init_mo &lt;- total_tax_base</code></pre>
-<pre class="r"><code># TO DELETE?
+<pre class="r"><code># TO DELETE
 
 # - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
 # cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so,  
@@ -2334,14 +2329,8 @@ est_billionares_in_f &lt;- function(evasion_param_var = evasion_param_in,
 
 invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
 #rm(list = c(&quot;aux1&quot;, &quot;one_billion&quot;))</code></pre>
-<pre class="r"><code>#DELETE?
+<pre class="r"><code>#DELETE
 
-# num_billionares_in &lt;- round(400 * 1.8^1.4)
-# top_tax_base &lt;- 0.01 * ( 400 * ( (1-0.15) * 7.2 - 1 ) * 1.25 )
-# Numbers in third bracket differ in 1 hhld 41636 instead of 4637
-# numberTaxpayers &lt;- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
-# 
-    
 # - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
 # - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
 
@@ -2412,7 +2401,7 @@ bracketNames &lt;- c(&quot;$10m-$25m&quot;, &quot;$25m-$50m&quot;, &quot;$50m-$1
 #This function computes the total tax collected for a tax unit with wealth &quot;wealth_var&quot;, applying &quot;taxrates_var&quot; to &quot;brackets_var&quot;
 # - inputs: wealth, tax rates, brackets to tax
 # - ouputs: total tax collected
-getTaxRevenue &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+get_tax_rev &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
                           brackets_var = brackets_po) {
     ## expecting taxLevels in percentage
     # taxLevels &lt;- taxLevels / 100
@@ -2447,7 +2436,7 @@ toPlot2 &lt;- merge(toPlot, toMatch, by.x = &quot;getGroup&quot;, by.y = &quot;g
 
 #lapply(x = 1:5, f(x,y), y = 6:10) = (1, 6:10); (2, 6:10);... ;(5, 6:10)  
 toPlot2$averageInt &lt;- sapply( toPlot2$xval, 
-                              function(x) getTaxRevenue(wealth_var = x, 
+                              function(x) get_tax_rev(wealth_var = x, 
                                                         taxrates_var = tax_rates_po, 
                                                         brackets_var = brackets_po) )
 
@@ -2458,7 +2447,7 @@ toPlot2$id &lt;- 1:nrow(toPlot2)
 #browser()
 #View(toPlot2)
 
-#sapply( toPlot2$xval, function(x) getTaxRevenue(wealth_var = x, taxrates_var = tax_rates_po, brackets_var = brackets_po) )
+#sapply( toPlot2$xval, function(x) get_tax_rev(wealth_var = x, taxrates_var = tax_rates_po, brackets_var = brackets_po) )
  
 ##########
 ##########
@@ -2517,27 +2506,27 @@ showMargin &lt;- function(x) {
       add_axis(&quot;x&quot;, title = &quot;Wealth before taxes&quot;) %&gt;%
       add_axis(&quot;y&quot;, title = &quot;Tax rate (%)&quot;) %&gt;%
       set_options(width = 1000, height = 500)</code></pre>
-<div id="plot_id612948265-container" class="ggvis-output-container">
-<div id="plot_id612948265" class="ggvis-output"></div>
+<div id="plot_id460276307-container" class="ggvis-output-container">
+<div id="plot_id460276307" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id612948265_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id612948265" data-renderer="svg">SVG</a>
+<a id="plot_id460276307_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id460276307" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id612948265_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id612948265" data-renderer="canvas">Canvas</a>
+<a id="plot_id460276307_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id460276307" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id612948265_download" class="ggvis-download" data-plot-id="plot_id612948265">Download</a>
+<a id="plot_id460276307_download" class="ggvis-download" data-plot-id="plot_id460276307">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id612948265_spec = {
+var plot_id460276307_spec = {
   "data": [
     {
       "name": ".0",
@@ -3211,7 +3200,7 @@ var plot_id612948265_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id612948265").parseSpec(plot_id612948265_spec);
+ggvis.getPlot("plot_id460276307").parseSpec(plot_id460276307_spec);
 </script>
 <pre class="r"><code>if (FALSE) {        
  #new
@@ -3240,7 +3229,9 @@ ggvis.getPlot("plot_id612948265").parseSpec(plot_id612948265_spec);
       set_options(width = 1000, height = 500)    
 }    </code></pre>
 <p><strong><a href="NULL">Click here/ADD URL WHEN ALLOWED</a> to explore different policy proposal and to see how the assumptions of the analysis affect the results.</strong></p>
-<p><strong>There are two ways to edit the code behind this document:</strong> ** 1 - Download/Clone the repository (<a href="NULL">Click here/ADD URL WHEN ALLOWED</a>) into your computer. You will need to install R and RStudio. <strong> </strong> 2 - Go to this link <a href="NULL">Click here/ADD URL WHEN ALLOWED</a> and reproduce all the result in a comnputing enviroment (supported by the amazing project mybinder.org)**</p>
+<p><strong>There are two ways to edit the code behind this document:</strong><br />
+1 - Download/Clone <a href="https://github.com/fhoces/opa-wealthtax">this repository</a> into your computer. You will need to install <a href="https://cloud.r-project.org/">R</a> and <a href="https://www.rstudio.com/products/rstudio/download/#download">RStudio</a>.</p>
+<p>2 - Go to <a href="https://mybinder.org/v2/gh/fhoces/opa-wealthtax/master?urlpath=rstudio">this link</a> and reproduce all the result in a computing enviroment (supported by <a href="mybinder.org">project binder</a>). You will <strong>not</strong> need to install anything in your computer.</p>
 </div>
 <div id="ten-year-projections" class="section level3">
 <h3>5 - Ten year projections</h3>

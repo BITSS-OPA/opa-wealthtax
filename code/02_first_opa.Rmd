@@ -333,7 +333,7 @@ export excel using "$datawork/wealthperc.xlsx", first(var) replace
 *export delimited using "/Users/fhoces/Desktop/sandbox/opa-wealthtax/analysis_data/tax_grid.csv", replace
 ```
 
-### 4 - Number of affected households and their total tax base [NEEDS CLEANING]
+### 4 - Number of affected households and their total tax base 
 
 To compute the relevant universe the evasion parameter of `r paste0(evasion_param_in *100, "%")` is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)
 
@@ -433,17 +433,15 @@ The `r target_hhlds_bn_mo` households with assests above `r paste0("$",next_incr
 
 ### 5 - Total tax revenue (1 year) [CLEAN AND UNDERSTAND DICREPANCIES]
 
-```{r new-tax-rev, eval=FALSE}
-#Total tax collected in a year
-#amount from 2%
-#amount from extra 1%
-
-
+```{r new-tax-rev, eval=FALSE} 
+# Total tax collected in a year
+# amount from 2%
+# amount from extra 1%
 
 #This function computes the total tax collected for a tax unit with wealth "wealth_var", applying "taxrates_var" to "brackets_var"
 # - inputs: wealth, tax rates, brackets to tax
 # - ouputs: total tax collected
-getTaxRevenue <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+get_tax_rev <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
                           brackets_var = brackets_po) {
     ## expecting taxLevels in percentage
     # taxLevels <- taxLevels / 100
@@ -464,42 +462,41 @@ getTaxRevenue <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
     return(total_tax)
 }
 
-#Assigns evaded wealth to brackets
-getTaxBasePerBracket=function(grid_var = grid,brackets_var = brackets_po, threshold_var = starting_brack_po){
-  ## brackets is lower end of each bracket
-  brackets = c(brackets_var, 1e12) ## get last bracket
-  # adding one dollar as the threshold represents the lower bound
-  grid_var$group=cut(grid_var$thresNew + 1, brackets)
-  toReturn = grid_var %>% 
-    group_by(group) %>% 
-    summarise(taxBase = sum((avgNew - threshold_var) * nb)) %>% 
-    drop_na()
-  return(toReturn)
-}
-  
 taxBase <- getTaxBasePerBracket(brackets = brackets_po, grid = grid)
 
-#NEED TO UNDERSTAND: why getTaxBasePerBracket differs from below
+# IMPORTANT: this (similar to getTaxBasePerBracket) was differing from simple
+# calculation below because this was not subseting to wealth above 50m.
 # computes tax payed by each average wealth per percintile (up to 2%)
 aux_test1 <- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
+                   function(x) get_tax_rev(wealth_var = x, 
                                              taxrates_var = c(tax_rates_po[-7], 0.02), 
                                              brackets_var = brackets_po))
 # computes tax payed by each average wealth per percintile (billionare surtax of 1%)
 aux_test2 <- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
+                   function(x) get_tax_rev(wealth_var = x, 
                                              taxrates_var = c(rep(0,6), 0.01), 
                                              brackets_var = brackets_po))
 # computes tax payed by each average wealth per percintile 
 aux_test3 <- sapply(grid$avgNew, 
-                   function(x) getTaxRevenue(wealth_var = x, 
+                   function(x) get_tax_rev(wealth_var = x, 
                                              taxrates_var = tax_rates_po, 
                                              brackets_var = brackets_po))
 
 total_tax_base <- sum(grid$nb * aux_test1)/1e9
 total_tax_sur_bill <- sum(grid$nb * aux_test2)/1e9
 total_tax_total <- sum(grid$nb * aux_test3)/1e9
+#199.9251
 
+ ## gets taxes paid per bracket
+  getTaxBasePerBracket <- function(grid_var = grid, taxLevels = tax_rates_po, brackets = brackets_po) {
+    grid_var <- grid_var %>% filter(thresNew > starting_brack_po)
+    test <- unlist(lapply(grid_var$avgNew, get_tax_rev, taxLevels, brackets))
+
+    return(sum(grid_var$nb * test))
+  }
+  
+  getTaxBasePerBracket()
+##199.9251
 
 
 # The following replicates stata code more closely UNDERSTAND WHY
@@ -507,21 +504,18 @@ total_tax_total <- sum(grid$nb * aux_test3)/1e9
 #2% above 50m
 asd1 <- grid %>% 
   filter(thresNew > starting_brack_po) %>% 
-  summarise(sum((avgNew-starting_brack_po) * nb * 0.02)/1e9)
+  summarise(sum((avgNew - starting_brack_po) * nb * 0.02)/1e9) %>% as.numeric()
 
 #billionares additional 1%
 asd2 <- grid %>% 
   filter(thresNew > next_increase_po) %>% 
-  summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9)
-
+  summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9) %>% as.numeric()
 
 asd1 + asd2
 
-
-
-getPeoplePerBracket=function(grid,brackets){
+getPeoplePerBracket=function(grid, brackets){
   brackets = c(brackets, 1e12) ## get last bracket
-  grid$group=cut(grid$thresNew,brackets)
+  grid$group=cut(grid$thresNew, brackets)
   toReturn = grid %>% 
     group_by(group) %>% 
     summarise(totalPeople=sum(nb)) %>% 
@@ -543,9 +537,8 @@ target_hhlds_mo <- sum( numberTaxpayers$totalPeople[brackets_po>=starting_brack_
 tax_rev_init_mo <- total_tax_base
 ```
 
-
 ```{r est-billionares-to-delete, eval=TRUE}  
-# TO DELETE?
+# TO DELETE
 
 # - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
 # cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so,  
@@ -612,16 +605,9 @@ invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
 
 ```
 
-
 ```{r tax-revenue-to-delete}   
-#DELETE?
+#DELETE
 
-# num_billionares_in <- round(400 * 1.8^1.4)
-# top_tax_base <- 0.01 * ( 400 * ( (1-0.15) * 7.2 - 1 ) * 1.25 )
-# Numbers in third bracket differ in 1 hhld 41636 instead of 4637
-# numberTaxpayers <- c(640198, 171310, 41637, 24974, 5155, 2612, 911)
-# 
-    
 # - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
 # - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
 
@@ -671,8 +657,6 @@ target_hhlds_round_dina <- format(round( sum(
 ```
 
 
-
-
 COMPLETE TOTAL REVENUE. 
 
 ```{r total-rev-to-delete}
@@ -704,7 +688,7 @@ bracketNames <- c("$10m-$25m", "$25m-$50m", "$50m-$100m", "$100m-$250m", "250m-$
 #This function computes the total tax collected for a tax unit with wealth "wealth_var", applying "taxrates_var" to "brackets_var"
 # - inputs: wealth, tax rates, brackets to tax
 # - ouputs: total tax collected
-getTaxRevenue <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+get_tax_rev <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
                           brackets_var = brackets_po) {
     ## expecting taxLevels in percentage
     # taxLevels <- taxLevels / 100
@@ -739,7 +723,7 @@ toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
 #lapply(x = 1:5, f(x,y), y = 6:10) = (1, 6:10); (2, 6:10);... ;(5, 6:10)  
 toPlot2$averageInt <- sapply( toPlot2$xval, 
-                              function(x) getTaxRevenue(wealth_var = x, 
+                              function(x) get_tax_rev(wealth_var = x, 
                                                         taxrates_var = tax_rates_po, 
                                                         brackets_var = brackets_po) )
 
@@ -750,7 +734,7 @@ toPlot2$id <- 1:nrow(toPlot2)
 #browser()
 #View(toPlot2)
 
-#sapply( toPlot2$xval, function(x) getTaxRevenue(wealth_var = x, taxrates_var = tax_rates_po, brackets_var = brackets_po) )
+#sapply( toPlot2$xval, function(x) get_tax_rev(wealth_var = x, taxrates_var = tax_rates_po, brackets_var = brackets_po) )
  
 ##########
 ##########
@@ -845,11 +829,10 @@ if (FALSE) {
 
 **[Click here/ADD URL WHEN ALLOWED](NULL) to explore different policy proposal and to see how the assumptions of the analysis affect the results.**
 
-**There are two ways to edit the code behind this document:** 
-** 1 - Download/Clone the repository ([Click here/ADD URL WHEN ALLOWED](NULL)) into your computer. You will need to install R and RStudio. **
-** 2 - Go to this link [Click here/ADD URL WHEN ALLOWED](NULL) and reproduce all the result in a comnputing enviroment (supported by the amazing project mybinder.org)**
+**There are two ways to edit the code behind this document:**   
+1 - Download/Clone [this repository](https://github.com/fhoces/opa-wealthtax) into your computer. You will need to install [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download).    
 
-
+2 - Go to [this link](https://mybinder.org/v2/gh/fhoces/opa-wealthtax/master?urlpath=rstudio) and reproduce all the result in a computing enviroment (supported by [project binder](mybinder.org)). You will **not** need to install anything in your computer.  
 
 ### 5 - Ten year projections
 

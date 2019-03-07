@@ -920,7 +920,7 @@ server <- function(input, output, session) {
 
   ## total tax output
   output$totalTax <- renderText({
-    round(totalTax())
+    round(totalTax(),4)
   })
 
   ## total tax output over 10 years
