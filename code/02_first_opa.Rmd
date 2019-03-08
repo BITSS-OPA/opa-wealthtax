@@ -5,6 +5,9 @@ author:
 - 'Dynamic Document: Fernando Hoces de la Guardia'
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  word_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
     code_folding: hide
     collapsed: yes
@@ -14,9 +17,6 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
-  word_document:
-    toc: yes
-    toc_depth: '3'
   pdf_document: default
 editor_options:
   chunk_output_type: console
@@ -24,16 +24,21 @@ always_allow_html: yes
 ---
 
 ```{r setup, include=FALSE}
+# Loading required libraries
+list.of.packages <- c("tidyverse", "haven", "EnvStats", "here", "ggvis", "kableExtra")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages, repos= "http://cran.cnr.berkeley.edu/")
+
+lapply(list.of.packages, library, character.only = TRUE)
+
+
+
 knitr::opts_chunk$set(echo = TRUE)
 #knitr::opts_knit$set(root.dir = "")
-library(tidyverse)
-library(haven)
-library(EnvStats)
-library(here)
-library(ggvis)
-library(kableExtra)
 
-print_code <- TRUE
+
+print_code <- FALSE
 
 ################ 
 #####  Notes:
