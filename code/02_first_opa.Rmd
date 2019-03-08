@@ -25,8 +25,7 @@ always_allow_html: yes
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#knitr::opts_knit$set(root.dir = "/Users/fhoces/Desktop/sandbox/opa-wealthtax")
-#knitr::opts_knit$set(root.dir = "C:/Users/clanc/o-lab/opa-wealthtax")
+#knitr::opts_knit$set(root.dir = "")
 library(tidyverse)
 library(haven)
 library(EnvStats)
@@ -35,12 +34,36 @@ library(ggvis)
 library(kableExtra)
 
 print_code <- TRUE
-###Outline:
-###Params (no narrative)
-###1 - Policy
-###2 - Elasticity calculation
-###3 - Relevant universe
-###4 - 
+
+################ 
+#####  Notes:
+################ 
+### Source ---------->  Input ---------->  Model ---------->  Policy Estimates (output)
+###  (_so)              (_in)              (_mo)                (_pe)
+### values            functions          functions              values
+###                   & values           & values             
+# - call_params_f - tax_elasticity_in_f  - tax_revenue_mo_f     - ten_year_revenue_pe
+# - policy_f      - est_billionares_in_f - total_rev_mo_f       - ten_year_top_tax_pe
+#                                        - ten_years_mo_f       - total_rev_pe
+### arguments in functions should used "_var" and functions should "_f"
+
+
+# DESCRIBE FUNCTIONS STRUCTURE
+# - inputs: list
+# - outputs: list
+#### function:  
+#sample_function_f <- function(){
+########################################## 
+##########################################  
+#
+#    ...
+#
+########################################## 
+##########################################  
+#    return( )                                  # A list with all (most?) the elements 
+#                                               # generated inside the function 
+#}
+#invisible( list2env(policy_f(),.GlobalEnv) ) 
 ```
 
 
@@ -67,24 +90,14 @@ call_params_f <- function(){
     ################
     ###### Data:
     ################ 
-    # Tax base called from data (SCF and DINA) already accounts for the adjustments
-    # due to population growth, tax avoidance, 
-    # Number of tax payers SCF & DINA
-    cum_numberTaxpayers_scf_so <- c(1100144, 298649, 72143, 34552, 7119,  2555,  671)
-    cum_numberTaxpayers_dina_so <- c(673449, 194548, 78434, 32751, 10236, 4491, 1597) 
-    # Tax base for brackets_po below
-    cum_tax_base_scf_so <-  c(203.97, 121.63,  81.79, 59.18, 36.67, 27.46, 20.78)
-    cum_tax_base_dina_so <- c(187.35, 135.38, 105.02, 80.11, 53.43, 36.94, 23.39)
+    # NEED TO ADD DATA SOURCES HERE: SCF, DINA, FORBES
     # Total wealth and number if households [SOURCE NEEDED]
-    total_wealth_so <- 94e12   # [SOURCE]  
     total_hhlds_so <- 129.4e6  # [SOURCE]
-    # Forbes: average across 400 and value for 400th billionare
-    average_wealth_top_400_so <- 7.2e9
-    wealth_last_400_so <- 2.1e9
     # Macro-economy/demographics
     inflation_so <- 0.025      # CBO/JCT
-    population_gr_so <- 0.01   # CBO/JCT
+    population_gr_so <- 0.01   # CBO/JCT AQUI VOY 
     real_growth_so <- 0.02     # CBO/JCT
+    
     is_dina_public_so <- TRUE
     
     ################ 
@@ -93,22 +106,11 @@ call_params_f <- function(){
     hhld_gr_so <- 0.009
     growth_wealth_so <- 0.055
 
+    
+    
     return( sapply( ls(pattern= "_so\\b"), function(x) get(x) ) ) 
 }
 invisible( list2env(call_params_f(),.GlobalEnv) )
-
-
-################ 
-#####  Notes:
-################ 
-### Source ---------->  Input ---------->  Model ---------->  Policy Estimates (output)
-###  (_so)              (_in)              (_mo)                (_pe)
-### values            functions          functions              values
-###                   & values           & values             
-# - call_params_f - tax_elasticity_in_f  - tax_revenue_mo_f     - ten_year_revenue_pe
-# - policy_f      - est_billionares_in_f - total_rev_mo_f       - ten_year_top_tax_pe
-#                                        - ten_years_mo_f       - total_rev_pe
-### arguments in functions should used "_var" and functions should "_f"
 
 ```
 
@@ -122,8 +124,8 @@ The wealth tax applies to net worth (sum of all assets net of debts) above $50 m
 # - outputs: all the original source values
 #### Policy:  
 policy_f <- function(){
-  
-  
+############################################################################### 
+###############################################################################  
   
     # brackets_po
     brackets_po <- c(10, 25, 50, 100, 250, 500,  1000) * 1e6
@@ -133,16 +135,18 @@ policy_f <- function(){
     main_tax_po <- median(tax_rates_po)
     max_tax_po <- max(tax_rates_po)
     
-    
-    
+############################################################################### 
+###############################################################################  
     return( sapply( ls(pattern= "_po\\b"), function(x) get(x)) ) 
 }
 invisible( list2env(policy_f(),.GlobalEnv) )
-knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,"Marginal Tax Rate (%)" = 100*tax_rates_po) )%>%
+
+knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,
+                   "Marginal Tax Rate (%)" = 100*tax_rates_po) )%>%
   kable_styling()  
 ```  
 
-Household net worth above `r paste("$", starting_brack_po/1e6, sep = "")` million would be taxed at `r paste(main_tax_po * 100, "%", sep = "")`. Any wealth over `r paste("$", next_increase_po/1e9, sep = "")` billion would be taxed an additional 1% (a billionaire surtax).
+Household net worth above `r paste0("$", starting_brack_po/1e6)` million would be taxed at `r paste(main_tax_po * 100, "%", sep = "")`. Any wealth over `r paste0("$", next_increase_po/1e9)` billion would be taxed an additional 1% (a billionaire surtax).
 
  
 ### 2 -  Compute tax avoidance elasticity
@@ -167,27 +171,27 @@ Seim (2017) and Jakobsen et al. (2018) obtain small avoidance/evasion responses 
 
 ```{r tax-elasticity, warning=FALSE, message=FALSE, echo=print_code}   
 # input: elasticity parameters from research, main tax, adjutment factor
-# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in) 
-tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so, ela3_1_var = ela3_1_so, 
-                                ela3_2_var = ela3_2_so, ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
+# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in)  
+tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so, 
+                                ela3_1_var = ela3_1_so, ela3_2_var = ela3_2_so, 
+                                ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
                                 main_tax_var = main_tax_po){
+############################################################################### 
+###############################################################################  
   
-  
-  
-    final_ela_in <- mean(c(ela1_var, ela2_var, (ela3_1_var + ela3_2_var)/2, (ela4_1_var + ela4_2_var)/2))
+    final_ela_in <- mean(c(ela1_var, ela2_var, (ela3_1_var + ela3_2_var)/2, 
+                           (ela4_1_var + ela4_2_var)/2))
     evasion_param_in <- main_tax_var * final_ela_in
     
-    
-    
+############################################################################### 
+###############################################################################  
     return(list("final_ela_in" = final_ela_in, 
                 "evasion_param_in" = evasion_param_in))
 }
 invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) ) 
-
-# ls(pattern = "_in\\b|_in_") 
 ```
 
-The final `r paste(evasion_param_in * 100,"%", sep="")` tax avoidance/evasion response to a `r paste0(main_tax_po * 100, "%")` wealth tax was computed as and average across these four studies (`r paste0(main_tax_po * 100, "%", "*(", ela1_so, "+", ela2_so, "+" ,(ela3_1_so+ela3_2_so)/2, "+", (ela4_1_so+ela4_2_so)/2, ")/4")`)
+The final `r paste0(evasion_param_in * 100,"%")` tax avoidance/evasion response to a `r paste0(main_tax_po * 100, "%")` wealth tax was computed as and average across these four studies (`r paste0(main_tax_po * 100, "%", "*(", ela1_so, "+", ela2_so, "+" ,(ela3_1_so+ela3_2_so)/2, "+", (ela4_1_so+ela4_2_so)/2, ")/4")`)
 
 ### 3 - Data sources
 Three data sources were used in this analysis:   
@@ -195,8 +199,6 @@ Three data sources were used in this analysis:
  - [Survey of Consumer Finances (SCF)](https://www.federalreserve.gov/econres/scfindex.htm) from the Federal Reserve Board. Latest year available: 2016.    
  - [Distributional National Accounts (DINA)](http://gabriel-zucman.eu/usdina/): estimates wealth by capitalizing investment income from income tax returns. Latest year available: 2019.    
  - [Forbes 400](https://www.forbes.com/forbes-400/#4d358acf7e2f):  provides the best estimate of billionares in the US. Last year available: 2018.  
-
-
 
 #### 3.1 Data cleanning
 
@@ -213,7 +215,8 @@ The following transformations were applied to the data:
 ##### Reproducing do file ('wealthtax.do')
 ### Forbes data 
 df_forbes <- read_dta("rawdata/forbes_20112018_bdays.dta")
-df_forbes1 <- df_forbes  %>% filter(forbes_yr == 2018) %>% 
+df_forbes1 <- df_forbes  %>% 
+  filter(forbes_yr == 2018) %>% 
   mutate("networth" = net_worthmillions * 1e6, 
            "weight" = 1, 
            "data" = "FB400") %>%
@@ -230,8 +233,10 @@ f400tot <- sum(df_forbes1$networth * df_forbes1$weight) / 1e12
 ####### If you have access to the orginal data set, set is_dina_public_so = TRUE.
 ####### To obtain this data please contact Gabriel Zucman at zucman@gmail.com
 ####### The file that you will obtain should have the following signature:
-####### in R: digest("usdina2019.dta", file = TRUE) produces: "2f5d529b1e89e39171927dc28bfebbe4"
-####### in Stata: datasignature produces: 282866:4(49628):4083279708:1806586907
+####### in R: digest("usdina2019.dta", file = TRUE) produces: 
+####### "2f5d529b1e89e39171927dc28bfebbe4"
+####### in Stata, datasignature produces: 
+####### "282866:4(49628):4083279708:1806586907"
 
 if(is_dina_public_so){
   # paste below the path to where usdina2019.dta is in your computer
@@ -299,12 +304,12 @@ df <- df %>% filter( !(networth > forbesmin & ( data == "SCF" | data == "DINA" )
 total_wealth <- df %>% 
   summarise(sum(networth * weight) / 1e12) %>% 
   as.numeric()
-billio_wealth <- df %>% 
+fifty_millio_wealth <- df %>% 
   filter(networth >= 50e6) %>% 
   summarise(sum(networth * weight) / 1e12) %>% 
   as.numeric()
 
-#cat("Total wealth (in trillions) is ", total_wealth, ". Wealth for billionares total wealth is ", billio_wealth) 
+#cat("Total wealth (in trillions) is ", total_wealth, ". Wealth for billionares total wealth is ", fifty_millio_wealth) 
 
 write_dta("analysis_data/wealth.dta", data = df, version = 11)
 
@@ -315,8 +320,12 @@ write_dta("analysis_data/wealth.dta", data = df, version = 11)
 #     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 #    0.000    0.000    0.008    0.928    0.174 3328.000 
 
-total_wealth_scf_in <- df_scf %>% summarise(sum(networth * wgt)/1e12) %>%  as.numeric()
-total_wealth_in <- df %>%  summarise(sum(networth * weight)/1e12)
+total_wealth_scf_in <- df_scf %>% 
+  summarise(sum(networth * wgt)/1e12) %>%  
+  as.numeric()
+total_wealth_in <- df %>%  
+  summarise(sum(networth * weight)/1e12) %>%  
+  as.numeric()
 ```
 
 The total household net worth projection is `r paste0("$", round(total_wealth_in))` trillion for 2019 (the SCF records a total household net worth of `r paste0("$", round(total_wealth_scf_in))` trillion in 2016).
