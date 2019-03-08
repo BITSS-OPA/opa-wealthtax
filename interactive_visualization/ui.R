@@ -12,7 +12,7 @@ ui <-
     useShinyjs(),
     titlePanel("Wealth Tax Explorer"),
 
-    numericInput("extraBrackets", "Number of Brackets", 4, min = 4, max = 8),
+    numericInput("extraBrackets", "Number of Brackets", 4, min = 2, max = 8),
     textInput("evasion", label = "Tax Evasion (%)", value = "16"),
 
     actionButton("reset", "Reset Values"),

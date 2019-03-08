@@ -160,15 +160,41 @@ server <- function(input, output, session) {
 
   ## add brackets - tax rate
   output$myui <- renderUI({
+    
+    if(input$extraBrackets==3){
+      shinyjs::hide(id = "bracket4T")
+      shinyjs::show(id = "bracket3T")
+      shinyjs::show(id = "bracket2T")
+      
+    }
+    
+    if(input$extraBrackets==2){
+      shinyjs::hide(id = "bracket3T")
+      shinyjs::hide(id = "bracket4T")
+      
+    }
+    
+    if(input$extraBrackets==4){
+      shinyjs::show(id = "bracket3T")
+      shinyjs::show(id = "bracket4T")
+      
+    }
+    
     if (input$extraBrackets == 5) {
+      shinyjs::show(id = "bracket3T")
+      shinyjs::show(id = "bracket4T")
       textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3")
     } else if (input$extraBrackets == 6) {
+      shinyjs::show(id = "bracket3T")
+      shinyjs::show(id = "bracket4T")
       tagList(
         textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
 
         textInput("bracket6T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3")
       )
     } else if (input$extraBrackets == 7) {
+      shinyjs::show(id = "bracket3T")
+      shinyjs::show(id = "bracket4T")
       tagList(
         textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
 
@@ -176,6 +202,8 @@ server <- function(input, output, session) {
         textInput("bracket7T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3")
       )
     } else if (input$extraBrackets == 8) {
+      shinyjs::show(id = "bracket3T")
+      shinyjs::show(id = "bracket4T")
       tagList(
         textInput("bracket5T", label = HTML("Apply a tax of (%): <br/> <br/>"), value = "3"),
 
@@ -188,9 +216,32 @@ server <- function(input, output, session) {
 
   ## add brackets - value
   output$myui2 <- renderUI({
+    
+    if(input$extraBrackets==3){
+      shinyjs::hide(id = "bracketV4T")
+      shinyjs::show(id = "bracketV3T")
+      shinyjs::show(id = "bracketV2T")
+      
+    }
+    
+    if(input$extraBrackets==2){
+      shinyjs::hide(id = "bracketV3T")
+      shinyjs::hide(id = "bracketV4T")
+      
+    }
+    
+    if(input$extraBrackets==4){
+      shinyjs::show(id = "bracketV3T")
+      shinyjs::show(id = "bracketV4T")
+      
+    }
     if (input$extraBrackets == 5) {
+      shinyjs::show(id = "bracketV3T")
+      shinyjs::show(id = "bracketV4T")
       textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
     } else if (input$extraBrackets == 6) {
+      shinyjs::show(id = "bracketV3T")
+      shinyjs::show(id = "bracketV4T")
       tagList(
         textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
 
@@ -198,6 +249,8 @@ server <- function(input, output, session) {
         textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
       )
     } else if (input$extraBrackets == 7) {
+      shinyjs::show(id = "bracketV3T")
+      shinyjs::show(id = "bracketV4T")
       tagList(
         textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
 
@@ -206,6 +259,8 @@ server <- function(input, output, session) {
         textInput("bracketV7T", label = "to wealth above ($m):", value = "1700")
       )
     } else if (input$extraBrackets == 8) {
+      shinyjs::show(id = "bracketV3T")
+      shinyjs::show(id = "bracketV4T")
       tagList(
         textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
 
