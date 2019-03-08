@@ -1117,28 +1117,37 @@ if(input$extraBrackets>=4){
     first <- wealth - brackets[1] * 1e6
     second <- first - (brackets[2] * 1e6 - brackets[1] * 1e6)
     
-    if(length(taxLevels)>=3){
+    if(length(taxLevels)==3){
       third <- second - (brackets[3] * 1e6 - brackets[2] * 1e6)
       
     }
-    if(length(taxLevels)>=4){
+    if(length(taxLevels)==4){
+      third <- second - (brackets[3] * 1e6 - brackets[2] * 1e6)
       fourth <- third - (brackets[4] * 1e6 - brackets[3] * 1e6)
     }
     if (length(taxLevels) == 5) {
+      third <- second - (brackets[3] * 1e6 - brackets[2] * 1e6)
+      fourth <- third - (brackets[4] * 1e6 - brackets[3] * 1e6)
       fifth <- fourth - (brackets[5] * 1e6 - brackets[4] * 1e6)
     }
     if (length(taxLevels) == 6) {
+      third <- second - (brackets[3] * 1e6 - brackets[2] * 1e6)
+      fourth <- third - (brackets[4] * 1e6 - brackets[3] * 1e6)
       fifth <- fourth - (brackets[5] * 1e6 - brackets[4] * 1e6)
 
       sixth <- fifth - (brackets[6] * 1e6 - brackets[5] * 1e6)
     }
     if (length(taxLevels) == 7) {
+      third <- second - (brackets[3] * 1e6 - brackets[2] * 1e6)
+      fourth <- third - (brackets[4] * 1e6 - brackets[3] * 1e6)
       fifth <- fourth - (brackets[5] * 1e6 - brackets[4] * 1e6)
 
       sixth <- fifth - (brackets[6] * 1e6 - brackets[5] * 1e6)
       seventh <- sixth - (brackets[7] * 1e6 - brackets[6] * 1e6)
     }
     if (length(taxLevels) == 8) {
+      third <- second - (brackets[3] * 1e6 - brackets[2] * 1e6)
+      fourth <- third - (brackets[4] * 1e6 - brackets[3] * 1e6)
       fifth <- fourth - (brackets[5] * 1e6 - brackets[4] * 1e6)
 
       sixth <- fifth - (brackets[6] * 1e6 - brackets[5] * 1e6)
@@ -1147,16 +1156,26 @@ if(input$extraBrackets>=4){
     }
 
     firstChunk <- ifelse(second >= 0, taxLevels[1] * (brackets[2] * 1e6 - brackets[1] * 1e6), taxLevels[1] * max(first, 0))
+    if(length(taxLevels)==2){
+    
+      secondChunk <- ifelse(second>=0, second*taxLevels[2],0)
+      toReturn <- firstChunk + secondChunk 
+      
+    }
+
     
     
     if(length(taxLevels)==3){
       secondChunk <- ifelse(third >= 0, taxLevels[2] * (brackets[3] * 1e6 - brackets[2] * 1e6), taxLevels[2] * max(second, 0))
-      toReturn <- firstChunk + secondChunk 
+    thirdChunk = ifelse(third >= 0, third* taxLevels[3], 0)
+      toReturn <- firstChunk + secondChunk +thirdChunk
     }
 if(length(taxLevels)==4){
   secondChunk <- ifelse(third >= 0, taxLevels[2] * (brackets[3] * 1e6 - brackets[2] * 1e6), taxLevels[2] * max(second, 0))
   thirdChunk <- ifelse(fourth >= 0, taxLevels[3] * (brackets[4] * 1e6 - brackets[3] * 1e6), taxLevels[3] * max(third, 0))
-  toReturn <- firstChunk + secondChunk +thirdChunk
+  fourthChunk <- ifelse(fourth >= 0, fourth * taxLevels[4], 0)
+  
+  toReturn <- firstChunk + secondChunk +thirdChunk+fourthChunk
 }
 
 
@@ -1191,10 +1210,7 @@ if(length(taxLevels)==4){
       fourthChunk <- ifelse(fifth >= 0, taxLevels[4] * (brackets[5] * 1e6 - brackets[4] * 1e6), taxLevels[4] * max(fourth, 0))
       fifthChunk <- ifelse(fifth >= 0, fifth * taxLevels[5], 0)
       toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk + fifthChunk
-    } else {
-      fourthChunk <- ifelse(fourth >= 0, fourth * taxLevels[4], 0)
-      toReturn <- firstChunk + secondChunk + thirdChunk + fourthChunk
-    }
+    } 
     return(toReturn)
   }
 
@@ -1209,9 +1225,8 @@ if(length(taxLevels)==4){
     req(input$bracketV2T)
     #req(input$bracketV3T)
     #req(input$bracketV4T)
-    
-    if(input$extraBrackets==4){
-      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T()))
+    if(input$extraBrackets==2){
+      taxRate <- as.numeric(c(bracket1T(), bracket2T()))
       
     }
     if(input$extraBrackets==3){
@@ -1219,10 +1234,12 @@ if(length(taxLevels)==4){
       
     }
     
-    if(input$extraBrackets==2){
-      taxRate <- as.numeric(c(bracket1T(), bracket2T()))
+    if(input$extraBrackets>=4){
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T()))
       
     }
+    
+    
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
       taxRate <- c(taxRate, bracket5T())
     }
@@ -1236,17 +1253,19 @@ if(length(taxLevels)==4){
       taxRate <- c(taxRate, bracket5T(),bracket6T(), bracket7T(), bracket8T())
     }
     taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
-    
-    if(input$extraBrackets==4){
-      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
-    }
- 
-    if(input$extraBrackets==3){
-      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
-    }
     if(input$extraBrackets==2){
       bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T()))
     }
+    
+    if(input$extraBrackets==3){
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
+    }
+    
+    if(input$extraBrackets>=4){
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+    }
+ 
+    
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
       bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()))
     }
@@ -1292,19 +1311,20 @@ if(length(taxLevels)==4){
     req(input$bracketV2T)
     #req(input$bracketV3T)
     #req(input$bracketV4T)
-
-    if(input$extraBrackets==4){
-      taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
-    }
-
-    if(input$extraBrackets==3){
-      taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
-    }
-    
     if(input$extraBrackets==2){
       taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T()))
       
     }
+    if(input$extraBrackets==3){
+      taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
+    }
+    
+    if(input$extraBrackets>=4){
+      taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+    }
+
+   
+    
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
       taxRate <- c(taxRate, bracketVal5T())
     }
@@ -1319,15 +1339,18 @@ if(length(taxLevels)==4){
     }
     taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
 
-    if(input$extraBrackets==4){
-      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
-    }
-if(input$extraBrackets==3){
-  bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
-}
     if(input$extraBrackets==2){
       bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T()))
     }
+    if(input$extraBrackets==3){
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
+    }
+    
+    
+    if(input$extraBrackets>=4){
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+    }
+
     
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
       bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()))
@@ -1449,7 +1472,7 @@ if(input$extraBrackets==3){
 if(input$extraBrackets==2){
   taxRate <- as.numeric(c(input$bracket1T, input$bracket2T))
 }
-    if(input$extraBrackets>=3){
+    if(input$extraBrackets==3){
       taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T))
       
     }
@@ -1518,25 +1541,39 @@ if(input$extraBrackets==2){
     extra0 <- cbind.data.frame(x = rep(max(as.numeric(brackets[1])*1e6,1e5) , 2), y = c(0, taxRate[1]))
     extra1 <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[1]))
     extra1b <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[2]))
-    if(input$extraBrackets>=3){
+    if(input$extraBrackets==3){
     extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
     extra2b <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
     }
     if(input$extraBrackets>=4){
+      extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
     extra3 <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[3]))
     extra3b <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[4]))
     }
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
+      extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3 <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3b <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4 <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4b <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[5]))
     }
     if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
+      extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3 <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3b <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4 <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4b <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[5]))
       extra5 <- cbind.data.frame(x = rep(as.numeric(brackets[6]) * 1e6, 2), y = c(0, taxRate[5]))
       extra5b <- cbind.data.frame(x = rep(as.numeric(brackets[6]) * 1e6, 2), y = c(0, taxRate[6]))
     }
     if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
+      extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3 <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3b <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4 <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4b <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[5]))
       extra5 <- cbind.data.frame(x = rep(as.numeric(brackets[6]) * 1e6, 2), y = c(0, taxRate[5]))
@@ -1545,6 +1582,10 @@ if(input$extraBrackets==2){
       extra6b <- cbind.data.frame(x = rep(as.numeric(brackets[7]) * 1e6, 2), y = c(0, taxRate[7]))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
+      extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
+      extra2b <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3 <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[3]))
+      extra3b <- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4 <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[4]))
       extra4b <- cbind.data.frame(x = rep(as.numeric(brackets[5]) * 1e6, 2), y = c(0, taxRate[5]))
       extra5 <- cbind.data.frame(x = rep(as.numeric(brackets[6]) * 1e6, 2), y = c(0, taxRate[5]))
@@ -1609,17 +1650,13 @@ valuesInt=sort(valuesInt)
       plot %>% 
         layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra2b, ~ x / 1e6, ~y) 
-    }
-    
-    if(input$extraBrackets==4){
+    }else if(input$extraBrackets==4){
       plot %>% 
         layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra3b, ~ x / 1e6, ~y) 
-    }
-    
-    if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
+    }else if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
       plot %>%
         layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
         layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
