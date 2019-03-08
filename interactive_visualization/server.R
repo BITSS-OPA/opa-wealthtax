@@ -300,9 +300,11 @@ server <- function(input, output, session) {
   }
   ## gets taxes paid per bracket
   getTaxBasePerBracket <- function(grid, taxLevels, brackets) {
-    test <- unlist(lapply(grid$avgNew, getAverageTax, taxLevels, brackets / 1e6))
+    first_nonzero_tax_brack <- brackets[min(which(taxLevels>0))]
+    grid_aux <- grid %>% filter(thresNew > first_nonzero_tax_brack)
+    test <- unlist(lapply(grid_aux$avgNew, getAverageTax, taxLevels, brackets / 1e6))
 
-    return(sum(grid$nb * test))
+    return(sum(grid_aux$nb * test))
   }
 
   ## gets people per bracket
