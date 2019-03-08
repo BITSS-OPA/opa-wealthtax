@@ -1,5 +1,123 @@
 
 server <- function(input, output, session) {
+  
+  observeEvent(input$submit,{
+    
+    taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
+    if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
+      req(input$bracket5T)
+      taxRate <- c(taxRate, as.numeric(input$bracket5T))
+    }
+    if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
+      req(input$bracket6T)
+      
+      taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T))
+    }
+    if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
+      req(input$bracket7T)
+      
+      taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T))
+    }
+    if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
+      req(input$bracket8T)
+      
+      taxRate <- c(taxRate, as.numeric(input$bracket5T), as.numeric(input$bracket6T), as.numeric(input$bracket7T), as.numeric(input$bracket8T))
+    }
+    
+    brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+    if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
+      req(input$bracketV5T)
+      brackets <- c(brackets, as.numeric(input$bracketV5T))
+    }
+    if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
+      req(input$bracketV6T)
+      
+      brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T))
+    }
+    if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
+      req(input$bracketV7T)
+      
+      brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T))
+    }
+    if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
+      req(input$bracketV8T)
+      
+      brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
+    }
+    
+    
+    reorderIdx <- order(as.numeric(brackets))
+    brackets <- brackets[reorderIdx]
+    taxRate <- taxRate[reorderIdx]
+    
+    
+    
+    updateTextInput(session, "bracketV1T", label = paste("to the top ", getPercentile(updateGrid(), brackets[1]), "%'s wealth above ($m):", sep = ""), value = brackets[1])
+    
+    updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), brackets[2]), "%'s wealth above ($m):", sep = ""), value = brackets[2])
+    
+    updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), brackets[3]), "%'s wealth above ($m):", sep = ""), value = brackets[3])
+    
+    updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), brackets[4]), "%'s wealth above ($m):", sep = ""), value = brackets[4])
+    
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T)) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), brackets[5]), "%'s wealth above ($m):", sep = ""), value = brackets[5])
+      }
+    }
+    
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T)) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), brackets[6]), "%'s wealth above ($m):", sep = ""), value = brackets[6])
+      }
+    }
+    
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T)) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), brackets[7]), "%'s wealth above ($m):", sep = ""), value = brackets[7])
+      }
+    }
+    
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T)) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal8T()), "%'s wealth above ($m):", sep = ""), value = bracketVal8T())
+      }
+    }
+    
+    updateTextInput(session, "bracket1T", value = taxRate[1])
+    updateTextInput(session, "bracket2T", value = taxRate[2])
+    updateTextInput(session, "bracket3T", value = taxRate[3])
+    updateTextInput(session, "bracket4T", value = taxRate[4])
+    
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracket5T)) {
+        updateTextInput(session, "bracket5T", value = taxRate[5])
+        
+      }
+    }
+    
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracket6T)) {
+        updateTextInput(session, "bracket6T", value = taxRate[6])
+        
+      }
+    }
+    
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracket7T)) {
+        updateTextInput(session, "bracket7T", value = taxRate[7])
+        
+      }
+    }
+    
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracket8T)) {
+        updateTextInput(session, "bracket8T", value = taxRate[8])
+        
+      }
+    }
+    
+  })
 
   ## reset everything when you click reset
   observeEvent(input$reset, {
@@ -35,7 +153,7 @@ server <- function(input, output, session) {
       reset("bracket8T")
     }
 
-    click("submit") ## Not working
+    #click("submit") ## Not working
   })
 
   ## https://stackoverflow.com/questions/39627760/conditional-panel-in-shiny-doesnt-update-variables
