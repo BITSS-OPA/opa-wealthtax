@@ -328,18 +328,26 @@ server <- function(input, output, session) {
   # https://github.com/rstudio/shiny/issues/1140
   ## update percentile for new bracket value
   observe({
+    if(input$bracketV1T!=".")
+      
     updateTextInput(session, "bracketV1T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal1T()), "%'s wealth above ($m):", sep = ""))
   })
 
   observe({
+    if(input$bracketV2T!=".")
+      
     updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal2T()), "%'s wealth above ($m):", sep = ""))
   })
 
   observe({
+    if(input$bracketV3T!=".")
+      
     updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal3T()), "%'s wealth above ($m):", sep = ""))
   })
 
   observe({
+    if(input$bracketV4T!=".")
+      
     updateTextInput(session, "bracketV4T", paste("to the top ", getPercentile(updateGrid(), bracketVal4T()), "%'s wealth above ($m):", sep = ""))
   })
 
@@ -347,7 +355,7 @@ server <- function(input, output, session) {
     req(input$extraBrackets)
     if (input$extraBrackets >= 5) {
       if (!is.null(input$bracketV5T)) {
-       
+       if(input$bracketV5T!=".")
         updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal5T()), "%'s wealth above ($m):", sep = ""), value = bracketVal5T())
         
       }
@@ -358,6 +366,8 @@ server <- function(input, output, session) {
     req(input$extraBrackets)
     if (input$extraBrackets >= 6) {
       if (!is.null(input$bracketV6T)) {
+        if(input$bracketV6T!=".")
+          
         updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal6T()), "%'s wealth above ($m):", sep = ""), value = bracketVal6T())
       }
     }
@@ -367,6 +377,8 @@ server <- function(input, output, session) {
     req(input$extraBrackets)
     if (input$extraBrackets >= 7) {
       if (!is.null(input$bracketV7T)) {
+        if(input$bracketV7T!=".")
+          
         updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal7T()), "%'s wealth above ($m):", sep = ""), value = bracketVal7T())
       }
     }
@@ -376,6 +388,8 @@ server <- function(input, output, session) {
     req(input$extraBrackets)
     if (input$extraBrackets >= 8) {
       if (!is.null(input$bracketV8T)) {
+        if(input$bracketV8T!=".")
+          
         updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal8T()), "%'s wealth above ($m):", sep = ""), value = bracketVal8T())
       }
     }
