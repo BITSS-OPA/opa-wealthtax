@@ -1,6 +1,8 @@
 ---
-title: "OPA for Wealth Tax"
-author: ''
+title: "Dynamic Documentation for Senator Warren's Wealth Tax Policy Analysis"
+author:
+- 'Policy Analysis: Emmanuel Saez  & Gabriel Zucman'
+- 'Dynamic Document: Fernando Hoces de la Guardia'
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -187,7 +189,7 @@ invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) )
 
 The final `r paste(evasion_param_in * 100,"%", sep="")` tax avoidance/evasion response to a `r paste0(main_tax_po * 100, "%")` wealth tax was computed as and average across these four studies (`r paste0(main_tax_po * 100, "%", "*(", ela1_so, "+", ela2_so, "+" ,(ela3_1_so+ela3_2_so)/2, "+", (ela4_1_so+ela4_2_so)/2, ")/4")`)
 
-### 3 - Data Sources
+### 3 - Data sources
 Three data sources were used in this analysis:   
 
  - [Survey of Consumer Finances (SCF)](https://www.federalreserve.gov/econres/scfindex.htm) from the Federal Reserve Board. Latest year available: 2016.    
@@ -347,142 +349,6 @@ export excel using "$datawork/wealthperc.xlsx", first(var) replace
 ```
 
 ### 4 - Number of affected households and their total tax base 
-```{r est-billionares-to-delete, eval=TRUE, echo=FALSE, echo=print_code}  
-# TO DELETE
-
-# - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
-# cum_numberTaxpayers_scf_so, cum_numberTaxpayers_dina_so, cum_tax_base_scf_so,  
-# cum_tax_base_dina_so 
-# - outputs: non_evaded_tax_in, totax_last_400_in, totax_average_400_in, totax_total_400_in, 
-# pareto_scale_in, ratio1_in, missing_fraction_in, missing_taxbase_in, num_billionares_in, 
-# final_taxbase_b_in, top_tax_rev_in, cum_numberTaxpayers_scf_in, cum_numberTaxpayers_dina_in, 
-# cum_tax_base_scf_in, cum_tax_base_dina_in 
-est_billionares_in_f <- function(evasion_param_var = evasion_param_in, 
-                                 wealth_last_400_var = wealth_last_400_so,
-                                 average_wealth_top_400_var = average_wealth_top_400_so,
-                                 cum_numberTaxpayers_scf_var = cum_numberTaxpayers_scf_so,
-                                 cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_so, 
-                                 cum_tax_base_scf_var = cum_tax_base_scf_so, 
-                                 cum_tax_base_dina_var = cum_tax_base_dina_so){
-    non_evaded_tax_in <- (1 - evasion_param_var)
-     
-    # Post evasion taxable wealth
-    totax_last_400_in <- non_evaded_tax_in * wealth_last_400_var/1e9                 
-    totax_average_400_in <- non_evaded_tax_in * average_wealth_top_400_var/1e9       
-    totax_total_400_in <- 400 * (totax_average_400_in - 1)                     # above one billion
-      
-    # Compute pareto scale of wealth distribution
-    aux1 <- average_wealth_top_400_var/wealth_last_400_var
-    pareto_scale_in <- aux1/(aux1-1) 
-    ratio1_in <- round(aux1, 1)
-    
-    # Compute missing fraction of taxable wealth above 1 billion
-    one_billion <- 1 
-    missing_fraction_in <- ( totax_last_400_in / one_billion )^( pareto_scale_in - 1 ) - 1
-
-    # Compute missing wealth (billions of dollars) to tax above one billion dollars
-    missing_taxbase_in <- missing_fraction_in * totax_total_400_in
-
-    # Compute total number of billionares. Extrapolation from forbes 400. 
-    #Diff between original document (911) and below (906) is due to rounding in inputs 
-    num_billionares_in <- 400 * ( totax_last_400_in / 1 ) ^ pareto_scale_in 
-    final_taxbase_b_in <- totax_total_400_in + missing_taxbase_in
-
-    #This is the taxed money (the aboves is the totale taxable) in billions  (minus one is just to match original results)
-    top_tax_rev_in <- final_taxbase_b_in * 0.01                                     # ALERT: Hard coded number
-     
-    #edit the number of billionares
-    cum_numberTaxpayers_scf_in <- c(cum_numberTaxpayers_scf_var[1:6], num_billionares_in)
-    cum_numberTaxpayers_dina_in <- c(cum_numberTaxpayers_dina_var[1:6], num_billionares_in)
-    #edit the tax revenue for billionares    
-    cum_tax_base_scf_in <- c(cum_tax_base_scf_var[1:6], top_tax_rev_in)
-    cum_tax_base_dina_in <- c(cum_tax_base_dina_var[1:6], top_tax_rev_in)
-    
-    return( list( "non_evaded_tax_in" = non_evaded_tax_in, "totax_last_400_in" = totax_last_400_in, 
-                  "totax_average_400_in" = totax_average_400_in, "totax_total_400_in" = 
-                    totax_total_400_in, "pareto_scale_in" = pareto_scale_in, "ratio1_in" = ratio1_in, 
-                  "missing_fraction_in" = missing_fraction_in, "missing_taxbase_in" = 
-                    missing_taxbase_in, "num_billionares_in" = num_billionares_in, 
-                  "final_taxbase_b_in" = final_taxbase_b_in, "top_tax_rev_in" = top_tax_rev_in, 
-                  "cum_numberTaxpayers_scf_in" = cum_numberTaxpayers_scf_in, 
-                  "cum_numberTaxpayers_dina_in" = cum_numberTaxpayers_dina_in, 
-                  "cum_tax_base_scf_in" = cum_tax_base_scf_in, 
-                  "cum_tax_base_dina_in" = cum_tax_base_dina_in ) )
-}
-
-invisible( list2env(est_billionares_in_f(),.GlobalEnv) )
-#rm(list = c("aux1", "one_billion"))
-
-```
-
-
-
-```{r tax-revenue-to-delete, echo=FALSE}   
-#DELETE
-
-# - inputs: cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_in, num_billionares_in, cum_tax_base_dina_in, cum_tax_base_scf_in, brackets_po, starting_brack_po, main_tax_po
-# - outputs: numberTaxpayers_mo, tax_base_mo, tax_base_dina_mo, tax_base_scf_mo, tax_base_total_mo, tax_rev_init_mo
-
-#ADD COMMENTS
-tax_revenue_mo_f <- function(cum_numberTaxpayers_dina_var = cum_numberTaxpayers_dina_in, cum_numberTaxpayers_scf_var = 
-                               cum_numberTaxpayers_scf_in, num_billionares_var = num_billionares_in, 
-                             cum_tax_base_dina_var = cum_tax_base_dina_in, cum_tax_base_scf_var =
-                               cum_tax_base_scf_in, brackets_var = brackets_po, starting_brack_var = starting_brack_po,
-                             main_tax_var = main_tax_po){
-  
-  
-  
-    aux1 <- (cum_numberTaxpayers_dina_var + cum_numberTaxpayers_scf_var)/2
-    numberTaxpayers_mo <- c(-1 * diff(aux1, lag = 1), num_billionares_var)
-    
-    aux2 <- (cum_tax_base_dina_var + cum_tax_base_scf_var)/2
-    tax_base_mo <- c(-1 * diff(aux2, lag = 1), top_tax_rev_in) * 100
-    
-    tax_base_dina_mo <- cum_tax_base_dina_var[brackets_var == starting_brack_var]
-    tax_base_scf_mo <- cum_tax_base_scf_var[brackets_var == starting_brack_var]
-    
-    #From here on: keep
-    target_hhlds_mo <- sum( numberTaxpayers_mo[brackets_var>=starting_brack_var] )
-   
-    tax_base_total_mo <- sum(tax_base_mo[brackets_var>=starting_brack_var])/1000
-    tax_rev_init_mo <-   tax_base_total_mo * main_tax_var * 1000
-    
-    
-    
-    return(list("numberTaxpayers_mo" = numberTaxpayers_mo, "tax_base_mo" = tax_base_mo, "tax_base_dina_mo" =
-                  tax_base_dina_mo,  "tax_base_scf_mo" = tax_base_scf_mo, "target_hhlds_mo" = 
-                  target_hhlds_mo, "tax_base_total_mo" = tax_base_total_mo, "tax_rev_init_mo" = tax_rev_init_mo))
-}
-invisible( list2env(tax_revenue_mo_f(),.GlobalEnv) )
-
-# TO DELETE ONCE CODE CHUNCK ABOVE GO EVAL TRUE
-# Temporary values to be used in next paragraph             
-target_hhlds_round <- format(round( sum( 
-  numberTaxpayers_mo[brackets_po>=starting_brack_po] )/1000 
-  ) * 1000, scientific = FALSE)
-target_hhlds_round_scf <- format(round( sum( 
-  cum_numberTaxpayers_scf_in[brackets_po==starting_brack_po] )/1000 
-  ) * 1000, scientific=FALSE)
-target_hhlds_round_dina <- format(round( sum( 
-  cum_numberTaxpayers_dina_in[brackets_po==starting_brack_po] )/1000 
-  ) * 1000, scientific=FALSE)
-```
-
-
-```{r total-rev-to-delete, echo=FALSE}
-#TO DELETE
-# - inputs: tax_rev_init_mo, top_tax_rev_in
-# - outputs: total_rev_pe
-total_rev_mo_f <- function(tax_rev_init_var = tax_rev_init_mo, top_tax_base_var = top_tax_rev_in) {
-  
-  
-    total_rev_pe <- tax_rev_init_var + top_tax_base_var #PE
-    
-    
-    return(list("total_rev_pe" = total_rev_pe))
-}
-invisible( list2env(total_rev_mo_f(),.GlobalEnv) )
-```
 
 To compute the relevant universe the evasion parameter of `r paste0(evasion_param_in *100, "%")` is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)
 
@@ -869,7 +735,7 @@ plot <- data[, -rmIdx] %>%
 
 plot
 ```
- <font size="4"> Tax revenue from wealth tax in first year: `r paste0("$", round(total_tax_rev))` billion </font>  
+ <font size="4"> Tax revenue from wealth tax in first year: `r paste0("$", round(total_tax_rev,4))` billion </font>  
  
  <font size="4"> Tax revenue from wealth tax over 10 year: `r paste0("$", round(ten_year_revenue_pe/1e3, 1))` trillion</font>
 
