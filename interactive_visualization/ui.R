@@ -86,14 +86,14 @@ ui <-
 
       column(
         8,
-        ggvisOutput("plot2"), 
+        ggvisOutput("plot2"),
         h3("Total Taxes ($bn)"),
         textOutput("totalTax"),
         h4("Total Taxes over 10 years ($t)"),
         textOutput("totalTax_10"),
-        h4("Total Taxpayers"), 
+        h4("Total Taxpayers"),
         textOutput("totalTaxpayers"),
-        h4("Percentage of Families Affected"), 
+        h4("Percentage of Families Affected"),
         textOutput("percentTaxUnits")
       )
     )
