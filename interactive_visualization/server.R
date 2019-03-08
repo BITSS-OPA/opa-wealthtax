@@ -265,11 +265,17 @@ server <- function(input, output, session) {
   ## update data with evasion parameter
   updateGrid <- reactive({
     req(input$evasion)
-    grid$thresNew <- (1 - as.numeric(input$evasion) / 100) * grid$thres
-    grid$avgNew <- (1 - as.numeric(input$evasion) / 100) * grid$avg ##
+    if(input$evasion=="."){
+     evas=0 ## if accidentally left here, will become zero
+    }else{
+      evas=input$evasion
+    }
+    grid$thresNew <- (1 - as.numeric(evas) / 100) * grid$thres
+    grid$avgNew <- (1 - as.numeric(evas) / 100) * grid$avg ##
     # browser()
     grid <- rbind(grid, c(100, 0, NA, NA, NA, grid$thresNew[nrow(grid)] + 1, 0)) ## fake extra row with nobody in it
     return(grid)
+    
   })
 
   ## get percentile for display
@@ -341,7 +347,9 @@ server <- function(input, output, session) {
     req(input$extraBrackets)
     if (input$extraBrackets >= 5) {
       if (!is.null(input$bracketV5T)) {
+       
         updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), bracketVal5T()), "%'s wealth above ($m):", sep = ""), value = bracketVal5T())
+        
       }
     }
   })
@@ -618,7 +626,7 @@ server <- function(input, output, session) {
 
   ## boundaries for evasion parameter
   observe({
-    if (input$evasion != "") {
+    if (input$evasion != "" & input$evasion!=".") {
       if (as.numeric(input$evasion) < 0) {
         updateTextInput(session, "evasion", value = "0")
       }
@@ -626,7 +634,7 @@ server <- function(input, output, session) {
   })
 
   observe({
-    if (input$evasion != "") {
+    if (input$evasion != "" & input$evasion!=".") {
       if (as.numeric(input$evasion) > 99) {
         updateTextInput(session, "evasion", value = "99")
       }
@@ -892,43 +900,77 @@ server <- function(input, output, session) {
 
   bracketVal1T <- reactive({
     req(input$bracketV1T)
-    as.numeric(input$bracketV1T)
+    if(input$bracketV1T=="."){
+      return(0)
+    }else{
+    return(as.numeric(input$bracketV1T))
+    }
   })
   bracketVal2T <- reactive({
     req(input$bracketV2T)
-    as.numeric(input$bracketV2T)
+    if(input$bracketV2T=="."){
+      return(0)
+    }else{
+    return(as.numeric(input$bracketV2T))
+    }
   })
   bracketVal3T <- reactive({
     req(input$bracketV3T)
-    as.numeric(input$bracketV3T)
+    if(input$bracketV3T=="."){
+      return(0)
+    }else{
+      return(as.numeric(input$bracketV3T))
+      
+    }
   })
   bracketVal4T <- reactive({
     req(input$bracketV4T)
-    as.numeric(input$bracketV4T)
+    if(input$bracketV4T=="."){
+      return(0)
+    }else{
+      return(as.numeric(input$bracketV4T))
+    }
   })
   bracketVal5T <- reactive({
     if (input$extraBrackets >= 5) {
       req(input$bracketV5T)
     }
-    as.numeric(input$bracketV5T)
+    if(input$bracketV5T=="."){
+      return(0)
+    }else{
+    return(as.numeric(input$bracketV5T))
+    }
   })
   bracketVal6T <- reactive({
     if (input$extraBrackets >= 6) {
       req(input$bracketV6T)
     }
-    as.numeric(input$bracketV6T)
+    if(input$bracketV6T=="."){
+      return(0)
+    }else{
+      return(as.numeric(input$bracketV6T))
+      
+    }
   })
   bracketVal7T <- reactive({
     if (input$extraBrackets >= 7) {
       req(input$bracketV7T)
     }
-    as.numeric(input$bracketV7T)
+    if(input$bracketV7T=="."){
+      return(0)
+    }else{
+      return(as.numeric(input$bracketV7T))
+    }
   })
   bracketVal8T <- reactive({
     if (input$extraBrackets >= 8) {
       req(input$bracketV8T)
     }
-    as.numeric(input$bracketV8T)
+    if(input$bracketV8T=="."){
+      return(0)
+    }else{
+      return(as.numeric(input$bracketV8T))
+    }
   })
 
 
