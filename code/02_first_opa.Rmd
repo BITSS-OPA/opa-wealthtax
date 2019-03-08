@@ -3,6 +3,10 @@ title: "OPA for Wealth Tax"
 author: ''
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  pdf_document: default
+  word_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
     code_folding: hide
     collapsed: yes
@@ -12,9 +16,9 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
-  pdf_document: default
 editor_options:
   chunk_output_type: console
+always_allow_html: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -26,7 +30,9 @@ library(haven)
 library(EnvStats)
 library(here)
 library(ggvis)
+library(kableExtra)
 
+print_code <- FALSE
 ###Outline:
 ###Params (no narrative)
 ###1 - Policy
@@ -36,10 +42,8 @@ library(ggvis)
 ```
 
 
-Wealth tax analysis
 
-
-```{r params, echo=TRUE, message=FALSE, warning=FALSE}
+```{r params, echo=print_code, message=FALSE, warning=FALSE}
 # - inputs: none
 # - outputs: all the original source values
 call_params_f <- function(){
@@ -111,7 +115,7 @@ invisible( list2env(call_params_f(),.GlobalEnv) )
 
 The wealth tax applies to net worth (sum of all assets net of debts) above $50 million dollars, and follows the following structure:
 
-```{r policy}
+```{r policy, echo=print_code}
 # - inputs: none
 # - outputs: all the original source values
 #### Policy:  
@@ -132,7 +136,8 @@ policy_f <- function(){
     return( sapply( ls(pattern= "_po\\b"), function(x) get(x)) ) 
 }
 invisible( list2env(policy_f(),.GlobalEnv) )
-knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,"Marginal Tax Rate (%)" = 100*tax_rates_po) )  
+knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,"Marginal Tax Rate (%)" = 100*tax_rates_po) )%>%
+  kable_styling()  
 ```  
 
 Household net worth above `r paste("$", starting_brack_po/1e6, sep = "")` million would be taxed at `r paste(main_tax_po * 100, "%", sep = "")`. Any wealth over `r paste("$", next_increase_po/1e9, sep = "")` billion would be taxed an additional 1% (a billionaire surtax).
@@ -152,12 +157,13 @@ aux1_df <-   research_so %>%
   select(Authors, Year, paper, Publisher) 
 aux2 <- c(ela1_so, ela2_so, paste0(ela3_1_so, "-", ela3_2_so), paste0(ela4_1_so, "-", ela4_2_so))
 table_aux <- cbind(aux1_df,  "Avoidance/evasion response" = aux2) 
-knitr::kable(table_aux)  
+knitr::kable(table_aux, format = "latex", booktabs = T) %>%
+kable_styling(full_width = TRUE)
 ```
 
 Seim (2017) and Jakobsen et al. (2018) obtain small avoidance/evasion responses in the case of Sweden and Denmark, two countries with systematic third party reporting of wealth: a 1% wealth tax reduces reported wealth by less than 1%. Londono-Velez and Avila (2018) show medium avoidance/evasion responses in the case of Colombia where enforcement is not as strong: a 1% wealth tax reduces reported wealth by about `r paste(ela3_1_so, "-", ela3_2_so,"%", sep="")`. The study for Switzerland, Brülhart et al. (2016) is an outlier that finds very large responses to wealth taxation in Switzerland: a 1% wealth tax lowers reported wealth by `r paste(ela4_1_so, "-", ela4_2_so,"%", sep="")`. This extremely large estimate is extrapolated from very small variations in wealth tax rates over time and across Swiss cantons and hence is not as compellingly identified as the other estimates based on large variations in the wealth tax rate. Switzerland has no systematic third party reporting of assets which can also make tax evasion responses larger than in Scandinavia. 
 
-```{r tax-elasticity, warning=FALSE, message=FALSE}   
+```{r tax-elasticity, warning=FALSE, message=FALSE, echo=print_code}   
 # input: elasticity parameters from research, main tax, adjutment factor
 # ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in) 
 tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so, ela3_1_var = ela3_1_so, 
@@ -201,7 +207,7 @@ The following transformations were applied to the data:
  - After combinind (appending) all three data sources, the population weights of SCF and DINA where combined by the taking the average.   
 
 
-```{r data-cleaning, eval=TRUE, warning=FALSE, message=FALSE} 
+```{r data-cleaning, eval=TRUE, warning=FALSE, message=FALSE, echo=print_code} 
 ##### Reproducing do file ('wealthtax.do')
 ### Forbes data 
 df_forbes <- read_dta("rawdata/forbes_20112018_bdays.dta")
@@ -317,7 +323,7 @@ The total household net worth projection is `r paste0("$", round(total_wealth_in
 
 In this section, the microdata generated before (`wealth.dta`) is aggregated in to percentiles and fractions of a percentile. The final analytic file contains: percentile or fraction of percentile (`gperc`), number of households in that group (`nb`), lowest level of wealth in that group (`thres`) and average level of wealth in that group (`avg`)  
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo=print_code}
 *# The code below does not run as part of the dynamic document and is presented only
 *# for reproducibility purposes.
 *# To run the code below you will require a license of Stata 11 or higher. You will also need to 
@@ -341,7 +347,7 @@ export excel using "$datawork/wealthperc.xlsx", first(var) replace
 ```
 
 ### 4 - Number of affected households and their total tax base 
-```{r est-billionares-to-delete, eval=TRUE, echo=FALSE}  
+```{r est-billionares-to-delete, eval=TRUE, echo=FALSE, echo=print_code}  
 # TO DELETE
 
 # - inputs: evasion_param_in, wealth_last_400_so, average_wealth_top_400_so,  
@@ -480,7 +486,7 @@ invisible( list2env(total_rev_mo_f(),.GlobalEnv) )
 
 To compute the relevant universe the evasion parameter of `r paste0(evasion_param_in *100, "%")` is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)
 
-```{r affected hhlds, eval=TRUE} 
+```{r affected hhlds, eval=TRUE, echo=print_code} 
 # tax_base_grid ---> 
 # Change the following line at the end.
 #grid <- read.csv("analysis_data/tax_grid.csv")  %>% 
@@ -580,7 +586,7 @@ The `r target_hhlds_bn_mo` households with assests above `r paste0("$",next_incr
 
 ### 5 - Total tax revenue in one year
 
-```{r new-tax-rev, eval=TRUE} 
+```{r new-tax-rev, eval=TRUE, echo=print_code} 
 # Total tax collected in a year
 # amount from 2%
 # amount from extra 1%
@@ -680,7 +686,7 @@ Starting with the `r paste0("$", round(tax_base_total_mo, digits = 1))` trillion
 
 The figure below illustrates the distribution of wealth tax across the population:
 
-```{r figure, warning=FALSE} 
+```{r figure, warning=FALSE, echo=print_code} 
 # Clean up the code (but do not make changes). 
 taxRate <- c(0, 2, 2, 3) 
 brackets <- c(10, 50, 500, 1000)
@@ -822,7 +828,7 @@ plot
 
 ### 6 - Ten year projections
 
-```{r ten-years} 
+```{r ten-years, echo=print_code} 
 # - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_rev_in
 # - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
