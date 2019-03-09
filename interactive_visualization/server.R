@@ -306,6 +306,7 @@ server <- function(input, output, session) {
   }
   ## gets taxes paid per bracket
   getTaxBasePerBracket <- function(grid, taxLevels, brackets) {
+    #browser()
     first_nonzero_tax_brack <- brackets[min(which(taxLevels>0))]
     grid_aux <- grid %>% filter(thresNew > first_nonzero_tax_brack)
     test <- unlist(lapply(grid_aux$avgNew, getAverageTax, taxLevels, brackets / 1e6))
@@ -398,7 +399,7 @@ server <- function(input, output, session) {
   ## update if make two brackets the same
   observeEvent(input$submit, ignoreNULL = FALSE, {
     if (bracketVal1T() == bracketVal2T()) {
-      # browser()
+
 
       updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
     }
