@@ -54,18 +54,18 @@ ui <-
       column(
         2,
         wellPanel(
-          textInput("bracketV1T", label = "to wealth above ($m):", value = "10"),
+          textInput("bracketV1T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "10"),
 
 
 
 
-          textInput("bracketV2T", label = "to wealth above ($m):", value = "50"),
+          textInput("bracketV2T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "50"),
 
-          textInput("bracketV3T", label = "to wealth above ($m):", value = "500"),
+          textInput("bracketV3T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "500"),
 
 
 
-          textInput("bracketV4T", label = "to wealth above ($m):", value = "1000"),
+          textInput("bracketV4T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1000"),
 
 
 

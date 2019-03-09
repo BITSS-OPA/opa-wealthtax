@@ -226,36 +226,36 @@ server <- function(input, output, session) {
     if (input$extraBrackets == 5) {
       shinyjs::show(id = "bracketV3T")
       shinyjs::show(id = "bracketV4T")
-      textInput("bracketV5T", label = "to wealth above ($m):", value = "1500")
+      textInput("bracketV5T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1500")
     } else if (input$extraBrackets == 6) {
       shinyjs::show(id = "bracketV3T")
       shinyjs::show(id = "bracketV4T")
       tagList(
-        textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
+        textInput("bracketV5T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1500"),
 
 
-        textInput("bracketV6T", label = "to wealth above ($m):", value = "1600")
+        textInput("bracketV6T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1600")
       )
     } else if (input$extraBrackets == 7) {
       shinyjs::show(id = "bracketV3T")
       shinyjs::show(id = "bracketV4T")
       tagList(
-        textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
+        textInput("bracketV5T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1500"),
 
 
-        textInput("bracketV6T", label = "to wealth above ($m):", value = "1600"),
-        textInput("bracketV7T", label = "to wealth above ($m):", value = "1700")
+        textInput("bracketV6T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1600"),
+        textInput("bracketV7T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1700")
       )
     } else if (input$extraBrackets == 8) {
       shinyjs::show(id = "bracketV3T")
       shinyjs::show(id = "bracketV4T")
       tagList(
-        textInput("bracketV5T", label = "to wealth above ($m):", value = "1500"),
+        textInput("bracketV5T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1500"),
 
 
-        textInput("bracketV6T", label = "to wealth above ($m):", value = "1600"),
-        textInput("bracketV7T", label = "to wealth above ($m):", value = "1700"),
-        textInput("bracketV8T", label = "to wealth above ($m):", value = "1900")
+        textInput("bracketV6T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1600"),
+        textInput("bracketV7T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1700"),
+        textInput("bracketV8T", label = HTML("to wealth above ($m): <br/> <br/>"), value = "1900")
       )
     }
   })
@@ -1398,7 +1398,7 @@ server <- function(input, output, session) {
       bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T(),bracketVal5T(),bracketVal6T(),bracketVal7T()))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
-      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T(),bracketVal5T(),bracketVal6T(),bracketVal7T(),bracketVal8T))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T(),bracketVal5T(),bracketVal6T(),bracketVal7T(),bracketVal8T()))
     }
 
     reorderIdx <- order(as.numeric(bracketStarts))
