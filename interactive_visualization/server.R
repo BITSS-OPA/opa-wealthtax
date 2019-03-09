@@ -1272,48 +1272,48 @@ server <- function(input, output, session) {
       taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T()))
     }
 
-    if (input$extraBrackets >= 4) {
+    if (input$extraBrackets == 4) {
       taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T()))
     }
 
 
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
-      taxRate <- c(taxRate, bracket5T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T()))
     }
     if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
-      taxRate <- c(taxRate, bracket5T(), bracket6T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T(),bracket6T()))
     }
     if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
-      taxRate <- c(taxRate, bracket5T(), bracket6T(), bracket7T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T(),bracket6T(),bracket7T()))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
-      taxRate <- c(taxRate, bracket5T(), bracket6T(), bracket7T(), bracket8T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T(),bracket6T(),bracket7T(),bracket8T()))
     }
     taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
+    
     if (input$extraBrackets == 2) {
       bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T()))
     }
-
     if (input$extraBrackets == 3) {
       bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
     }
 
-    if (input$extraBrackets >= 4) {
+    if (input$extraBrackets == 4) {
       bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
     }
 
 
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T(),bracketVal5T()))
     }
     if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()), 1e6 * as.numeric(bracketVal6T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T(),bracketVal5T(),bracketVal6T()))
     }
     if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()), 1e6 * as.numeric(bracketVal6T()), 1e6 * as.numeric(bracketVal7T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T(),bracketVal5T(),bracketVal6T(),bracketVal7T()))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()), 1e6 * as.numeric(bracketVal6T()), 1e6 * as.numeric(bracketVal7T()), 1e6 * as.numeric(bracketVal8T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T(),bracketVal5T(),bracketVal6T(),bracketVal7T(),bracketVal8T()))
     }
 
     reorderIdx <- order(as.numeric(bracketStarts))
@@ -1349,29 +1349,29 @@ server <- function(input, output, session) {
     # req(input$bracketV3T)
     # req(input$bracketV4T)
     if (input$extraBrackets == 2) {
-      taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T()))
+      taxRate <- as.numeric(c(bracket1T(), bracket2T()))
     }
     if (input$extraBrackets == 3) {
-      taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T()))
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T()))
     }
 
-    if (input$extraBrackets >= 4) {
-      taxRate <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+    if (input$extraBrackets == 4) {
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T()))
     }
 
 
 
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
-      taxRate <- c(taxRate, bracketVal5T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T()))
     }
     if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
-      taxRate <- c(taxRate, bracketVal5T(), bracketVal6T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T(),bracket6T()))
     }
     if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
-      taxRate <- c(taxRate, bracketVal5T(), bracketVal6T(), bracketVal7T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T(),bracket6T(),bracket7T()))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
-      taxRate <- c(taxRate, bracketVal5T(), bracketVal6T(), bracketVal7T(), bracketVal8T())
+      taxRate <- as.numeric(c(bracket1T(), bracket2T(), bracket3T(), bracket4T(),bracket5T(),bracket6T(),bracket7T(),bracket8T()))
     }
     taxRateP <- as.numeric(taxRate) / 100 ## get to percentage
 
@@ -1383,22 +1383,22 @@ server <- function(input, output, session) {
     }
 
 
-    if (input$extraBrackets >= 4) {
-      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+    if (input$extraBrackets == 4) {
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T()))
     }
 
 
     if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T(),bracketVal5T()))
     }
     if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()), 1e6 * as.numeric(bracketVal6T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T(),bracketVal5T(),bracketVal6T()))
     }
     if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()), 1e6 * as.numeric(bracketVal6T()), 1e6 * as.numeric(bracketVal7T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T(),bracketVal5T(),bracketVal6T(),bracketVal7T()))
     }
     if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
-      bracketStarts <- c(bracketStarts, 1e6 * as.numeric(bracketVal5T()), 1e6 * as.numeric(bracketVal6T()), 1e6 * as.numeric(bracketVal7T()), 1e6 * as.numeric(bracketVal8T()))
+      bracketStarts <- 1e6 * as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(),bracketVal4T(),bracketVal5T(),bracketVal6T(),bracketVal7T(),bracketVal8T))
     }
 
     reorderIdx <- order(as.numeric(bracketStarts))
