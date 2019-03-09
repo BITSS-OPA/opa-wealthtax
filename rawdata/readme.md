@@ -4,7 +4,6 @@ The following files were part of a part of a set of files shared on dropbox by E
  - `rscfp2016.dta`: ADD description						
  - `gperc.ado`: ADD description  
  - `wealthtax.do`: ADD description  
- - `dina.dta`:
 
 
 All the files above have not been edited. The folder `/edits` contains raw data that has been edited in some form.  

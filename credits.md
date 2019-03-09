@@ -1,7 +1,7 @@
 # Contributors to this project include:  
 
 ### Overall Open Policy Analysis:   
- - Fernando Hoces de Guardia   
+ - [Berkeley Initiative for Transparency in the Social Sciences](https://www.bitss.org/)   
 
 ### Policy Analysis:  
  - Emmanuel Saez
