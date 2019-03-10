@@ -46,10 +46,17 @@ ui <-
         h6("Interactive Visualization by:"),
         tags$a(href = "https://sastoudt.github.io", "Sara Stoudt"),
         h6(""),
-        h6("This visualization is part of an Open Policy Analysis which follows the guidelines of the"),
-        tags$a(href = "https://www.bitss.org/opa/", "Berkeley Initiative for Transparency in the Social Sciences."),
+        h6("Assisted by:"),
+        h6(""), 
+        h6("Katie Donnelly Moran"),
+        h6("and Clancy Green,"),
+        
+        h6("Deployment help by:"),
+        h6("Akcan Balkir"),
+        tags$a(href = "https://mybinder.readthedocs.io/en/latest/", "and the Binder Team"),
+        
         h6(""),
-        tags$a(href = "https://github.com/fhoces/opa-wealthtax/blob/master/credits.md", "See all the collaborators here.") # ,
+        tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
       ),
       column(
         2,
@@ -71,17 +78,14 @@ ui <-
 
           uiOutput("myui2")
         ),
-        h6("Assisted by:"),
+        h6("This visualization is part of an Open Policy Analysis supported by the"),
+        tags$a(href = "https://www.bitss.org/opa/", "Berkeley Initiative for Transparency in the Social Sciences."),
         h6(""),
-        h6("Katie Donnelly Moran"),
-        h6("and Clancy Green,"),
-
-        h6("Deployment help by:"),
-        h6("Akcan Balkir"),
-        tags$a(href = "https://mybinder.readthedocs.io/en/latest/", "and the Binder Team"),
-
+        tags$a(href = "http://rpubs.com/fhoces/472302", "Detailed dynamic documentation here."),
         h6(""),
-        tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
+        tags$a(href = "https://github.com/fhoces/opa-wealthtax", "Source code here."),
+        h6("")
+        
       ),
 
       column(
