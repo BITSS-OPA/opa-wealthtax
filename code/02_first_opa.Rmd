@@ -1,8 +1,9 @@
 ---
 title: "Dynamic Documentation for Senator Warren's Wealth Tax Policy Analysis"
 author:
-- 'Policy Analysis: Emmanuel Saez  & Gabriel Zucman'
-- 'Dynamic Document: Fernando Hoces de la Guardia'
+- 'Policy Analysis: Emmanuel Saez  & Gabriel Zucman[^1]'
+- 'Dynamic Document: Fernando Hoces de la Guardia[^2]'
+- '[List of all contributors](https://github.com/fhoces/opa-wealthtax/blob/master/credits.md) to the entire Open Policy Analysis'
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -124,7 +125,7 @@ invisible( list2env(call_sources_f(),.GlobalEnv) )
 The wealth tax applies to net worth (sum of all assets net of debts) above $50 million dollars, and follows the following structure:
 
 ```{r policy, echo=print_code}
-# - inputs: none
+# - inputs: none 
 # - outputs: all the original source values
 #### Policy:  
 policy_f <- function(){
@@ -152,12 +153,12 @@ knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,
 
 Household net worth above `r paste0("$", starting_brack_po/1e6)` million would be taxed at `r paste(main_tax_po * 100, "%", sep = "")`. Any wealth over `r paste0("$", next_increase_po/1e9)` billion would be taxed an additional 1% (a billionaire surtax).
 
- 
 ### 2 -  Compute tax avoidance elasticity
 
 To calculate the tax revenue from this wealth tax, the extent of wealth tax evasion/avoidance is estimated based on recent research. Recent research shows that the extent of wealth tax evasion/avoidance depends crucially on loopholes and enforcement. The tax-avoidance elasticity is computed as the average elasticity from four studies. The table lists the four studies and the avoidance/evasion response to a 1% wealth tax.
 
 ```{r avoid, echo=FALSE}
+# EXPLAIN that this is for display only in this chunk. Not needed late on. 
 # Format the parameters from research into one table
 aux1_df <-   research_so %>% 
   group_by(paper_id) %>% 
@@ -216,6 +217,8 @@ The following transformations were applied to the data:
 
 
 ```{r data-cleaning, eval=TRUE, warning=FALSE, message=FALSE, echo=print_code} 
+#### WRAP WITH A FUNCTION
+
 ##### Reproducing do file ('wealthtax.do')
 ### Forbes data 
 df_forbes1 <- df_forbes_so  %>% 
@@ -365,6 +368,8 @@ export excel using "$datawork/wealthperc.xlsx", first(var) replace
 To compute the relevant universe the evasion parameter of `r paste0(evasion_param_in *100, "%")` is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)
 
 ```{r affected hhlds, eval=TRUE, echo=print_code} 
+# WRAP WITH A FUNCTION
+
 # tax_base_grid ---> 
 # Change the following line at the end.
 #grid <- read.csv("analysis_data/tax_grid.csv")  %>% 
@@ -465,6 +470,8 @@ The `r target_hhlds_bn_mo` households with assests above `r paste0("$",next_incr
 ### 5 - Total tax revenue in one year
 
 ```{r new-tax-rev, eval=TRUE, echo=print_code} 
+# WRAP all in one big function
+
 # Total tax collected in a year
 # amount from 2%
 # amount from extra 1%
@@ -547,15 +554,6 @@ numberTaxpayers <- getPeoplePerBracket(brackets = brackets_po, grid = grid)
 #From here on: keep
 target_hhlds_mo <- sum( numberTaxpayers$totalPeople[brackets_po>=starting_brack_po] )
 
-# tax_base_total_mo
-# tax_rev_init_mo
-# final_taxbase_b_in tax_base_total_noav_mo
-# num_billionares_in
-# top_tax_rev_in
-# total_rev_pe
-#go with wealthperc and highlight discrepe =   
-#tax_base_total_mo <- sum(taxBase$taxBase[brackets_po>=starting_brack_po])/1e12* main_tax_po * 1000
-#tax_rev_init_mo <-   tax_base_total_mo * main_tax_po * 1000
 ```
 
 Starting with the `r paste0("$", round(tax_base_total_mo, digits = 1))` trillion tax base of wealth above `r paste0("$", starting_brack_po/1e6)` million (`r paste0("$", round(tax_base_total_noav_mo, digits = 1))` with no avoidance), a two percent tax would raise `r paste0("$", round(tax_rev_init_mo))` billion in 2019. The billionaire surtax is estimated to apply to a base of `r paste0("$", round(tax_base_total_surtax_mo, 1))` trillion (`r paste0("$", round(tax_base_total_surtax_noav_mo, digits = 1))` with no avoidance) from about `r round(target_hhlds_bn_mo / 100) * 100 ` billionaire families (`r round(target_hhlds_bn_noav_mo / 100) * 100 `  with no avoidance). Thus the billionaire surtax would raise `r paste0("$", round(top_tax_rev_in))` billion in 2019. The combination of the `r paste0(100*main_tax_po, "%")` tax above `r paste0("$",starting_brack_po/1e6)` million and the billionaire surtax would raise `r paste0(round(tax_rev_init_mo)," + ", round(top_tax_rev_in))` = `r round(total_tax_rev)` billion in 2019. 
@@ -568,8 +566,8 @@ Starting with the `r paste0("$", round(tax_base_total_mo, digits = 1))` trillion
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
                            real_growth_var = real_growth_so, total_rev_var = total_tax_rev, 
                            top_tax_base_var = top_tax_rev_in){
-  
-  
+############################################################################### 
+###############################################################################
   
     discount_rate_mo <- inflation_var + population_gr_so + real_growth_so  
     ten_year_factor_mo <- sum( ( 1 + discount_rate_mo )^( 0:9 ) ) 
@@ -579,31 +577,12 @@ ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = pop
     ten_year_top_tax_pe <- top_tax_base_var * ten_year_factor_mo          
     #ten_year_top_tax_pe <- top_tax_base_var * ten_year_factor_mo                  #PE
     
-    
-    
+############################################################################### 
+###############################################################################
     return( list("discount_rate_mo" = discount_rate_mo, "ten_year_factor_mo" = ten_year_factor_mo, 
            "ten_year_revenue_pe" = ten_year_revenue_pe, "ten_year_top_tax_pe" = ten_year_top_tax_pe) )
 }
-
 invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
-
-#TO DELETE
-ten_year_factor_round <- round(ten_year_factor_mo) 
-
-
-
-# test to run from the beginning (only functions)
-if (FALSE) {
-    rm(list = ls()[!(ls() %in% ls(pattern = "_f\\b"))])
-    invisible( list2env(call_sources_f(), .GlobalEnv) )
-    invisible( list2env(policy_f(), .GlobalEnv) )
-    invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
-    invisible( list2env(est_billionares_in_f(), .GlobalEnv) )
-    invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) )
-    invisible( list2env(total_rev_mo_f(), .GlobalEnv) )
-    invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
-    sapply(ls(pattern = "_pe\\b"), get)
-}
 ```
 
 To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, at `r paste(100 * discount_rate_mo,"%", sep="")` per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into `r paste(100 * inflation_so,"%", sep="")` price, `r paste(100 * round(population_gr_so,2),"%", sep="")` population growth, and `r paste(100 * real_growth_so,"%", sep="")` of real growth per capita. This implies that tax revenue over the 10 years 2019-2028 is about `r round(ten_year_factor_mo)` times the revenue raised in 2019[^4]. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman[^5] show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is most likely that top wealth would continue to grow at least as fast as the average.  
@@ -612,15 +591,30 @@ This 10-year projection implies that revenue raised by the progressive wealth ta
 
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because your proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 
+```{r only-function, eval=FALSE}
+# test to run from the beginning (only functions)
+rm(list = ls()[!(ls() %in% ls(pattern = "_f\\b"))])
+invisible( list2env(call_sources_f(), .GlobalEnv) )
+invisible( list2env(policy_f(), .GlobalEnv) )
+invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
+invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) )
+invisible( list2env(total_rev_mo_f(), .GlobalEnv) )
+invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
+sapply(ls(pattern = "_pe\\b"), get)
+```
+
+
 
 ### 7 - Visualization
 
 The figure below illustrates the distribution of wealth tax across the population:
 
-```{r figure, warning=FALSE, echo=print_code}   
-# Clean up the code (but do not make changes).  
-taxRate <- c(0, 2, 2, 3) 
-brackets <- c(10, 50, 500, 1000)
+```{r figure, warning=FALSE, echo=print_code}       
+# Clean up the code (but do not make changes).   
+taxRate <- c(mean(tax_rates_po[1:2]), mean(tax_rates_po[3:5]), tax_rates_po[6],
+             tax_rates_po[7]) * 100
+brackets <- c(min(brackets_po[1:2]), min(brackets_po[3:5]), brackets_po[6], 
+              brackets_po[7]) / 1e6
 #this section sorts the tax brackets. Not needed outside the app    
 if (FALSE){          
     ## reshuffle to make sure brackets are increasing
@@ -629,10 +623,10 @@ if (FALSE){
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
 }
-    
+  
 ### KATIE: change the 1e5 to whatever you want to be the minimum
-xval <- 10^seq(log10(1e5), log10(45e9), by = 0.001) ## get uniform on log scale
- 
+xval <- 10^seq(log10(1e5), log10(max(grid$thresNew)), by = 0.001) ## get uniform on log scale
+ #(max(grid$thresNew))
 if(FALSE){
     idx0 <- xval <= as.numeric(brackets[1]) * 1e6
     idx1 <- xval <= as.numeric(brackets[2]) * 1e6 & xval > as.numeric(brackets[1]) * 1e6
@@ -654,7 +648,7 @@ toPlot <- cbind.data.frame(xval, getGroup)
 #summary(toPlot)
 #toMatch <- cbind.data.frame(group = 1:7, tax = tax_rates_po)
 toMatch <- cbind.data.frame(group = 1:(length(taxRate) + 1), tax = c(0, taxRate))
-
+ 
 toPlot2 <- merge(toPlot, toMatch, by.x = "getGroup", by.y = "group")
 
 #lapply(x = 1:5, f(x,y), y = 6:10) = (1, 6:10); (2, 6:10);... ;(5, 6:10)  
@@ -680,19 +674,18 @@ if(FALSE) {
 #summary(toPlot2)
 #end of dataInputT
        
- #  
- #      getGroup          xval                tax         marginalInt         marginalRate          id      
+ 
+ #    getGroup          xval                tax         marginalInt         marginalRate          id      
  # Min.   :1.000   Min.   :1.000e+05   Min.   :0.000   Min.   :0.000e+00   Min.   :0.0000   Min.   :   1  
- # 1st Qu.:1.000   1st Qu.:2.590e+06   1st Qu.:0.000   1st Qu.:0.000e+00   1st Qu.:0.0000   1st Qu.:1414  
- # Median :3.000   Median :6.707e+07   Median :2.000   Median :3.413e+05   Median :0.5089   Median :2828  
- # Mean   :2.807   Mean   :3.459e+09   Mean   :1.338   Mean   :9.947e+07   Mean   :1.1090   Mean   :2828  
- # 3rd Qu.:5.000   3rd Qu.:1.737e+09   3rd Qu.:3.000   3rd Qu.:4.110e+07   3rd Qu.:2.3667   3rd Qu.:4241  
- # Max.   :5.000   Max.   :4.498e+10   Max.   :3.000   Max.   :1.338e+09   Max.   :2.9755   Max.   :5654 
- #  
-  
-  
-# These are mini data set that ggvis needs to create vertical lines
-extra0 <- cbind.data.frame(x = rep(as.numeric(brackets[1]) * 1e6, 2), y = c(0, taxRate[1]))
+ # 1st Qu.:1.000   1st Qu.:2.477e+06   1st Qu.:0.000   1st Qu.:0.000e+00   1st Qu.:0.0000   1st Qu.:1395  
+ # Median :3.000   Median :6.138e+07   Median :2.000   Median :2.275e+05   Median :0.3707   Median :2789  
+ # Mean   :2.777   Mean   :2.937e+09   Mean   :1.315   Mean   :8.391e+07   Mean   :1.0833   Mean   :2789  
+ # 3rd Qu.:5.000   3rd Qu.:1.521e+09   3rd Qu.:3.000   3rd Qu.:3.462e+07   3rd Qu.:2.2766   3rd Qu.:4183  
+ # Max.   :5.000   Max.   :3.767e+10   Max.   :3.000   Max.   :1.119e+09   Max.   :2.9708   Max.   :5577   
+ 
+   
+# These are mini data set that ggvis needs to cre ate vertical lines
+extra0 <- cbind.data.frame(x = rep(max(as.numeric(brackets[1]) * 1e6, 1e5), 2), y = c(0, taxRate[1]))
 extra1 <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[1]))
 extra1b <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[2]))
 extra2 <- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
@@ -714,38 +707,62 @@ showAvg <- function(x) {
   if(FALSE){
   paste0("Average Tax Rate: ", round(row$averageRate, 2), "%", 
          " <br> Wealth ($m): ", round(row$xval / 1e6, 0), 
-         "<br> Top ", getPercentile(updateGrid(), row$xval / 1e6), 
+         "<br> Top ", getPercentile(grid, row$xval / 1e6), 
          "%", "<br> Taxes Paid ($m): ", round(row$averageInt / 1e6, 2), 
          sep = "") ## dividing by 1e6 may need to change if we do this for xval overall
   }
 }
 
 
+getPercentileMarkers <- function(grid) {
+    c(
+      grid$thresNew[which(grid$gperc == 90)],
+      grid$thresNew[which(grid$gperc == 99)],
+      grid$thresNew[which(grid$gperc >= 99.9 & grid$gperc < 99.99)[1]],
+      grid$thresNew[which(grid$gperc >= 99.99 & grid$gperc < 99.999)[1]]
+    )
+  }
+
 data <- toPlot2
 
+ markers <- data.frame(a = c(getPercentileMarkers(grid) / 1e6, 
+                             max(grid$thresNew) / 1e6), 
+                       b = rep(0.25, 5), 
+                       c = c("Top 10%", "Top 1%", "Top 0.1%", "Top 0.01%", "Maximum"))
+
+valuesInt <- c(brackets, round(max(grid$thresNew) / 1e6, 2), 
+               round(getPercentileMarkers(grid) / 1e6, 2))
+valuesInt <- sort(valuesInt)
 rmIdx <- ncol(data)
 plot <- data[, -rmIdx] %>%
   ggvis(x = ~ xval / 1e6, y = ~tax) %>%
   layer_points() %>%
-  layer_points(data = data, x = ~ xval / 1e6, y = ~averageRate, stroke := "red", key := ~id) %>%
+  layer_points(data = subset(data, xval / 1e6 <= max(grid$thresNew) / 1e6), 
+               x = ~ xval / 1e6, 
+               y = ~averageRate, stroke := "red", key := ~id) %>%
   add_tooltip(showAvg, "hover") %>%
-  layer_lines(x = ~ xval / 1e6, y = ~averageRate, stroke := "red") %>%
+  # layer_lines(data = subset(data,xval/1e6<=45000),x = ~ xval / 1e6, y = ~marginalRate, stroke := "red") %>%
   layer_paths(data = extra1, ~ x / 1e6, ~y) %>%
-  layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
-  layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
+  # layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
+  # layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
   layer_paths(data = extra0, ~ x / 1e6, ~y) %>%
   layer_paths(data = extra1b, ~ x / 1e6, ~y) %>%
-  layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
-  layer_paths(data = extra3b, ~ x / 1e6, ~y) %>%
+  # layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
+  # layer_paths(data = extra3b, ~ x / 1e6, ~y) %>%
+  layer_text(data = markers, ~a, ~b, text := ~c, align := "center", fontWeight := "bold") %>%
   add_axis("x",
-           title_offset = 80, title = "Wealth ($m)", grid = F, format = ",",
-           values = brackets, properties = axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))
+    title_offset = 80, title = "Wealth ($m)", grid = F, format = ",",
+    values = valuesInt, properties = 
+      axis_props(labels = list(angle = 45, align = "left", baseline = "middle"))
   ) %>%
   add_axis("y", title = "Tax rate (%)") %>%
   scale_numeric("x", trans = "log", expand = 0) %>%
-  set_options(width = 800, height = 500)
-
-plot 
+  set_options(width = 800, height = 500) %>%
+    layer_paths(data = extra2, ~ x / 1e6, ~y) %>%
+    layer_paths(data = extra2b, ~ x / 1e6, ~y) %>%
+    layer_paths(data = extra3, ~ x / 1e6, ~y) %>%
+    layer_paths(data = extra3b, ~ x / 1e6, ~y)
+  plot
 ```
  <font size="4"> Tax revenue from wealth tax in first year: `r paste0("$", round(total_tax_rev,4))` billion </font>  
  
@@ -776,6 +793,9 @@ In contrast, the bottom 99% families have a total tax burden of 7.2% relative to
 
 **Note:** Our analysis complies with the highest levels of transparency and reproducibilty for open policy analysis proposed by the [_Berkeley Initiative for Transparency in the Social Sciences_](https://www.bitss.org/opa/). We invite contributors and critics of this analysis to follow similar standards. 
 
+[^1]: The authors would like to particularly acknowledge the excellent research assitanship of Katie Donnelly Moran and Clancy Green. 
+
+[^2]: This dynamic document is part of an Open Policy Analysis which follows the guidelines of the [Berkeley Initiative for Transparency in the Social Sciences](https://www.bitss.org/opa/)
 
 [^4]: With r=`r paste0(100 * discount_rate_mo, "%")`, we have [1+(1+r)+..+(1+r)^9]=[(1+r)^10-1]/r=`r round(sum((1 + discount_rate_mo)^(0:9)),1)`, approximately 13.
 
