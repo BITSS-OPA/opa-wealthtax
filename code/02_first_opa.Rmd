@@ -24,7 +24,7 @@ editor_options:
 always_allow_html: yes
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE} 
 # Loading required libraries
 list.of.packages <- c("tidyverse", "haven", "EnvStats", "here", "ggvis", "kableExtra")
 
@@ -37,7 +37,9 @@ knitr::opts_knit$set(root.dir = here())
 knitr::opts_chunk$set(echo = TRUE)
 
 print_code <- FALSE
+``` 
 
+```{r notes}
 ################ 
 #####  Notes:
 ################ 
@@ -71,7 +73,7 @@ print_code <- FALSE
 
 
 
-```{r sources, echo=print_code, message=FALSE, warning=FALSE}
+```{r sources, echo=print_code, message=FALSE, warning=FALSE} 
 # - inputs: none
 # - outputs: all the original source values
 call_sources_f <- function(){
@@ -103,13 +105,14 @@ call_sources_f <- function(){
     total_hhlds_so <- 129.4e6  # [SOURCE]
     # Macroeconomy/demographics
     inflation_so <- 0.025      # CBO/JCT
-    population_gr_so <- 0.01   # CBO/JCT DISCUSS WITH EMMANUEL
+    population_gr_so <- 0.01   # CBO/JCT 
     real_growth_so <- 0.02     # CBO/JCT
+    hhld_gr_so <- 0.009        # [SOURCE]
     
     ################ 
     #####  Guesswork:
     ################ 
-    hhld_gr_so <- 0.009
+    
 
 ############################################################################### 
 ############################################################################### 
@@ -119,12 +122,11 @@ invisible( list2env(call_sources_f(),.GlobalEnv) )
 
 ```
 
-
 ### 1 - Policy choices
 
 The wealth tax applies to net worth (sum of all assets net of debts) above $50 million, and obeys the following structure:
 
-```{r policy, echo=print_code}
+```{r policy, echo=print_code} 
 # - inputs: none 
 # - outputs: all the original source values
 #### Policy:  
@@ -157,7 +159,7 @@ Household net worth above `r paste0("$", starting_brack_po/1e6)` million would b
 
 To calculate the revenue from this wealth tax, the extent of wealth tax evasion/avoidance is estimated based on recent research showing that it depends crucially on loopholes and enforcement. The tax-avoidance elasticity is computed as the average elasticity from four studies. The table lists the four studies and the avoidance/evasion response to a 1% wealth tax.
 
-```{r avoid, echo=FALSE}
+```{r avoidance-table, echo=FALSE}
 # EXPLAIN that this is for display only in this chunk. Not needed late on. 
 # Format the parameters from research into one table
 aux1_df <-   research_so %>% 
@@ -216,12 +218,12 @@ The following transformations were applied to the data:
  - After combining (appending) all three data sources, the population weights of SCF and DINA where combined by the taking the average of the two.   
 
 
-```{r data-cleaning, eval=TRUE, warning=FALSE, message=FALSE, echo=print_code} 
+```{r data-cleaning, eval=TRUE, warning=FALSE, message=FALSE, echo=print_code}  
 #### WRAP WITH A FUNCTION
 
 ##### Reproducing do file ('wealthtax.do')
 ### Forbes data 
-df_forbes1 <- df_forbes_so  %>% 
+df_forbes1 <- df_forbes_so  %>%                     # Needed outside of chunk (add _in)
   filter(forbes_yr == 2018) %>% 
   mutate("networth" = net_worthmillions * 1e6, 
            "weight" = 1, 
@@ -367,7 +369,7 @@ export excel using "$datawork/wealthperc.xlsx", first(var) replace
 
 To compute the relevant universe the evasion parameter of `r paste0(evasion_param_in *100, "%")` is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)
 
-```{r affected hhlds, eval=TRUE, echo=print_code} 
+```{r affected hhlds, eval=TRUE, echo=print_code}  
 # WRAP WITH A FUNCTION
 
 # tax_base_grid ---> 

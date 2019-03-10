@@ -37,11 +37,11 @@ save $datawork/fb400.dta, replace
 * SCF 2016 data blown to 2019 (official rscfp2016.dta data downloaded from Fed website)
 use "$datawork/rscfp2016.dta", clear
 * increase wealth from 2016 to $yr=2019 (benchmarking on DINA aggregate household wealth of 2019 of $94.0Tr - Forbes 2.9tr)
-sum networth [w=wgt] 
+sum networth [w=wgt]
 local totw=r(sum)*1e-12
 display "TOTAL SCF NETWORTH 2016  (Tr) " `totw'
 replace wgt=round(wgt*1.009^($yr-2016))
-sum networth [w=wgt] 
+sum networth [w=wgt]
 local totw=r(sum)*1e-12
 local totn=r(sum_w)
 * Rescaling scf to match total total wealth reported in DINA excluding the f400
@@ -55,25 +55,26 @@ save $datawork/scf.dta, replace
 
 * DINA 2019 (complete  data  usdina$yr.dta built in usdina project, directory usdina/output/dinafiles)
 
-* use hweal id dweght married using $root/SaezZucman2014/usdina/output/dinafiles/usdina$yr.dta, clear 
+* use hweal id dweght married using $root/SaezZucman2014/usdina/output/dinafiles/usdina$yr.dta, clear
 * save "$root/bookwebsite/wealthtaxsim/data/usdina$yr.dta"
 
 use "$datawork/usdina$yr.dta", clear
 	// Collapse at tax unit level
 	collapse (sum) hweal (mean) dweght married, by(id)
-gen networth= hweal 
-gen weight=dweght*1e-5	
-sum networth [w=weight] 
+gen networth= hweal
+gen weight=dweght*1e-5
+sum networth [w=weight]
 local totw=r(sum)*1e-12
 display "TOTAL DINA NETWORTH 2019  (Tr) " `totw'
 local totn=r(sum_w)
 gen data="DINA"
 * average by groups of 5
-gsort -networth
+gen aux_id = _n
+gsort -networth aux_id
 * Collapsing 5 obs into into 1
 gen group=floor((_n+3)/5)
 collapse (sum) weight (mean) networth, by(group)
-sum networth [w=weight] 
+sum networth [w=weight]
 gen data="DINA"
 keep weight data networth
 order data networth weight
@@ -89,18 +90,15 @@ sum networth [w=weight]
 display r(sum)*1e-12
 sum networth [w=weight] if networth>=1e+9
 display r(sum)*1e-12
-gsort -networth
+gen aux_id = _n
+gsort -networth aux_id
 save $datawork/wealth.dta, replace
 
 * creating an excel table for the simulation
 use $datawork/wealth.dta, clear
-gperc networth [w=weight], matname(wealthperc)	
-mat list wealthperc	
+gperc networth [w=weight], matname(wealthperc)
+mat list wealthperc
 clear
 svmat wealthperc, names(col)
 qui compress
 export excel using "$datawork/wealthperc.xlsx", first(var) replace
-
-
-
-
