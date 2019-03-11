@@ -81,7 +81,7 @@ ui <-
         h6("This visualization is part of an Open Policy Analysis supported by the"),
         tags$a(href = "https://www.bitss.org/opa/", "Berkeley Initiative for Transparency in the Social Sciences."),
         h6(""),
-        tags$a(href = "http://rpubs.com/fhoces/472302", "Detailed dynamic documentation here."),
+        tags$a(href = "http://rpubs.com/BITSS/dd_wt", "Detailed dynamic documentation here."),
         h6(""),
         tags$a(href = "https://github.com/BITSS/opa-wealthtax", "Source code here."),
         h6("")
