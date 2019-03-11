@@ -83,7 +83,7 @@ ui <-
         h6(""),
         tags$a(href = "http://rpubs.com/fhoces/472302", "Detailed dynamic documentation here."),
         h6(""),
-        tags$a(href = "https://github.com/fhoces/opa-wealthtax", "Source code here."),
+        tags$a(href = "https://github.com/BITSS/opa-wealthtax", "Source code here."),
         h6("")
         
       ),
