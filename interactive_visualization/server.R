@@ -259,7 +259,7 @@ server <- function(input, output, session) {
       )
     }
   })
-  grid <- read.csv("../analysis_data/tax_grid4.csv")
+  grid <- read.csv("../analysis_data/tax_grid.csv")
 
   ## update data with evasion parameter
   updateGrid <- reactive({
