@@ -248,7 +248,6 @@ f400tot <- sum(df_forbes1$networth * df_forbes1$weight) / 1e12
 # With access to
 # private DINA, set indicator to below to TRUE
 is_dina_public <- FALSE                        
-
 if(is_dina_public){
   # paste below the path to where usdina2019.dta is in your computer
   df_dina_so <- read_dta("/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta")
@@ -277,9 +276,10 @@ if(is_dina_public){
     select("data", "networth", "weight")
   write_dta("analysis_data/dina.dta", data = df_dina1)
   df_dina1_so <- read_dta("analysis_data/dina.dta")
-  #### End of confidential section
+ 
 } 
-
+#### End of confidential section
+ 
 totw_dina <- sum(df_dina1_so$networth * df_dina1_so$weight) / 1e12
 
 ### SCF data 
@@ -371,11 +371,10 @@ To compute the relevant universe the evasion parameter of `r paste0(evasion_para
 
 ```{r affected hhlds, eval=TRUE, echo=print_code}  
 # WRAP WITH A FUNCTION
-
 # tax_base_grid ---> 
 # Change the following line at the end.
-#grid <- read.csv("analysis_data/tax_grid.csv")  %>% 
-grid <- read.csv("analysis_data/taxBaseGridUpdated.csv")  %>% 
+grid <- read.csv("analysis_data/tax_grid.csv")  %>% 
+#grid <- read.csv("analysis_data/taxBaseGridUpdated.csv")  %>% 
   filter(!is.na(gperc))
 # print(head(grid)) ## check that app has access to this file
 
@@ -756,7 +755,7 @@ plot <- data[, -rmIdx] %>%
     layer_paths(data = extra3b, ~ x / 1e6, ~y)
   plot
 ```
- <font size="4"> Tax revenue from wealth tax in first year: `r paste0("$", round(total_tax_rev,4))` billion </font>  
+ <font size="4"> Tax revenue from wealth tax in first year: `r paste0("$", round(total_tax_rev))` billion </font>  
  
  <font size="4"> Tax revenue from wealth tax over 10 year: `r paste0("$", round(ten_year_revenue_pe/1e3, 1))` trillion</font>
 

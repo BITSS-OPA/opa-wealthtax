@@ -259,8 +259,7 @@ server <- function(input, output, session) {
       )
     }
   })
-
-  grid <- read.csv("taxBaseGridUpdated.csv")
+  grid <- read.csv("../analysis_data/tax_grid4.csv")
 
   ## update data with evasion parameter
   updateGrid <- reactive({
@@ -1327,14 +1326,14 @@ server <- function(input, output, session) {
 
   ## total tax output
   output$totalTax <- renderText({
-    round(totalTax(), 4)
+    round(totalTax())
   })
 
   ## total tax output over 10 years
   output$totalTax_10 <- renderText({
-    totalTax10 <- totalTax() * 13
+    totalTax10 <- totalTax() * 12.87535
 
-    round(totalTax10 / 1e3, 2)
+    round(totalTax10 / 1e3, 1)
   })
 
   ## total number of households taxed helper
