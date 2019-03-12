@@ -61,8 +61,6 @@ always_allow_html: yes
 
 
 
-
-
 ### 1 - Policy choices
 
 The wealth tax applies to net worth (sum of all assets net of debts) above $50 million, and obeys the following structure:
@@ -240,27 +238,27 @@ sapply(ls(pattern = "_pe\\b"), get)
 
 The figure below illustrates the distribution of wealth tax across the population:
 
-<!--html_preserve--><div id="plot_id790827032-container" class="ggvis-output-container">
-<div id="plot_id790827032" class="ggvis-output"></div>
+<!--html_preserve--><div id="plot_id739324341-container" class="ggvis-output-container">
+<div id="plot_id739324341" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id790827032_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id790827032" data-renderer="svg">SVG</a>
+<a id="plot_id739324341_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id739324341" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id790827032_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id790827032" data-renderer="canvas">Canvas</a>
+<a id="plot_id739324341_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id739324341" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id790827032_download" class="ggvis-download" data-plot-id="plot_id790827032">Download</a>
+<a id="plot_id739324341_download" class="ggvis-download" data-plot-id="plot_id739324341">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id790827032_spec = {
+var plot_id739324341_spec = {
   "data": [
     {
       "name": ".0",
@@ -748,7 +746,7 @@ var plot_id790827032_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id790827032").parseSpec(plot_id790827032_spec);
+ggvis.getPlot("plot_id739324341").parseSpec(plot_id739324341_spec);
 </script><!--/html_preserve-->
  <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font>  
  

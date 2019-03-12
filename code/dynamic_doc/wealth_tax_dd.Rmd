@@ -66,12 +66,10 @@ print_code <- FALSE
 ########################################## 
 ##########################################  
 #    return( )                                  # A list with all (most?) the elements 
-#                                               # generated inside the function 
-#}
-#invisible( list2env(policy_f(),.GlobalEnv) ) 
+#}                                              # generated inside the function 
+#invisible( list2env(sample_function_f(),.GlobalEnv) ) 
+#
 ```
-
-
 
 ```{r sources, echo=print_code, message=FALSE, warning=FALSE} 
 # - inputs: none
@@ -219,121 +217,135 @@ The following transformations were applied to the data:
 
 
 ```{r data-cleaning, eval=TRUE, warning=FALSE, message=FALSE, echo=print_code}  
-#### WRAP WITH A FUNCTION
-
 ##### Reproducing do file ('wealthtax.do')
-### Forbes data 
-df_forbes1 <- df_forbes_so  %>%                     # Needed outside of chunk (add _in)
-  filter(forbes_yr == 2018) %>% 
-  mutate("networth" = net_worthmillions * 1e6, 
-           "weight" = 1, 
-           "data" = "FB400") %>%
-  select(data, networth, weight) %>% 
-  filter( !is.na(networth) )
-forbesmin <- min(df_forbes1$networth)
-f400tot <- sum(df_forbes1$networth * df_forbes1$weight) / 1e12
-#cat("TOTAL FORBES NETWORTH 2018 (Tr) = ", f400tot,  "FORBES MIN WEALTH 2018 = ", forbesmin)
+# inputs: 
+# outputs: df_forbes1_in, df_dina1_in, df_scf1_in, df_in, total_wealth_scf_in,
+# total_wealth_in
+clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_so,
+                         df_scf_var = df_scf_so){
+############################################################################### 
+###############################################################################
 
-### DINA data 
-####### This section uses data that cannot be shared for confidentiality reasons
-####### Below is the code used to aggregate the data.
-####### If you have access to the orginal data set, set is_dina_public_so = TRUE.
-####### To obtain this data please contact Gabriel Zucman at zucman@gmail.com
-####### The file that you will obtain should have the following signature:
-####### in R: digest("usdina2019.dta", file = TRUE) produces: 
-####### "2f5d529b1e89e39171927dc28bfebbe4"
-####### in Stata, datasignature produces: 
-####### "282866:4(49628):4083279708:1806586907"
-
-# With access to
-# private DINA, set indicator to below to TRUE
-is_dina_public <- FALSE                        
-if(is_dina_public){
-  # paste below the path to where usdina2019.dta is in your computer
-  df_dina_so <- read_dta("/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta")
-  df_dina <- df_dina_so %>% 
-  group_by(id) %>% 
-  summarise("networth" = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
-            "weight" = mean(dweght)/1e5) 
+    ### Forbes data 
+    df_forbes1_in <- df_forbes_var  %>%                     
+      filter(forbes_yr == 2018) %>% 
+      mutate("networth" = net_worthmillions * 1e6, 
+               "weight" = 1, 
+               "data" = "FB400") %>%
+      select(data, networth, weight) %>% 
+      filter( !is.na(networth) )
+    forbesmin <- min(df_forbes1_in$networth)
+    f400tot <- sum(df_forbes1_in$networth * df_forbes1_in$weight) / 1e12  
+    #cat("TOTAL FORBES NETWORTH 2018 (Tr) = ", f400tot,  "FORBES MIN WEALTH 2018 = ", forbesmin)
     
-  totw_dina <- sum(df_dina$networth * df_dina$weight) / 1e12
-  #cat("TOTAL DINA NETWORTH 2019  (Tr) ", totw_dina)
-  
-  totn_dina <- sum(df_dina$weight)
-  
-  df_dina$data <- "DINA"
-  
-  # Aggregate into bins of 5 househodls info to protect confidentiality
-  df_dina1 <- df_dina %>% 
-    mutate("aux_id" = 1:dim(df_dina)[1]) %>% 
-    arrange(desc(networth),aux_id) %>% 
-    # Still not clear what the role of the "+3" is.  
-    mutate("group" = floor((1:dim(df_dina)[1] + 3) / 5)) %>% 
-    group_by(group) %>% 
-    summarise("weight" = sum(weight),
-              "networth" = mean(networth)) %>% 
-    mutate("data" = "DINA") %>% 
-    select("data", "networth", "weight")
-  write_dta("analysis_data/dina.dta", data = df_dina1)
-  df_dina1_so <- read_dta("analysis_data/dina.dta")
- 
-} 
-#### End of confidential section
- 
-totw_dina <- sum(df_dina1_so$networth * df_dina1_so$weight) / 1e12
-
-### SCF data 
-totw_scf <- sum(df_scf_so$networth * df_scf_so$wgt) / 1e12
-
-#cat("TOTAL SCF NETWORTH 2016  (Tr)", totw_scf)
-# Increase the population weigths to reflect population growth from 2016 to 1019
-df_scf_so <- df_scf_so %>% mutate("wgt2019" = round( wgt * (1 + hhld_gr_so)^( 2019 - 2016 )))
-totw <- sum(df_scf_so$networth * df_scf_so$wgt2019) / 1e12
-totn <- sum(df_scf_so$wgt2019)
-
-# Rescaling SCF to match total total wealth reported in DINA excluding the f400
-df_scf1 <- df_scf_so %>% mutate("networth" = networth * ( totw_dina - f400tot ) / totw, 
-                            "weight" = wgt2019, 
-                            "data" = "SCF") %>%
-  select(data, networth, weight)
-
-# Combine three data sources
-df <- rbind(df_forbes1, df_scf1, df_dina1_so)
-
-# If observation is in SCF or DINA, then divide their weights in 2
-df$weight <- with(df, ifelse(data=="SCF" | data=="DINA", 
-                               round(weight/2), weight) )
-# All obs from SCF and DINA that have wealth above the min of forbes are droped to avoid duplications
-df <- df %>% filter( !(networth > forbesmin & ( data == "SCF" | data == "DINA" ) ) )
-
-# df %>% 
-#   summarise( mean(networth), sd(networth) ) 
-
-total_wealth <- df %>% 
-  summarise(sum(networth * weight) / 1e12) %>% 
-  as.numeric()
-fifty_millio_wealth <- df %>% 
-  filter(networth >= 50e6) %>% 
-  summarise(sum(networth * weight) / 1e12) %>% 
-  as.numeric()
-
-#cat("Total wealth (in trillions) is ", total_wealth, ". Wealth for billionares total wealth is ", fifty_millio_wealth) 
-
-write_dta("analysis_data/wealth.dta", data = df, version = 11)
-
-# Very small differences with stata output (but it should be zero differences)
-# wealth <- read_dta("~/Downloads/wealthtaxsim/data/wealth.dta")
-# diff_aux <- abs( df$networth -  wealth$networth )
-# summary(abs(diff_aux))
-#     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-#    0.000    0.000    0.008    0.928    0.174 3328.000 
-
-total_wealth_scf_in <- df_scf_so %>% 
-  summarise(sum(networth * wgt)/1e12) %>%  
-  as.numeric()
-total_wealth_in <- df %>%  
-  summarise(sum(networth * weight)/1e12) %>%  
-  as.numeric()
+    ### DINA data 
+    ####### This section uses data that cannot be shared for confidentiality reasons
+    ####### Below is the code used to aggregate the data.
+    ####### If you have access to the orginal data set, set is_dina_public_so = TRUE.
+    ####### To obtain this data please contact Gabriel Zucman at zucman@gmail.com
+    ####### The file that you will obtain should have the following signature:
+    ####### in R: digest("usdina2019.dta", file = TRUE) produces: 
+    ####### "2f5d529b1e89e39171927dc28bfebbe4"
+    ####### in Stata, datasignature produces: 
+    ####### "282866:4(49628):4083279708:1806586907"
+    
+    # With access to
+    # private DINA, set indicator to below to TRUE
+    is_dina_public <- FALSE                        
+    if(is_dina_public){
+      # paste below the path to where usdina2019.dta is in your computer
+      df_dina_so <- read_dta("/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta")
+      df_dina <- df_dina_so %>% 
+      group_by(id) %>% 
+      summarise("networth" = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
+                "weight" = mean(dweght)/1e5) 
+        
+      totw_dina <- sum(df_dina$networth * df_dina$weight) / 1e12
+      #cat("TOTAL DINA NETWORTH 2019  (Tr) ", totw_dina)
+      
+      totn_dina <- sum(df_dina$weight)
+      
+      df_dina$data <- "DINA"
+      
+      # Aggregate into bins of 5 househodls info to protect confidentiality
+      df_dina1 <- df_dina %>% 
+        mutate("aux_id" = 1:dim(df_dina)[1]) %>% 
+        arrange(desc(networth),aux_id) %>% 
+        # Still not clear what the role of the "+3" is.  
+        mutate("group" = floor((1:dim(df_dina)[1] + 3) / 5)) %>% 
+        group_by(group) %>% 
+        summarise("weight" = sum(weight),
+                  "networth" = mean(networth)) %>% 
+        mutate("data" = "DINA") %>% 
+        select("data", "networth", "weight")
+      write_dta("analysis_data/dina.dta", data = df_dina1)
+      df_dina1_in <- read_dta("analysis_data/dina.dta")
+    } else {
+      df_dina1_in <- df_dina1_var 
+    }
+    #### End of confidential section
+    totw_dina <- sum(df_dina1_in$networth * df_dina1_in$weight) / 1e12
+    ### SCF data 
+    
+    # Increase the population weigths to reflect population growth from 2016 to 1019
+    df_scf_var <- df_scf_var %>% 
+          mutate("wgt2019" = round( wgt * (1 + hhld_gr_so)^( 2019 - 2016 )))
+    totw <- sum(df_scf_var$networth * df_scf_var$wgt2019) / 1e12
+    totn <- sum(df_scf_var$wgt2019)
+    totw_scf <- sum(df_scf_var$networth * df_scf_var$wgt) / 1e12
+    #cat("TOTAL SCF NETWORTH 2016  (Tr)", totw_scf)
+    
+    # Rescaling SCF to match total total wealth reported in DINA excluding the f400
+    df_scf1_in <- df_scf_var %>% mutate("networth" = networth * ( totw_dina - f400tot ) / totw, 
+                                "weight" = wgt2019, 
+                                "data" = "SCF") %>%
+      select(data, networth, weight)
+    
+    # Combine three data sources
+    df <- rbind(df_forbes1_in, df_scf1_in, df_dina1_in)
+    
+    # If observation is in SCF or DINA, then divide their weights in 2
+    df$weight <- with(df, ifelse(data=="SCF" | data=="DINA", 
+                                   round(weight/2), weight) )
+    # All obs from SCF and DINA that have wealth above the min of forbes are droped to avoid duplications
+    df_in <- df %>% filter( !(networth > forbesmin & ( data == "SCF" | data == "DINA" ) ) )
+    
+    # df %>% 
+    #   summarise( mean(networth), sd(networth) ) 
+    
+    total_wealth <- df_in %>% 
+      summarise(sum(networth * weight) / 1e12) %>% 
+      as.numeric()
+    fifty_millio_wealth <- df_in %>% 
+      filter(networth >= 50e6) %>% 
+      summarise(sum(networth * weight) / 1e12) %>% 
+      as.numeric()
+    
+    #cat("Total wealth (in trillions) is ", total_wealth, ". Wealth for billionares total wealth is ", fifty_millio_wealth) 
+    
+    write_dta("analysis_data/wealth.dta", data = df_in, version = 11)
+    
+    # Very small differences with stata output (but it should be zero differences)
+    # wealth <- read_dta("~/Downloads/wealthtaxsim/data/wealth.dta")
+    # diff_aux <- abs( df_in$networth -  wealth$networth )
+    # summary(abs(diff_aux))
+    #     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+    #    0.000    0.000    0.008    0.928    0.174 3328.000 
+    
+    total_wealth_scf_in <- df_scf_var %>% 
+      summarise(sum(networth * wgt)/1e12) %>%  
+      as.numeric()
+    total_wealth_in <- df_in %>%  
+      summarise(sum(networth * weight)/1e12) %>%  
+      as.numeric()
+    
+###############################################################################
+###############################################################################  
+     return(list("df_forbes1_in" = df_forbes1_in, "df_dina1_in" = df_dina1_in, 
+     "df_scf1_in" = df_scf1_in, "df_in" = df_in, "total_wealth_scf_in" = total_wealth_scf_in, 
+     "total_wealth_in" = total_wealth_in))
+}
+invisible(list2env(clean_data_f(),.GlobalEnv) ) 
 ```
 
 The total household net worth projection is `r paste0("$", round(total_wealth_in))` trillion for 2019 (the SCF records a total household net worth of `r paste0("$", round(total_wealth_scf_in))` trillion in 2016).
@@ -348,21 +360,21 @@ In this section, the microdata generated before (`wealth.dta`) is aggregated int
 *# To run the code below you will require a license of Stata 11 or higher. You will also need to 
 *# place a copy of the file 'gperc.ado', located in the 'rawdata' folder of this repository 
 *# into your ado folder.   
-global ado_dir "INCLUDE YOUR FILE PATH FOR DATA HERE"
-global  datawork   "INCLUDE YOUR FILE PATH FOR ADOs HERE"
+*# paste the directory of the repository in your computer below: 
+global  repository   "YOUR PATH HERE"
 
-sysdir set PERSONAL "$ado_dir"
+sysdir set PERSONAL "$repository/rawdata/"
 
 * creating an excel table for the simulation
-use $datawork/wealth.dta, clear
+use $repository/analysis_data/wealth.dta, clear
+cap gen aux_id = _n
+sort aux_id
 gperc networth [w=weight], matname(wealthperc)	
 mat list wealthperc	
 clear
 svmat wealthperc, names(col)
 qui compress
-export excel using "$datawork/wealthperc.xlsx", first(var) replace
-*REPLACE AT THE END
-*export delimited using "$datawork/analysis_data/tax_grid.csv", replace
+export delimited using "$repository/analysis_data/tax_grid.csv", replace
 ```
 
 ### 4 - Number of affected households and their total tax base 
@@ -371,43 +383,12 @@ To compute the relevant universe the evasion parameter of `r paste0(evasion_para
 
 ```{r affected hhlds, eval=TRUE, echo=print_code}  
 # WRAP WITH A FUNCTION
-# tax_base_grid ---> 
-# Change the following line at the end.
 grid <- read.csv("analysis_data/tax_grid.csv")  %>% 
-#grid <- read.csv("analysis_data/taxBaseGridUpdated.csv")  %>% 
   filter(!is.na(gperc))
-# print(head(grid)) ## check that app has access to this file
 
 # Wealth per bin (percentile) after evasion  
 grid$thresNew <- (1 - evasion_param_in) * grid$thres
 grid$avgNew <- (1 - evasion_param_in) * grid$avg 
-
-# TO DELETE? 
-###### The following section depends on the cleaning data chunk
-if (FALSE){
-#QUESTION: Why counts from original source differ?
-#    df_dina1_so %>% filter(networth>50e6) %>% summarise(sum(weight))
-#    grid %>% filter(thresNew>50e6) %>% summarise(sum(nb))
-#    df_scf %>% filter(networth>50e6) %>% summarise(sum(weight))
-target_hhlds_mo <- df %>% 
-  filter(networth>starting_brack_po) %>% 
-  summarise(sum(weight)) %>% 
-  as.numeric()
-target_hhlds_round <- round(target_hhlds_mo/1000) * 1000
-
-target_hhlds_scf_mo <- df_scf1 %>% 
-  filter(networth>starting_brack_po) %>% 
-  summarise(sum(weight)) %>% 
-  as.numeric()
-target_hhlds_round_scf <- round(target_hhlds_scf_mo/1000) * 1000
-
-target_hhlds_dina_mo <- df_dina1_so %>% 
-  filter(networth>starting_brack_po) %>% 
-  summarise(sum(weight)) %>% 
-  as.numeric()
-target_hhlds_round_dina <- round(target_hhlds_dina_mo/1000) * 1000
-
-}
 
 ##### Num hhlds:
 #no avoidance
@@ -471,8 +452,25 @@ The `r target_hhlds_bn_mo` households with assests totaling over `r paste0("$",n
 ### 5 - Total tax revenue in one year
 
 ```{r new-tax-rev, eval=TRUE, echo=print_code} 
-# WRAP all in one big function
+# DESCRIBE FUNCTIONS STRUCTURE
+# - inputs: list
+# - outputs: list
+#### function:  
+#sample_function_f <- function(){
+################################################################################ 
+################################################################################  
+#
+#    ...
+#
+################################################################################ 
+################################################################################  
+#    return( )                                 
+#}                                             
+#invisible( list2env(sample_function_f(),.GlobalEnv) )
 
+
+
+ 
 # Total tax collected in a year
 # amount from 2%
 # amount from extra 1%
