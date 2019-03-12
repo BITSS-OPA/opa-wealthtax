@@ -111,6 +111,237 @@ server <- function(input, output, session) {
       }
     }
     
+    ##
+    
+    if (brackets[1] == brackets[2]) {
+      
+      updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
+    }
+    
+    
+    if (brackets[1] == brackets[3]) {
+      updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
+    }
+    
+    
+    
+    if (brackets[1] == brackets[4]) {
+      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
+    }
+    
+    
+    
+    if (brackets[2] == brackets[3]) {
+      updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
+    }
+    
+    
+    
+    if (brackets[2] == brackets[3]) {
+      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
+    }
+    
+    
+    
+    if (brackets[3] == brackets[4]) {
+      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[3]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[3]), 2))
+    }
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T) & brackets[4] == brackets[5]) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[4]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[4]), 2))
+      }
+    }
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T) & brackets[3] == brackets[5]) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[3]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[3]), 2))
+      }
+    }
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T) & brackets[2] == brackets[5]) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 5) {
+      if (!is.null(input$bracketV5T) & brackets[1] == brackets[5]) {
+        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & brackets[5] == brackets[6]) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[5]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[5]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & brackets[4] == brackets[6]) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[4]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[4]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & brackets[3] == brackets[6]) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[3]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[3]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & brackets[2] == brackets[6]) {
+    updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
+  }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 6) {
+      if (!is.null(input$bracketV6T) & brackets[1] == brackets[6]) {
+        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & brackets[6] == brackets[7]) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[6]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[6]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & brackets[5] == brackets[7]) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[5]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[5]), 2))
+      }
+    }
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & brackets[4] == brackets[7]) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[4]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[4]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & brackets[3] == brackets[7]) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[3]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[3]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & brackets[2] == brackets[7]) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 7) {
+      if (!is.null(input$bracketV7T) & brackets[1] == brackets[7]) {
+        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & brackets[7] == brackets[8]) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[7]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[7]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & brackets[6] == brackets[8]) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[6]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[6]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & brackets[5] == brackets[8]) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[5]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[5]), 2))
+      }
+    }
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & brackets[4] == brackets[8]) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[4]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[4]), 2))
+      }
+    }
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & brackets[3] == brackets[8]) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[3]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[3]), 2))
+      }
+    }
+    
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & brackets[2] == brackets[8]) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
+      }
+    }
+    
+    
+    req(input$extraBrackets)
+    if (input$extraBrackets >= 8) {
+      if (!is.null(input$bracketV8T) & brackets[1] == brackets[8]) {
+        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
+      }
+    }
+    
+    
+    
+    
+    
     
 
   })
@@ -398,243 +629,243 @@ server <- function(input, output, session) {
   # })
 
   ## update if make two brackets the same
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    if (bracketVal1T() == bracketVal2T()) {
-
-
-      updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    if (bracketVal1T() == bracketVal3T()) {
-      updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    if (bracketVal1T() == bracketVal4T()) {
-      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    if (bracketVal2T() == bracketVal3T()) {
-      updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    if (bracketVal2T() == bracketVal4T()) {
-      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    if (bracketVal3T() == bracketVal4T()) {
-      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 5) {
-      if (!is.null(input$bracketV5T) & bracketVal4T() == bracketVal5T()) {
-        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 5) {
-      if (!is.null(input$bracketV5T) & bracketVal3T() == bracketVal5T()) {
-        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 5) {
-      if (!is.null(input$bracketV5T) & bracketVal2T() == bracketVal5T()) {
-        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 5) {
-      if (!is.null(input$bracketV5T) & bracketVal1T() == bracketVal5T()) {
-        updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 6) {
-      if (!is.null(input$bracketV6T) & bracketVal5T() == bracketVal6T()) {
-        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal5T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal5T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 6) {
-      if (!is.null(input$bracketV6T) & bracketVal4T() == bracketVal6T()) {
-        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 6) {
-      if (!is.null(input$bracketV6T) & bracketVal3T() == bracketVal6T()) {
-        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 6) {
-      if (!is.null(input$bracketV6T) & bracketVal2T() == bracketVal6T()) {
-        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 6) {
-      if (!is.null(input$bracketV6T) & bracketVal1T() == bracketVal6T()) {
-        updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 7) {
-      if (!is.null(input$bracketV7T) & bracketVal6T() == bracketVal7T()) {
-        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal6T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal6T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 7) {
-      if (!is.null(input$bracketV7T) & bracketVal5T() == bracketVal7T()) {
-        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal5T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal5T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 7) {
-      if (!is.null(input$bracketV7T) & bracketVal4T() == bracketVal7T()) {
-        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 7) {
-      if (!is.null(input$bracketV7T) & bracketVal3T() == bracketVal7T()) {
-        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 7) {
-      if (!is.null(input$bracketV7T) & bracketVal2T() == bracketVal7T()) {
-        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 7) {
-      if (!is.null(input$bracketV7T) & bracketVal1T() == bracketVal7T()) {
-        updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T) & bracketVal7T() == bracketVal8T()) {
-        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal7T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal7T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T) & bracketVal6T() == bracketVal8T()) {
-        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal6T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal6T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T) & bracketVal5T() == bracketVal8T()) {
-        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal5T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal5T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T) & bracketVal4T() == bracketVal8T()) {
-        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T) & bracketVal3T() == bracketVal8T()) {
-        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T) & bracketVal2T() == bracketVal8T()) {
-        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
-      }
-    }
-  })
-
-  observeEvent(input$submit, ignoreNULL = FALSE, {
-    req(input$extraBrackets)
-    if (input$extraBrackets >= 8) {
-      if (!is.null(input$bracketV8T) & bracketVal1T() == bracketVal8T()) {
-        updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
-      }
-    }
-  })
-
-
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   if (bracketVal1T() == bracketVal2T()) {
+  # 
+  # 
+  #     updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   if (bracketVal1T() == bracketVal3T()) {
+  #     updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   if (bracketVal1T() == bracketVal4T()) {
+  #     updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   if (bracketVal2T() == bracketVal3T()) {
+  #     updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   if (bracketVal2T() == bracketVal4T()) {
+  #     updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   if (bracketVal3T() == bracketVal4T()) {
+  #     updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 5) {
+  #     if (!is.null(input$bracketV5T) & bracketVal4T() == bracketVal5T()) {
+  #       updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 5) {
+  #     if (!is.null(input$bracketV5T) & bracketVal3T() == bracketVal5T()) {
+  #       updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 5) {
+  #     if (!is.null(input$bracketV5T) & bracketVal2T() == bracketVal5T()) {
+  #       updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 5) {
+  #     if (!is.null(input$bracketV5T) & bracketVal1T() == bracketVal5T()) {
+  #       updateTextInput(session, "bracketV5T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 6) {
+  #     if (!is.null(input$bracketV6T) & bracketVal5T() == bracketVal6T()) {
+  #       updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal5T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal5T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 6) {
+  #     if (!is.null(input$bracketV6T) & bracketVal4T() == bracketVal6T()) {
+  #       updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 6) {
+  #     if (!is.null(input$bracketV6T) & bracketVal3T() == bracketVal6T()) {
+  #       updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 6) {
+  #     if (!is.null(input$bracketV6T) & bracketVal2T() == bracketVal6T()) {
+  #       updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 6) {
+  #     if (!is.null(input$bracketV6T) & bracketVal1T() == bracketVal6T()) {
+  #       updateTextInput(session, "bracketV6T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 7) {
+  #     if (!is.null(input$bracketV7T) & bracketVal6T() == bracketVal7T()) {
+  #       updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal6T()), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal6T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 7) {
+  #     if (!is.null(input$bracketV7T) & bracketVal5T() == bracketVal7T()) {
+  #       updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal5T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal5T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 7) {
+  #     if (!is.null(input$bracketV7T) & bracketVal4T() == bracketVal7T()) {
+  #       updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 7) {
+  #     if (!is.null(input$bracketV7T) & bracketVal3T() == bracketVal7T()) {
+  #       updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 7) {
+  #     if (!is.null(input$bracketV7T) & bracketVal2T() == bracketVal7T()) {
+  #       updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 7) {
+  #     if (!is.null(input$bracketV7T) & bracketVal1T() == bracketVal7T()) {
+  #       updateTextInput(session, "bracketV7T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T) & bracketVal7T() == bracketVal8T()) {
+  #       updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal7T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal7T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T) & bracketVal6T() == bracketVal8T()) {
+  #       updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal6T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal6T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T) & bracketVal5T() == bracketVal8T()) {
+  #       updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal5T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal5T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T) & bracketVal4T() == bracketVal8T()) {
+  #       updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal4T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal4T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T) & bracketVal3T() == bracketVal8T()) {
+  #       updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal3T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal3T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T) & bracketVal2T() == bracketVal8T()) {
+  #       updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal2T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal2T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # observeEvent(input$submit, ignoreNULL = FALSE, {
+  #   req(input$extraBrackets)
+  #   if (input$extraBrackets >= 8) {
+  #     if (!is.null(input$bracketV8T) & bracketVal1T() == bracketVal8T()) {
+  #       updateTextInput(session, "bracketV8T", label = paste("to the top ", getPercentile(updateGrid(), getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), bracketVal1T()), 2))), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), bracketVal1T()), 2))
+  #     }
+  #   }
+  # })
+  # 
+  # 
 
 
 
