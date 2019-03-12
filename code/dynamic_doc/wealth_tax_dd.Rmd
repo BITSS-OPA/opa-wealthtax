@@ -382,7 +382,24 @@ export delimited using "$repository/analysis_data/tax_grid.csv", replace
 To compute the relevant universe the evasion parameter of `r paste0(evasion_param_in *100, "%")` is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)
 
 ```{r affected hhlds, eval=TRUE, echo=print_code}  
-# WRAP WITH A FUNCTION
+# DESCRIBE FUNCTIONS STRUCTURE
+# - inputs: list
+# - outputs: list
+#### function:  
+#sample_function_f <- function(){
+################################################################################ 
+################################################################################  
+#
+#    ...
+#
+################################################################################ 
+################################################################################  
+#    return( )                                 
+#}                                             
+#invisible( list2env(sample_function_f(),.GlobalEnv) )
+
+
+
 grid <- read.csv("analysis_data/tax_grid.csv")  %>% 
   filter(!is.na(gperc))
 
