@@ -8,7 +8,7 @@
  - Gabriel Zucman
 
 ### Visualization:  
- -  Sara Stoudt  
+ -  [Sara Stoudt](https://sastoudt.github.io/)  
 
 ### Dynamic Document:  
  -  Fernando Hoces de la Guardia  
