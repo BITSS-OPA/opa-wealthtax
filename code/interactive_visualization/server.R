@@ -1,5 +1,49 @@
 
 server <- function(input, output, session) {
+  
+  # errstat <- reactive(input$submit,{
+  #   brackets <- as.numeric(c(bracketVal1T(), bracketVal2T(), bracketVal3T(), bracketVal4T()))
+  #   if (input$extraBrackets == 5 & !is.null(input$bracket5T)) {
+  #     req(input$bracketV5T)
+  #     brackets <- c(brackets, as.numeric(input$bracketV5T))
+  #   }
+  #   if (input$extraBrackets == 6 & !is.null(input$bracket6T)) {
+  #     req(input$bracketV6T)
+  #     
+  #     brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T))
+  #   }
+  #   if (input$extraBrackets == 7 & !is.null(input$bracket7T)) {
+  #     req(input$bracketV7T)
+  #     
+  #     brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T))
+  #   }
+  #   if (input$extraBrackets == 8 & !is.null(input$bracket8T)) {
+  #     req(input$bracketV8T)
+  #     
+  #     brackets <- c(brackets, as.numeric(input$bracketV5T), as.numeric(input$bracketV6T), as.numeric(input$bracketV7T), as.numeric(input$bracketV8T))
+  #   }
+  #   
+  #   
+  #   reorderIdx <- order(as.numeric(brackets))
+  #   brackets <- brackets[reorderIdx]
+  #   
+  #   ifelse(sum(duplicated(brackets))>0,1,0)
+  #   
+  # })
+  # 
+  # output$warnmsg <- renderPrint({
+  #   if (errstat()){
+  #   print("Click 'Update Plot' again.")
+  #     head(data())
+  #   } else {
+  #     print("")
+  #   }
+  # })
+  # 
+  # output$warnstat <- renderText({print(errstat());ifelse(errstat(),"Error","No error") })
+  
+  
+  
   # https://stackoverflow.com/questions/40670288/show-hide-inputs-based-on-numericinput-and-actionbutton
   observeEvent(input$submit, priority=1,{
     taxRate <- as.numeric(c(input$bracket1T, input$bracket2T, input$bracket3T, input$bracket4T))
@@ -113,13 +157,21 @@ server <- function(input, output, session) {
     
     ##
     
+    
+    #idxNames= c("bracketV1T","bracketV2T","bracketV3T","bracketV4T","bracketV5T","bracketV6T","bracketV7T", "bracketV8T")
+    
+    #idxNames[2]
+    
+    ## START HERE
+    
     if (brackets[1] == brackets[2]) {
-      
+   
       updateTextInput(session, "bracketV2T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
     }
     
     
     if (brackets[1] == brackets[3]) {
+     
       updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[1]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[1]), 2))
     }
     
@@ -138,12 +190,14 @@ server <- function(input, output, session) {
     
     
     if (brackets[2] == brackets[3]) {
-      updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
+      print(brackets)
+      updateTextInput(session, "bracketV3T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[2]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[2]), 2))
     }
     
     
     
     if (brackets[3] == brackets[4]) {
+   
       updateTextInput(session, "bracketV4T", label = paste("to the top ", getPercentile(updateGrid(), round(getNextPercentile(updateGrid(), brackets[3]), 2)), "%'s wealth above ($m):", sep = ""), value = round(getNextPercentile(updateGrid(), brackets[3]), 2))
     }
     
