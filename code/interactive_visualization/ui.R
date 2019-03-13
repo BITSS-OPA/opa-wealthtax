@@ -17,8 +17,7 @@ ui <-
 
     actionButton("reset", "Reset Values"),
     actionButton("submit", "Update Plot"),
-    #conditionalPanel(condition = "output.warnstat == 'Error'",
-    #                 verbatimTextOutput("warnmsg")),
+    htmlOutput("warn"),
     fluidRow(
       column(
         2,
