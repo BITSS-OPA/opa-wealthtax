@@ -15,8 +15,8 @@ ui <-
     numericInput("extraBrackets", "Number of Brackets", 4, min = 2, max = 8),
     textInput("evasion", label = "Tax Evasion (%)", value = "16"),
 
-    actionButton("reset", "Reset Values"),
-    actionButton("submit", "Update Plot"),
+    actionButton("reset", "Reset"),
+    actionButton("submit", "Update"),
     htmlOutput("warn"),
     fluidRow(
       column(
@@ -48,14 +48,14 @@ ui <-
         tags$a(href = "https://sastoudt.github.io", "Sara Stoudt"),
         h6(""),
         h6("Assisted by:"),
-        h6(""), 
+        h6(""),
         h6("Katie Donnelly Moran"),
         h6("and Clancy Green,"),
-        
+
         h6("Deployment help by:"),
         h6("Akcan Balkir"),
         tags$a(href = "https://mybinder.readthedocs.io/en/latest/", "and the Binder Team"),
-        
+
         h6(""),
         tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
       ),
@@ -86,7 +86,6 @@ ui <-
         h6(""),
         tags$a(href = "https://github.com/BITSS/opa-wealthtax", "Source code here."),
         h6("")
-        
       ),
 
       column(
