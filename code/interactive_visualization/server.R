@@ -1556,7 +1556,7 @@ server <- function(input, output, session) {
       ) %>%
       add_axis("y", title = "Tax rate (%)") %>%
       scale_numeric("x", trans = "log", expand = 0) %>%
-      set_options(width = 1000, height = 500)
+      set_options(width = "auto", height = 500)
 
 
     if (input$extraBrackets == 3) {

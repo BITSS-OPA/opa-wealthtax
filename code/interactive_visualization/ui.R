@@ -9,6 +9,10 @@ library(shinyjs)
 ui <-
 
   fluidPage(
+    tags$head(
+      tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.16/iframeResizer.contentWindow.min.js",
+                  type="text/javascript")
+    ),
     useShinyjs(),
     titlePanel("Wealth Tax Explorer"),
 
@@ -98,7 +102,8 @@ ui <-
         h4("Total Taxpayers"),
         textOutput("totalTaxpayers"),
         h4("Percentage of Families Affected"),
-        textOutput("percentTaxUnits")
+        textOutput("percentTaxUnits"),
+        HTML('<div data-iframe-height></div>')
       )
     )
   )
