@@ -584,7 +584,6 @@ server <- function(input, output, session) {
 
   ## gets people per bracket
   getPeoplePerBracket <- function(grid, brackets) {
-   
     brackets <- c(brackets, max(grid$thresNew) + 1e6) ## get last bracket
     grid$group <- cut(grid$thresNew, brackets, include.lowest = T)
     toReturn <- grid %>% group_by(group) %>% summarise(totalPeople = sum(nb)) %>% drop_na() %>% complete(group, fill = list(totalPeople = 0)) ## avoid dropping levels without any people
@@ -1305,13 +1304,15 @@ server <- function(input, output, session) {
       return(NA)
     } else {
       ##  when monotonic this worked
-      #householdsTaxed <- numberTaxpayers * (taxRateP > 0)
+      # householdsTaxed <- numberTaxpayers * (taxRateP > 0)
 
       ## are any of the brackets below taxed?
-     isTaxedEver= unlist(lapply(1:length(numberTaxpayers),function(idx){sum(taxRateP[1:idx]>0)}))
-      
-     householdsTaxed <- numberTaxpayers *(isTaxedEver>0)
-      
+      isTaxedEver <- unlist(lapply(1:length(numberTaxpayers), function(idx) {
+        sum(taxRateP[1:idx] > 0)
+      }))
+
+      householdsTaxed <- numberTaxpayers * (isTaxedEver > 0)
+
       return(householdsTaxed)
     }
   })
@@ -1376,18 +1377,19 @@ server <- function(input, output, session) {
     reorderIdx <- order(as.numeric(brackets))
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
-## HERE
-    
-     peoplePerBracket <- getPeoplePerBracket(updateGrid(), brackets)
-     numberTaxpayers <- peoplePerBracket$totalPeople
-     isTaxedEver= unlist(lapply(1:length(numberTaxpayers),function(idx){sum(taxRate[1:idx]>0)}))
+
+    peoplePerBracket <- getPeoplePerBracket(updateGrid(), brackets)
+    numberTaxpayers <- peoplePerBracket$totalPeople
+    isTaxedEver <- unlist(lapply(1:length(numberTaxpayers), function(idx) {
+      sum(taxRate[1:idx] > 0)
+    }))
 
 
-     ## when tax rates were monotonic
-    #getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
-     
-     ## need the isTaxedEver for nonmonotonic tax rates
-     getPercentile(updateGrid(), brackets[which(isTaxedEver>0)[1]])
+    ## when tax rates were monotonic
+    # getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
+
+    ## need the isTaxedEver for nonmonotonic tax rates
+    getPercentile(updateGrid(), brackets[which(isTaxedEver > 0)[1]])
   })
 
   ## use percentile affected
