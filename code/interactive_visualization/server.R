@@ -1385,11 +1385,8 @@ server <- function(input, output, session) {
     }))
 
 
-    ## when tax rates were monotonic
-    # getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
+   getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
 
-    ## need the isTaxedEver for nonmonotonic tax rates
-    getPercentile(updateGrid(), brackets[which(isTaxedEver > 0)[1]])
   })
 
   ## use percentile affected
