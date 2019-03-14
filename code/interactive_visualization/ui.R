@@ -45,11 +45,11 @@ ui <-
 
 
         h6("Policy Analysis by:"),
-        tags$a(href = "https://eml.berkeley.edu/~saez/", "Emmanuel Saez"),
+        tags$a(href = "https://eml.berkeley.edu/~saez/", target="_blank", "Emmanuel Saez"),
         h6("and"),
-        tags$a(href = "http://gabriel-zucman.eu/", "Gabriel Zucman"),
+        tags$a(href = "http://gabriel-zucman.eu/", target="_blank", "Gabriel Zucman"),
         h6("Interactive Visualization by:"),
-        tags$a(href = "https://sastoudt.github.io", "Sara Stoudt"),
+        tags$a(href = "https://sastoudt.github.io", target="_blank", "Sara Stoudt"),
         h6(""),
         h6("Assisted by:"),
         h6(""),
@@ -58,10 +58,10 @@ ui <-
 
         h6("Deployment help by:"),
         h6("Akcan Balkir"),
-        tags$a(href = "https://mybinder.readthedocs.io/en/latest/", "and the Binder Team"),
+        tags$a(href = "https://mybinder.readthedocs.io/en/latest/", target="_blank", "and the Binder Team"),
 
         h6(""),
-        tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", "Inspired by this visualization")
+        tags$a(href = "https://www.splitwise.com/taxes/#/brackets/0|160|353|432|479|543/10.1|14.9|25.0|28.1|33#.0|35.1/params/1|1|1|0|1|15", target="_blank", "Inspired by this visualization")
       ),
       column(
         2,
@@ -84,11 +84,11 @@ ui <-
           uiOutput("myui2")
         ),
         h6("This visualization is part of an Open Policy Analysis supported by the"),
-        tags$a(href = "https://www.bitss.org/opa/", "Berkeley Initiative for Transparency in the Social Sciences."),
+        tags$a(href = "https://www.bitss.org/opa/", target="_blank", "Berkeley Initiative for Transparency in the Social Sciences."),
         h6(""),
-        tags$a(href = "http://rpubs.com/BITSS/dd_wt", "Detailed dynamic documentation here."),
+        tags$a(href = "http://rpubs.com/BITSS/dd_wt", target="_blank", "Detailed dynamic documentation here."),
         h6(""),
-        tags$a(href = "https://github.com/BITSS/opa-wealthtax", "Source code here."),
+        tags$a(href = "https://github.com/BITSS/opa-wealthtax", target="_blank", "Source code here."),
         h6("")
       ),
 
