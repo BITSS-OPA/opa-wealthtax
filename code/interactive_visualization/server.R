@@ -1376,10 +1376,18 @@ server <- function(input, output, session) {
     reorderIdx <- order(as.numeric(brackets))
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
+## HERE
+    
+     peoplePerBracket <- getPeoplePerBracket(updateGrid(), brackets)
+     numberTaxpayers <- peoplePerBracket$totalPeople
+     isTaxedEver= unlist(lapply(1:length(numberTaxpayers),function(idx){sum(taxRate[1:idx]>0)}))
 
 
-
-    getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
+     ## when tax rates were monotonic
+    #getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
+     
+     ## need the isTaxedEver for nonmonotonic tax rates
+     getPercentile(updateGrid(), brackets[which(isTaxedEver>0)[1]])
   })
 
   ## use percentile affected
