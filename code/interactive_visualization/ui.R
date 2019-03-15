@@ -15,6 +15,7 @@ ui <-
         type = "text/javascript"
       )
     ),
+    tags$div(style="margin:50px 25px;",
     useShinyjs(),
     titlePanel("Wealth Tax Explorer"),
 
@@ -88,7 +89,7 @@ ui <-
         h6("This visualization is part of an Open Policy Analysis supported by the"),
         tags$a(href = "https://www.bitss.org/opa/", target = "_blank", "Berkeley Initiative for Transparency in the Social Sciences."),
         h6(""),
-        tags$a(href = "http://rpubs.com/BITSS/dd_wt", target = "_blank", "Detailed dynamic documentation here."),
+        tags$a(href = "http://wealthtaxsimulator.org/analysis/", target = "_blank", "Detailed dynamic documentation here."),
         h6(""),
         tags$a(href = "https://github.com/BITSS/opa-wealthtax", target = "_blank", "Source code here."),
         h6("")
@@ -107,5 +108,6 @@ ui <-
         textOutput("percentTaxUnits"),
         HTML("<div data-iframe-height></div>")
       )
+    )
     )
   )
