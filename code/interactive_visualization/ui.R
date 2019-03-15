@@ -15,7 +15,7 @@ ui <-
         type = "text/javascript"
       )
     ),
-    tags$div(style="margin:50px 25px;",
+    tags$div(style="margin:50px 100px; zoom:90%;",
     useShinyjs(),
     titlePanel("Wealth Tax Explorer"),
 
