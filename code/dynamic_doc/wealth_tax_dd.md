@@ -4,7 +4,7 @@ author:
 - 'Policy Analysis: Emmanuel Saez  & Gabriel Zucman[^1]'
 - 'Dynamic Document: Fernando Hoces de la Guardia[^2]'
 - '[List of all contributors](https://github.com/fhoces/opa-wealthtax/blob/master/credits.md) to the entire Open Policy Analysis'
-date: "11 March, 2019"
+date: "14 March, 2019"
 output:
   html_document:
     code_folding: hide
@@ -54,9 +54,9 @@ always_allow_html: yes
 ########################################## 
 ##########################################  
 #    return( )                                  # A list with all (most?) the elements 
-#                                               # generated inside the function 
-#}
-#invisible( list2env(policy_f(),.GlobalEnv) ) 
+#}                                              # generated inside the function 
+#invisible( list2env(sample_function_f(),.GlobalEnv) ) 
+#
 ```
 
 
@@ -226,8 +226,8 @@ rm(list = ls()[!(ls() %in% ls(pattern = "_f\\b"))])
 invisible( list2env(call_sources_f(), .GlobalEnv) )
 invisible( list2env(policy_f(), .GlobalEnv) )
 invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
-invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) )
-invisible( list2env(total_rev_mo_f(), .GlobalEnv) )
+invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) ) #replace
+invisible( list2env(total_rev_mo_f(), .GlobalEnv) )  #replace
 invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
 sapply(ls(pattern = "_pe\\b"), get)
 ```
@@ -238,27 +238,27 @@ sapply(ls(pattern = "_pe\\b"), get)
 
 The figure below illustrates the distribution of wealth tax across the population:
 
-<!--html_preserve--><div id="plot_id739324341-container" class="ggvis-output-container">
-<div id="plot_id739324341" class="ggvis-output"></div>
+<!--html_preserve--><div id="plot_id178195700-container" class="ggvis-output-container">
+<div id="plot_id178195700" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id739324341_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id739324341" data-renderer="svg">SVG</a>
+<a id="plot_id178195700_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id178195700" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id739324341_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id739324341" data-renderer="canvas">Canvas</a>
+<a id="plot_id178195700_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id178195700" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id739324341_download" class="ggvis-download" data-plot-id="plot_id739324341">Download</a>
+<a id="plot_id178195700_download" class="ggvis-download" data-plot-id="plot_id178195700">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id739324341_spec = {
+var plot_id178195700_spec = {
   "data": [
     {
       "name": ".0",
@@ -746,7 +746,7 @@ var plot_id739324341_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id739324341").parseSpec(plot_id739324341_spec);
+ggvis.getPlot("plot_id178195700").parseSpec(plot_id178195700_spec);
 </script><!--/html_preserve-->
  <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font>  
  

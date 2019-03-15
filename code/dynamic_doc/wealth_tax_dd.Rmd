@@ -398,8 +398,6 @@ To compute the relevant universe the evasion parameter of `r paste0(evasion_para
 #}                                             
 #invisible( list2env(sample_function_f(),.GlobalEnv) )
 
-
-
 grid <- read.csv("analysis_data/tax_grid.csv")  %>% 
   filter(!is.na(gperc))
 
@@ -412,26 +410,22 @@ grid$avgNew <- (1 - evasion_param_in) * grid$avg
 target_hhlds_noav_mo <- grid %>% 
   filter(thres > starting_brack_po) %>% 
   summarise(sum(nb))
-target_hhlds_noav_round <- format(round(target_hhlds_noav_mo / 1000) * 1000 , scientific = FALSE)
 
 #with avoidance
 target_hhlds_mo <- grid %>% 
   filter(thresNew > starting_brack_po) %>% 
   summarise(sum(nb))
-target_hhlds_round <- format(round(target_hhlds_mo / 1000) * 1000, scientific = FALSE)
 
 ### Billionares:
 #no avoidance
 target_hhlds_bn_noav_mo <- grid %>% 
   filter(thres > next_increase_po) %>% 
   summarise(sum(nb))
-target_hhlds_bn_noav_round <- round(target_hhlds_bn_noav_mo / 1000) * 1000 
 
 #with avoidance
 target_hhlds_bn_mo <- grid %>% 
   filter(thresNew > next_increase_po) %>% 
   summarise(sum(nb))
-target_hhlds_bn_round <- round(target_hhlds_bn_mo / 1000) * 1000 
 
 ##### Total Taxable Wealth:
 tax_base_total_noav_mo <- grid %>% 
@@ -452,7 +446,11 @@ tax_base_total_surtax_mo <- grid %>%
   filter(thresNew > next_increase_po) %>% 
   summarise(sum((avgNew - next_increase_po) * nb)/1e12)
 
-
+# rounding number to display in the next paragraphs
+target_hhlds_noav_round <- format(round(target_hhlds_noav_mo / 1000) * 1000 , scientific = FALSE)
+target_hhlds_round <- format(round(target_hhlds_mo / 1000) * 1000, scientific = FALSE)
+target_hhlds_bn_noav_round <- round(target_hhlds_bn_noav_mo / 1000) * 1000 
+target_hhlds_bn_round <- round(target_hhlds_bn_mo / 1000) * 1000 
 ```
 
 In 2019, there would be around `r  target_hhlds_round` households liable for the wealth tax (`r target_hhlds_noav_round` before accounting for avoidance). This would be less than `r paste0(round(target_hhlds_mo/total_hhlds_so * 100 , digits = 2), "%")` of the `r round(total_hhlds_so/1e7) * 10` million US households in 2019. 
@@ -613,8 +611,8 @@ rm(list = ls()[!(ls() %in% ls(pattern = "_f\\b"))])
 invisible( list2env(call_sources_f(), .GlobalEnv) )
 invisible( list2env(policy_f(), .GlobalEnv) )
 invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
-invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) )
-invisible( list2env(total_rev_mo_f(), .GlobalEnv) )
+invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) ) #replace
+invisible( list2env(total_rev_mo_f(), .GlobalEnv) )  #replace
 invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
 sapply(ls(pattern = "_pe\\b"), get)
 ```
