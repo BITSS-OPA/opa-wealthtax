@@ -1303,7 +1303,15 @@ server <- function(input, output, session) {
     if (length(numberTaxpayers) != length(taxRateP)) {
       return(NA)
     } else {
-      householdsTaxed <- numberTaxpayers * (taxRateP > 0)
+      ##  when monotonic this worked
+      # householdsTaxed <- numberTaxpayers * (taxRateP > 0)
+
+      ## are any of the brackets below taxed?
+      isTaxedEver <- unlist(lapply(1:length(numberTaxpayers), function(idx) {
+        sum(taxRateP[1:idx] > 0)
+      }))
+
+      householdsTaxed <- numberTaxpayers * (isTaxedEver > 0)
 
       return(householdsTaxed)
     }
@@ -1370,9 +1378,15 @@ server <- function(input, output, session) {
     brackets <- brackets[reorderIdx]
     taxRate <- taxRate[reorderIdx]
 
+    peoplePerBracket <- getPeoplePerBracket(updateGrid(), brackets)
+    numberTaxpayers <- peoplePerBracket$totalPeople
+    isTaxedEver <- unlist(lapply(1:length(numberTaxpayers), function(idx) {
+      sum(taxRate[1:idx] > 0)
+    }))
 
 
-    getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
+   getPercentile(updateGrid(), brackets[which(taxRate > 0)[1]])
+
   })
 
   ## use percentile affected

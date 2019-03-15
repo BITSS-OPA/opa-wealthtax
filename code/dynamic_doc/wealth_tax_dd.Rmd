@@ -775,7 +775,7 @@ plot <- data[, -rmIdx] %>%
  <font size="4"> Percentage of US households paying the wealth tax: `r paste0(round(target_hhlds_mo/total_hhlds_so * 100 , digits = 2), "%")`</font>
 
 
-**[Click here/ADD APP URL](NULL) to explore different policy proposals and to see how the assumptions of the analysis affect the results.**
+**[Click here](http://wealthtaxsimulator.org/simulator_app/) to explore different policy proposals and to see how the assumptions of the analysis affect the results.**
 
 **There are two ways to edit the code behind this document:**   
 1 - Download/Clone [this repository](https://github.com/fhoces/opa-wealthtax) into your computer. You will need to install [R](https://cloud.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download).    
