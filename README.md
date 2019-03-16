@@ -18,4 +18,4 @@ This OPA was the result of a collaboration between UC Berkeley economists Emmanu
 
 This is the first collaborative case study on how to bring open science practices into policy analysis. It complies with the highest levels of the [Open Policy Analysis (OPA) Guidelines](https://www.bitss.org/opa/community-standards/). We also look to demonstrate tools, ideas, and practices through which OPA can be implemented in practice. This exercise, and future case studies, in turn will inform the Guidelines.
 
-To learn more about BITSS and our OPA initiative [click here](www.bitss.org/opa/). If you would like to collaborate with BITSS to develop a demonstration of a OPA in your organization please email Aleks Bogdanoski (abogdanoski@berkeley.edu).
+To learn more about BITSS and our OPA initiative [click here](https://www.bitss.org/opa/). If you would like to collaborate with BITSS to develop a demonstration of a OPA in your organization please email Aleks Bogdanoski (abogdanoski@berkeley.edu).
