@@ -8,9 +8,9 @@ Go straight to the Shiny app: [![Binder](http://mybinder.org/badge_logo.svg)](ht
 
 This repository is part of an Open Policy Analysis (OPA) on Senator Elizabeth Warren's proposal for a wealth tax. It consist of three components:
 
-1 - An interactive plot(ADD FINAL LINK), which summarizes the interactions between all key parameters for a given set of assumptions. Materials can be found in: [`code\interactive_visualization`](https://github.com/BITSS/opa-wealthtax/tree/master/code/interactive_visualization).
+1 - [An interactive plot](http://wealthtaxsimulator.org/simulator_app/), which summarizes the interactions between all key parameters for a given set of assumptions. Materials can be found in: [`code\interactive_visualization`](https://github.com/BITSS/opa-wealthtax/tree/master/code/interactive_visualization).
 
-2 - Open policy report in the form of a dynamic document(ADD FINAL LINK), which details all data, code, and assumptions included in the analysis. Materials can be found in: [`code\dynamic_doc`](https://github.com/BITSS/opa-wealthtax/tree/master/code/dynamic_doc).
+2 - Open policy report in the form of a [dynamic document](http://wealthtaxsimulator.org/analysis/), which details all data, code, and assumptions included in the analysis. Materials can be found in: [`code\dynamic_doc`](https://github.com/BITSS/opa-wealthtax/tree/master/code/dynamic_doc).
 
 3 - This Github repository, which stores all data, code, and materials necessary to replicate the analysis in full with minimal effort.  
 
