@@ -2893,7 +2893,7 @@ div.tocify {
 <h4 class="author"><em>Policy Analysis: Emmanuel Saez &amp; Gabriel Zucman<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></em></h4>
 <h4 class="author"><em>Dynamic Document: Fernando Hoces de la Guardia<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></em></h4>
 <h4 class="author"><em><a href="https://github.com/fhoces/opa-wealthtax/blob/master/credits.md">List of all contributors</a> to the entire Open Policy Analysis</em></h4>
-<h4 class="date"><em>15 March, 2019</em></h4>
+<h4 class="date"><em>03 April, 2019</em></h4>
 
 </div>
 
@@ -2927,9 +2927,78 @@ div.tocify {
 #}                                              # generated inside the function 
 #invisible( list2env(sample_function_f(),.GlobalEnv) ) 
 #</code></pre>
+<pre class="r"><code># - inputs: none
+# - outputs: all the original source values
+call_sources_f &lt;- function(){
+############################################################################### 
+###############################################################################   
+
+    ################  
+    ####### Research:
+    ################  
+    research_so &lt;- read_csv(&quot;rawdata/edits/research.csv&quot;)      #load data set that contains parameters from research
+    # Elasticities
+    ela1_so &lt;- as.numeric(research_so[1,&quot;param&quot;])           # 0.5 - David. 2017
+    ela2_so &lt;- as.numeric(research_so[2,&quot;param&quot;])           # 0.5 - Jakobsen et al. 2018
+    ela3_1_so &lt;- as.numeric(research_so[3,&quot;param&quot;])         # 2   - Londono-Velez 2018
+    ela3_2_so &lt;-   as.numeric(research_so[4,&quot;param&quot;])       # 3   - Londono-Velez 2018
+    ela4_1_so &lt;- as.numeric(research_so[5,&quot;param&quot;])         # 23  - Brülhart et al. 2016
+    ela4_2_so &lt;- as.numeric(research_so[6,&quot;param&quot;])         # 34  - Brülhart et al. 2016
+    
+    ################
+    ###### Data:
+    ################ 
+    df_forbes_so &lt;- read_dta(&quot;rawdata/forbes_20112018_bdays.dta&quot;)  # Forbes
+    df_scf_so &lt;- read_dta(&quot;rawdata/rscfp2016.dta&quot;)                 # SCF
+    df_dina1_so &lt;- read_dta(&quot;analysis_data/dina.dta&quot;)              # DINA
+    # The source data file for DINA is confidential. Instructions 
+    # to obtain it are in code chunk of section #3.               
+
+    # Total wealth and number of households [SOURCE NEEDED]
+    total_hhlds_so &lt;- 129.4e6  # [SOURCE]
+    # Macroeconomy/demographics
+    inflation_so &lt;- 0.025      # CBO/JCT
+    population_gr_so &lt;- 0.01   # CBO/JCT 
+    real_growth_so &lt;- 0.02     # CBO/JCT
+    hhld_gr_so &lt;- 0.009        # [SOURCE]
+    
+    ################ 
+    #####  Guesswork:
+    ################ 
+    
+
+############################################################################### 
+############################################################################### 
+    return( sapply( ls(pattern= &quot;_so\\b&quot;), function(x) get(x) ) ) 
+}
+invisible( list2env(call_sources_f(),.GlobalEnv) )</code></pre>
 <div id="policy-choices" class="section level3">
 <h3>1 - Policy choices</h3>
 <p>The wealth tax applies to net worth (sum of all assets net of debts) above $50 million, and obeys the following structure:</p>
+<pre class="r"><code># - inputs: none 
+# - outputs: all the original source values
+#### Policy:  
+policy_f &lt;- function(){
+############################################################################### 
+###############################################################################  
+  
+    # brackets_po
+    brackets_po &lt;- c(10, 25, 50, 100, 250, 500,  1000) * 1e6
+    tax_rates_po &lt;- c(  0,    0, 0.02,  0.02,  0.02,  0.02, 0.03) 
+    starting_brack_po &lt;- brackets_po[min(which(tax_rates_po&gt;0))]
+    next_increase_po &lt;- brackets_po[min(which(tax_rates_po&gt;0.02))]
+    main_tax_po &lt;- median(tax_rates_po)
+    max_tax_po &lt;- max(tax_rates_po)
+    
+############################################################################### 
+###############################################################################  
+    return( sapply( ls(pattern= &quot;_po\\b&quot;), function(x) get(x)) ) 
+}
+invisible( list2env(policy_f(),.GlobalEnv) )
+
+knitr::kable(cbind(&quot;Bracket (millions of $)&quot; = brackets_po/1e6,
+                   &quot;Marginal Tax Rate (%)&quot; = 100*tax_rates_po) )%&gt;%
+  kable_styling()  </code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3097,6 +3166,25 @@ NBER working paper No. 22376, 2016
 </tbody>
 </table>
 <p>Seim (2017) and Jakobsen et al. (2018) obtain small avoidance/evasion responses in the case of Sweden and Denmark, two countries with systematic third party reporting of wealth: a 1% wealth tax reduces reported wealth by less than 1%. Londono-Velez and Avila (2018) show medium avoidance/evasion responses in the case of Colombia where enforcement is not as strong: a 1% wealth tax reduces reported wealth by about 2-3%. The study on Switzerland by Brülhart et al. (2016) is an outlier that finds very large responses to wealth taxation in Switzerland: a 1% wealth tax lowers reported wealth by 23-34%. This extremely large estimate is extrapolated from very small variations in wealth tax rates over time and across Swiss cantons and hence is not as compellingly identified as the other estimates based on large variations in the wealth tax rate. Switzerland has no systematic third party reporting of assets which can also make tax evasion responses larger than in Scandinavia.</p>
+<pre class="r"><code># input: elasticity parameters from research, main tax, adjutment factor
+# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in)  
+tax_elasticity_in_f &lt;- function(ela1_var = ela1_so, ela2_var = ela2_so, 
+                                ela3_1_var = ela3_1_so, ela3_2_var = ela3_2_so, 
+                                ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
+                                main_tax_var = main_tax_po){
+############################################################################### 
+###############################################################################  
+  
+    final_ela_in &lt;- mean(c(ela1_var, ela2_var, (ela3_1_var + ela3_2_var)/2, 
+                           (ela4_1_var + ela4_2_var)/2))
+    evasion_param_in &lt;- main_tax_var * final_ela_in
+    
+############################################################################### 
+###############################################################################  
+    return(list(&quot;final_ela_in&quot; = final_ela_in, 
+                &quot;evasion_param_in&quot; = evasion_param_in))
+}
+invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) ) </code></pre>
 <p>The final 16% tax avoidance/evasion response to a 2% wealth tax was computed as and average across these four studies (2%*(0.5+0.5+2.5+28.5)/4).</p>
 </div>
 <div id="data-sources" class="section level3">
@@ -3120,16 +3208,234 @@ NBER working paper No. 22376, 2016
 </li>
 <li>After combining (appending) all three data sources, the population weights of SCF and DINA where combined by the taking the average of the two.</li>
 </ul>
+<pre class="r"><code>##### Reproducing do file ('wealthtax.do')
+# inputs: 
+# outputs: df_forbes1_in, df_dina1_in, df_scf1_in, df_in, total_wealth_scf_in,
+# total_wealth_in
+clean_data_f &lt;- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_so,
+                         df_scf_var = df_scf_so){
+############################################################################### 
+###############################################################################
+
+    ### Forbes data 
+    df_forbes1_in &lt;- df_forbes_var  %&gt;%                     
+      filter(forbes_yr == 2018) %&gt;% 
+      mutate(&quot;networth&quot; = net_worthmillions * 1e6, 
+               &quot;weight&quot; = 1, 
+               &quot;data&quot; = &quot;FB400&quot;) %&gt;%
+      select(data, networth, weight) %&gt;% 
+      filter( !is.na(networth) )
+    forbesmin &lt;- min(df_forbes1_in$networth)
+    f400tot &lt;- sum(df_forbes1_in$networth * df_forbes1_in$weight) / 1e12  
+    #cat(&quot;TOTAL FORBES NETWORTH 2018 (Tr) = &quot;, f400tot,  &quot;FORBES MIN WEALTH 2018 = &quot;, forbesmin)
+    
+    ### DINA data 
+    ####### This section uses data that cannot be shared for confidentiality reasons
+    ####### Below is the code used to aggregate the data.
+    ####### If you have access to the orginal data set, set is_dina_public_so = TRUE.
+    ####### To obtain this data please contact Gabriel Zucman at zucman@gmail.com
+    ####### The file that you will obtain should have the following signature:
+    ####### in R: digest(&quot;usdina2019.dta&quot;, file = TRUE) produces: 
+    ####### &quot;2f5d529b1e89e39171927dc28bfebbe4&quot;
+    ####### in Stata, datasignature produces: 
+    ####### &quot;282866:4(49628):4083279708:1806586907&quot;
+    
+    # With access to
+    # private DINA, set indicator to below to TRUE
+    is_dina_public &lt;- FALSE                        
+    if(is_dina_public){
+      # paste below the path to where usdina2019.dta is in your computer
+      df_dina_so &lt;- read_dta(&quot;/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta&quot;)
+      df_dina &lt;- df_dina_so %&gt;% 
+      group_by(id) %&gt;% 
+      summarise(&quot;networth&quot; = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
+                &quot;weight&quot; = mean(dweght)/1e5) 
+        
+      totw_dina &lt;- sum(df_dina$networth * df_dina$weight) / 1e12
+      #cat(&quot;TOTAL DINA NETWORTH 2019  (Tr) &quot;, totw_dina)
+      
+      totn_dina &lt;- sum(df_dina$weight)
+      
+      df_dina$data &lt;- &quot;DINA&quot;
+      
+      # Aggregate into bins of 5 househodls info to protect confidentiality
+      df_dina1 &lt;- df_dina %&gt;% 
+        mutate(&quot;aux_id&quot; = 1:dim(df_dina)[1]) %&gt;% 
+        arrange(desc(networth),aux_id) %&gt;% 
+        # Still not clear what the role of the &quot;+3&quot; is.  
+        mutate(&quot;group&quot; = floor((1:dim(df_dina)[1] + 3) / 5)) %&gt;% 
+        group_by(group) %&gt;% 
+        summarise(&quot;weight&quot; = sum(weight),
+                  &quot;networth&quot; = mean(networth)) %&gt;% 
+        mutate(&quot;data&quot; = &quot;DINA&quot;) %&gt;% 
+        select(&quot;data&quot;, &quot;networth&quot;, &quot;weight&quot;)
+      write_dta(&quot;analysis_data/dina.dta&quot;, data = df_dina1)
+      df_dina1_in &lt;- read_dta(&quot;analysis_data/dina.dta&quot;)
+    } else {
+      df_dina1_in &lt;- df_dina1_var 
+    }
+    #### End of confidential section
+    totw_dina &lt;- sum(df_dina1_in$networth * df_dina1_in$weight) / 1e12
+    ### SCF data 
+    
+    # Increase the population weigths to reflect population growth from 2016 to 1019
+    df_scf_var &lt;- df_scf_var %&gt;% 
+          mutate(&quot;wgt2019&quot; = round( wgt * (1 + hhld_gr_so)^( 2019 - 2016 )))
+    totw &lt;- sum(df_scf_var$networth * df_scf_var$wgt2019) / 1e12
+    totn &lt;- sum(df_scf_var$wgt2019)
+    totw_scf &lt;- sum(df_scf_var$networth * df_scf_var$wgt) / 1e12
+    #cat(&quot;TOTAL SCF NETWORTH 2016  (Tr)&quot;, totw_scf)
+    
+    # Rescaling SCF to match total total wealth reported in DINA excluding the f400
+    df_scf1_in &lt;- df_scf_var %&gt;% mutate(&quot;networth&quot; = networth * ( totw_dina - f400tot ) / totw, 
+                                &quot;weight&quot; = wgt2019, 
+                                &quot;data&quot; = &quot;SCF&quot;) %&gt;%
+      select(data, networth, weight)
+    
+    # Combine three data sources
+    df &lt;- rbind(df_forbes1_in, df_scf1_in, df_dina1_in)
+    
+    # If observation is in SCF or DINA, then divide their weights in 2
+    df$weight &lt;- with(df, ifelse(data==&quot;SCF&quot; | data==&quot;DINA&quot;, 
+                                   round(weight/2), weight) )
+    # All obs from SCF and DINA that have wealth above the min of forbes are droped to avoid duplications
+    df_in &lt;- df %&gt;% filter( !(networth &gt; forbesmin &amp; ( data == &quot;SCF&quot; | data == &quot;DINA&quot; ) ) )
+    
+    # df %&gt;% 
+    #   summarise( mean(networth), sd(networth) ) 
+    
+    total_wealth &lt;- df_in %&gt;% 
+      summarise(sum(networth * weight) / 1e12) %&gt;% 
+      as.numeric()
+    fifty_millio_wealth &lt;- df_in %&gt;% 
+      filter(networth &gt;= 50e6) %&gt;% 
+      summarise(sum(networth * weight) / 1e12) %&gt;% 
+      as.numeric()
+    
+    #cat(&quot;Total wealth (in trillions) is &quot;, total_wealth, &quot;. Wealth for billionares total wealth is &quot;, fifty_millio_wealth) 
+    
+    write_dta(&quot;analysis_data/wealth.dta&quot;, data = df_in, version = 11)
+    
+    # Very small differences with stata output (but it should be zero differences)
+    # wealth &lt;- read_dta(&quot;~/Downloads/wealthtaxsim/data/wealth.dta&quot;)
+    # diff_aux &lt;- abs( df_in$networth -  wealth$networth )
+    # summary(abs(diff_aux))
+    #     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+    #    0.000    0.000    0.008    0.928    0.174 3328.000 
+    
+    total_wealth_scf_in &lt;- df_scf_var %&gt;% 
+      summarise(sum(networth * wgt)/1e12) %&gt;%  
+      as.numeric()
+    total_wealth_in &lt;- df_in %&gt;%  
+      summarise(sum(networth * weight)/1e12) %&gt;%  
+      as.numeric()
+    
+###############################################################################
+###############################################################################  
+     return(list(&quot;df_forbes1_in&quot; = df_forbes1_in, &quot;df_dina1_in&quot; = df_dina1_in, 
+     &quot;df_scf1_in&quot; = df_scf1_in, &quot;df_in&quot; = df_in, &quot;total_wealth_scf_in&quot; = total_wealth_scf_in, 
+     &quot;total_wealth_in&quot; = total_wealth_in))
+}
+invisible(list2env(clean_data_f(),.GlobalEnv) ) </code></pre>
 <p>The total household net worth projection is $94 trillion for 2019 (the SCF records a total household net worth of $87 trillion in 2016).</p>
 </div>
 <div id="generating-percentiles-and-micro-percentiles" class="section level4">
 <h4>3.2 Generating percentiles and micro-percentiles</h4>
 <p>In this section, the microdata generated before (<code>wealth.dta</code>) is aggregated into percentiles and fractions of a percentile. The final analytic file contains: percentile or fraction of percentile (<code>gperc</code>), number of households in that group (<code>nb</code>), lowest level of wealth in that group (<code>thres</code>), and average level of wealth in that group (<code>avg</code>)</p>
+<pre class="r"><code>*# The code below does not run as part of the dynamic document and is presented only
+*# for reproducibility purposes.
+*# To run the code below you will require a license of Stata 11 or higher. You will also need to 
+*# place a copy of the file 'gperc.ado', located in the 'rawdata' folder of this repository 
+*# into your ado folder.   
+*# paste the directory of the repository in your computer below: 
+global  repository   &quot;YOUR PATH HERE&quot;
+
+sysdir set PERSONAL &quot;$repository/rawdata/&quot;
+
+* creating an excel table for the simulation
+use $repository/analysis_data/wealth.dta, clear
+cap gen aux_id = _n
+sort aux_id
+gperc networth [w=weight], matname(wealthperc)  
+mat list wealthperc 
+clear
+svmat wealthperc, names(col)
+qui compress
+export delimited using &quot;$repository/analysis_data/tax_grid.csv&quot;, replace</code></pre>
 </div>
 </div>
 <div id="number-of-affected-households-and-their-total-tax-base" class="section level3">
 <h3>4 - Number of affected households and their total tax base</h3>
 <p>To compute the relevant universe the evasion parameter of 16% is applied to both the threshold and the average wealth of each percentile (and fraction of a percentile)</p>
+<pre class="r"><code># DESCRIBE FUNCTIONS STRUCTURE
+# - inputs: list
+# - outputs: list
+#### function:  
+#sample_function_f &lt;- function(){
+################################################################################ 
+################################################################################  
+#
+#    ...
+#
+################################################################################ 
+################################################################################  
+#    return( )                                 
+#}                                             
+#invisible( list2env(sample_function_f(),.GlobalEnv) )
+
+grid &lt;- read.csv(&quot;analysis_data/tax_grid.csv&quot;)  %&gt;% 
+  filter(!is.na(gperc))
+
+# Wealth per bin (percentile) after evasion  
+grid$thresNew &lt;- (1 - evasion_param_in) * grid$thres
+grid$avgNew &lt;- (1 - evasion_param_in) * grid$avg 
+
+##### Num hhlds:
+#no avoidance
+target_hhlds_noav_mo &lt;- grid %&gt;% 
+  filter(thres &gt; starting_brack_po) %&gt;% 
+  summarise(sum(nb))
+
+#with avoidance
+target_hhlds_mo &lt;- grid %&gt;% 
+  filter(thresNew &gt; starting_brack_po) %&gt;% 
+  summarise(sum(nb))
+
+### Billionares:
+#no avoidance
+target_hhlds_bn_noav_mo &lt;- grid %&gt;% 
+  filter(thres &gt; next_increase_po) %&gt;% 
+  summarise(sum(nb))
+
+#with avoidance
+target_hhlds_bn_mo &lt;- grid %&gt;% 
+  filter(thresNew &gt; next_increase_po) %&gt;% 
+  summarise(sum(nb))
+
+##### Total Taxable Wealth:
+tax_base_total_noav_mo &lt;- grid %&gt;% 
+  filter(thres &gt; starting_brack_po) %&gt;% 
+  summarise(sum((avg - starting_brack_po) * nb)/1e12)
+
+#with avoidance
+#2% above 50m
+tax_base_total_mo &lt;- grid %&gt;% 
+  filter(thresNew &gt; starting_brack_po) %&gt;% 
+  summarise(sum((avgNew - starting_brack_po) * nb)/1e12)
+
+#billionares additional 1%
+tax_base_total_surtax_noav_mo &lt;- grid %&gt;% 
+  filter(thres &gt; next_increase_po) %&gt;% 
+  summarise(sum((avg - next_increase_po) * nb)/1e12)
+tax_base_total_surtax_mo &lt;- grid %&gt;% 
+  filter(thresNew &gt; next_increase_po) %&gt;% 
+  summarise(sum((avgNew - next_increase_po) * nb)/1e12)
+
+# rounding number to display in the next paragraphs
+target_hhlds_noav_round &lt;- format(round(target_hhlds_noav_mo / 1000) * 1000 , scientific = FALSE)
+target_hhlds_round &lt;- format(round(target_hhlds_mo / 1000) * 1000, scientific = FALSE)
+target_hhlds_bn_noav_round &lt;- round(target_hhlds_bn_noav_mo / 1000) * 1000 
+target_hhlds_bn_round &lt;- round(target_hhlds_bn_mo / 1000) * 1000 </code></pre>
 <p>In 2019, there would be around 63000 households liable for the wealth tax (78000 before accounting for avoidance). This would be less than 0.05% of the 130 million US households in 2019.</p>
 <div id="tax-on-all-wealth-above-50-millions" class="section level4">
 <h4>4.1 - 2% tax on all wealth above $50 millions</h4>
@@ -3142,10 +3448,132 @@ NBER working paper No. 22376, 2016
 </div>
 <div id="total-tax-revenue-in-one-year" class="section level3">
 <h3>5 - Total tax revenue in one year</h3>
+<pre class="r"><code># DESCRIBE FUNCTIONS STRUCTURE
+# - inputs: list
+# - outputs: list
+#### function:  
+#sample_function_f &lt;- function(){
+################################################################################ 
+################################################################################  
+#
+#    ...
+#
+################################################################################ 
+################################################################################  
+#    return( )                                 
+#}                                             
+#invisible( list2env(sample_function_f(),.GlobalEnv) )
+
+
+
+ 
+# Total tax collected in a year
+# amount from 2%
+# amount from extra 1%
+
+#This function computes the total tax collected for a tax unit with wealth &quot;wealth_var&quot;, applying &quot;taxrates_var&quot; to &quot;brackets_var&quot;
+# - inputs: wealth, tax rates, brackets to tax
+# - ouputs: total tax collected
+get_tax_rev &lt;- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
+                          brackets_var = brackets_po) {
+    ## expecting taxLevels in percentage
+    # taxLevels &lt;- taxLevels / 100
+    if (length(brackets_var) != length(taxrates_var)){
+      stop(&quot;Tax brackets and tax rates do not match&quot;)
+    }
+   # Compute max taxable wealth per bracket
+    max_tax_per_brack &lt;- c(diff(c(0, brackets_var)), 1e100)
+   # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
+   # then assign max taxable wealth to that given bracket
+    to_tax &lt;- ifelse( wealth_var - c(0, brackets_var) &gt; max_tax_per_brack, 
+                      max_tax_per_brack, 
+                      ( wealth_var - c(0,brackets_var) ) )   
+   # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
+    to_tax &lt;- ifelse( to_tax&lt;0, 0, to_tax )
+    # Apply trax rates to each corresponding bracket and all together
+    total_tax &lt;- sum( to_tax * c(0, taxrates_var) )   
+    return(total_tax)
+}
+
+# IMPORTANT: this (similar to getTaxBasePerBracket) was differing from simple
+# calculation below because this was not subseting to wealth above 50m.
+# computes tax payed by each average wealth per percintile (up to 2%)
+
+## gets taxes paid per group (percentile and micropercentile)
+get_tax_rev_per_group &lt;- function(grid_var = grid, taxLevels_var = tax_rates_po, brackets_var1 = brackets_po) {
+  grid_var &lt;- grid_var %&gt;% filter(thresNew &gt; starting_brack_po)
+  aux_var &lt;- sapply(grid_var$avgNew, 
+                   function(x) get_tax_rev(wealth_var = x, 
+                                             taxrates_var = taxLevels_var, 
+                                             brackets_var = brackets_var1))
+  return(sum(grid_var$nb * aux_var) / 1e9)
+}
+
+tax_rev_init_mo &lt;- get_tax_rev_per_group(taxLevels = c(tax_rates_po[-7], 0.02))
+top_tax_rev_in &lt;- get_tax_rev_per_group(taxLevels = c(rep(0,6), 0.01))
+total_tax_rev &lt;- get_tax_rev_per_group(taxLevels = tax_rates_po)
+#199.7889
+
+# The following replicates stata code more closely and seems more straightforward. 
+# Howevere it differs more from the code in the app. Consider this in both (app and DD)
+# in the future
+if (FALSE){
+    #with avoidance
+    #2% above 50m
+    tax_rev_init_mo &lt;- grid %&gt;% 
+      filter(thresNew &gt; starting_brack_po) %&gt;% 
+      summarise(sum((avgNew - starting_brack_po) * nb * 0.02)/1e9) %&gt;% as.numeric()
+    
+    #billionares additional 1%
+    top_tax_rev_in &lt;- grid %&gt;% 
+      filter(thresNew &gt; next_increase_po) %&gt;% 
+      summarise(sum((avgNew - next_increase_po) * nb * 0.01)/1e9) %&gt;% as.numeric()
+    
+    total_tax_rev &lt;- total_tax_base + total_tax_sur_bill
+}
+
+# TO DELETE ALL BELOW?
+getPeoplePerBracket=function(grid, brackets){
+  brackets = c(brackets, 1e12) ## get last bracket
+  grid$group=cut(grid$thresNew, brackets)
+  toReturn = grid %&gt;% 
+    group_by(group) %&gt;% 
+    summarise(totalPeople=sum(nb)) %&gt;% 
+    drop_na()
+  return(toReturn)
+}
+
+numberTaxpayers &lt;- getPeoplePerBracket(brackets = brackets_po, grid = grid)
+
+#Revenue
+#From here on: keep
+target_hhlds_mo &lt;- sum( numberTaxpayers$totalPeople[brackets_po&gt;=starting_brack_po] )</code></pre>
 <p>Starting with the $8.9 trillion tax base of wealth above $50 million ($11.3 with no avoidance), a 2% tax would raise $177 billion in 2019. The billionaire surtax is estimated to apply to a base of $2.2 trillion ($2.8 with no avoidance) from about 1000 billionaire families (1300 with no avoidance). Thus the billionaire surtax would raise $22 billion in 2019. The combination of the 2% tax above $50 million and the billionaire surtax would raise 177.2 + 21.6 = 198.8 billion in 2019.</p>
 </div>
 <div id="ten-year-projections" class="section level3">
 <h3>6 - Ten year projections</h3>
+<pre class="r"><code># - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_rev_in
+# - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
+ten_years_mo_f &lt;- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
+                           real_growth_var = real_growth_so, total_rev_var = total_tax_rev, 
+                           top_tax_base_var = top_tax_rev_in){
+############################################################################### 
+###############################################################################
+  
+    discount_rate_mo &lt;- inflation_var + population_gr_so + real_growth_so  
+    ten_year_factor_mo &lt;- sum( ( 1 + discount_rate_mo )^( 0:9 ) ) 
+
+    ten_year_revenue_pe &lt;- total_rev_var * ten_year_factor_mo     
+    #ten_year_revenue_pe &lt;- total_rev_pe * ten_year_factor_mo                      #PE
+    ten_year_top_tax_pe &lt;- top_tax_base_var * ten_year_factor_mo          
+    #ten_year_top_tax_pe &lt;- top_tax_base_var * ten_year_factor_mo                  #PE
+    
+############################################################################### 
+###############################################################################
+    return( list(&quot;discount_rate_mo&quot; = discount_rate_mo, &quot;ten_year_factor_mo&quot; = ten_year_factor_mo, 
+           &quot;ten_year_revenue_pe&quot; = ten_year_revenue_pe, &quot;ten_year_top_tax_pe&quot; = ten_year_top_tax_pe) )
+}
+invisible( list2env(ten_years_mo_f(),.GlobalEnv) )</code></pre>
 <p>To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, or 5.5% per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over 10 years 2019-2028 is about 12.9 times the revenue raised in 2019<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is likely that top wealth would continue to grow at least as fast as the average.</p>
 <p>This 10-year projection implies that revenue raised by the progressive wealth tax would be 12.9 * 198.8 = $2560 billion, rounded to $2.6 trillion. Out of this $2.6 trillion, the billionaire surtax would raise 21.6 * 12.9 = $278.7 billion, rounded to $0.3 trillion.</p>
 <p>It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because Senator Warren’s proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.</p>
@@ -3162,27 +3590,169 @@ sapply(ls(pattern = &quot;_pe\\b&quot;), get)</code></pre>
 <div id="visualization" class="section level3">
 <h3>7 - Visualization</h3>
 <p>The figure below illustrates the distribution of wealth tax across the population:</p>
-<p><div id="plot_id335723619-container" class="ggvis-output-container">
-<div id="plot_id335723619" class="ggvis-output"></div>
+<pre class="r"><code># Clean up the code (but do not make changes).   
+taxRate &lt;- c(mean(tax_rates_po[1:2]), mean(tax_rates_po[3:5]), tax_rates_po[6],
+             tax_rates_po[7]) * 100
+brackets &lt;- c(min(brackets_po[1:2]), min(brackets_po[3:5]), brackets_po[6], 
+              brackets_po[7]) / 1e6
+#this section sorts the tax brackets. Not needed outside the app    
+if (FALSE){          
+    ## reshuffle to make sure brackets are increasing
+    ## tax rates not forced to be monotonic
+    reorderIdx &lt;- order(as.numeric(brackets))
+    brackets &lt;- brackets[reorderIdx]
+    taxRate &lt;- taxRate[reorderIdx]
+}
+  
+### KATIE: change the 1e5 to whatever you want to be the minimum
+xval &lt;- 10^seq(log10(1e5), log10(max(grid$thresNew)), by = 0.001) ## get uniform on log scale
+ #(max(grid$thresNew))
+if(FALSE){
+    idx0 &lt;- xval &lt;= as.numeric(brackets[1]) * 1e6
+    idx1 &lt;- xval &lt;= as.numeric(brackets[2]) * 1e6 &amp; xval &gt; as.numeric(brackets[1]) * 1e6
+    idx2 &lt;- xval &gt; as.numeric(brackets[2]) * 1e6 &amp; xval &lt;= as.numeric(brackets[3]) * 1e6
+    idx3 &lt;- xval &gt; as.numeric(brackets[3]) * 1e6 &amp; xval &lt;= as.numeric(brackets[4]) * 1e6
+    idx4 &lt;- xval &gt; as.numeric(brackets[4]) * 1e6
+    idx &lt;- cbind.data.frame(idx0, idx1, idx2, idx3, idx4)
+   # Indicator across income on tax bracket position
+    getGroup &lt;- unlist(apply(idx, 1, function(x) {
+      which(x)[1]
+    }))
+
+    toPlot &lt;- cbind.data.frame(xval, getGroup)  
+}
+    #brackets_po &lt;- c(0, 25, 50, 100, 250, 500, 1000) * 1e6
+getGroup &lt;- as.numeric(cut(xval, c(0, brackets * 1e6, 1e12), include.lowest = TRUE))
+
+toPlot &lt;- cbind.data.frame(xval, getGroup)  
+#summary(toPlot)
+#toMatch &lt;- cbind.data.frame(group = 1:7, tax = tax_rates_po)
+toMatch &lt;- cbind.data.frame(group = 1:(length(taxRate) + 1), tax = c(0, taxRate))
+ 
+toPlot2 &lt;- merge(toPlot, toMatch, by.x = &quot;getGroup&quot;, by.y = &quot;group&quot;)
+
+#lapply(x = 1:5, f(x,y), y = 6:10) = (1, 6:10); (2, 6:10);... ;(5, 6:10)  
+toPlot2$averageInt &lt;- sapply( toPlot2$xval, 
+                              function(x) get_tax_rev(wealth_var = x, 
+                                                        taxrates_var = taxRate/100, 
+                                                        brackets_var = brackets * 1e6) )
+
+# Here is where the total tax payed by each individuals is transform into average tax rates
+toPlot2$averageRate &lt;- (toPlot2$averageInt / toPlot2$xval) * 100
+
+toPlot2$id &lt;- 1:nrow(toPlot2)
+#browser()
+if(FALSE) {
+    # unaffected by new grouping
+    toPlot2$marginalInt &lt;- unlist(lapply(toPlot2$xval, getAverageTax, taxRate, brackets))
+
+    toPlot2$marginalRate &lt;- (toPlot2$marginalInt / toPlot2$xval) * 100
+
+    toPlot2$id &lt;- 1:nrow(toPlot2)
+}
+#summary(toPlot2)
+#end of dataInputT
+   
+# These are mini data set that ggvis needs to cre ate vertical lines
+extra0 &lt;- cbind.data.frame(x = rep(max(as.numeric(brackets[1]) * 1e6, 1e5), 2), y = c(0, taxRate[1]))
+extra1 &lt;- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[1]))
+extra1b &lt;- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[2]))
+extra2 &lt;- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[2]))
+extra2b &lt;- cbind.data.frame(x = rep(as.numeric(brackets[3]) * 1e6, 2), y = c(0, taxRate[3]))
+extra3 &lt;- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[3]))
+extra3b &lt;- cbind.data.frame(x = rep(as.numeric(brackets[4]) * 1e6, 2), y = c(0, taxRate[4]))
+
+showAvg &lt;- function(x) {
+  # https://stackoverflow.com/questions/28396900/r-ggvis-html-function-failing-to-add-tooltip/28399656#28399656
+  # https://stackoverflow.com/questions/31230124/exclude-line-points-from-showing-info-when-using-add-tooltip-with-hover-in-ggvis
+  if (sum(grepl(&quot;id&quot;, names(x))) == 0) return(NULL)
+  if (is.null(x)) return(NULL)
+  
+  data &lt;- toPlot2
+
+  row &lt;- data[data$id == x$id, ]
+
+  #The following section does not work in the static plot
+  if(FALSE){
+  paste0(&quot;Average Tax Rate: &quot;, round(row$averageRate, 2), &quot;%&quot;, 
+         &quot; &lt;br&gt; Wealth ($m): &quot;, round(row$xval / 1e6, 0), 
+         &quot;&lt;br&gt; Top &quot;, getPercentile(grid, row$xval / 1e6), 
+         &quot;%&quot;, &quot;&lt;br&gt; Taxes Paid ($m): &quot;, round(row$averageInt / 1e6, 2), 
+         sep = &quot;&quot;) ## dividing by 1e6 may need to change if we do this for xval overall
+  }
+}
+
+
+getPercentileMarkers &lt;- function(grid) {
+    c(
+      grid$thresNew[which(grid$gperc == 90)],
+      grid$thresNew[which(grid$gperc == 99)],
+      grid$thresNew[which(grid$gperc &gt;= 99.9 &amp; grid$gperc &lt; 99.99)[1]],
+      grid$thresNew[which(grid$gperc &gt;= 99.99 &amp; grid$gperc &lt; 99.999)[1]]
+    )
+  }
+
+data &lt;- toPlot2
+
+markers &lt;- data.frame(a = c(getPercentileMarkers(grid) / 1e6, 
+                           max(grid$thresNew) / 1e6), 
+                     b = rep(0.25, 5), 
+                     c = c(&quot;Top 10%&quot;, &quot;Top 1%&quot;, &quot;Top 0.1%&quot;, &quot;Top 0.01%&quot;, &quot;Maximum&quot;))
+
+valuesInt &lt;- c(brackets, round(max(grid$thresNew) / 1e6, 2), 
+               round(getPercentileMarkers(grid) / 1e6, 2))
+valuesInt &lt;- sort(valuesInt)
+rmIdx &lt;- ncol(data)
+plot &lt;- data[, -rmIdx] %&gt;%
+  ggvis(x = ~ xval / 1e6, y = ~tax) %&gt;%
+  layer_points() %&gt;%
+  layer_points(data = subset(data, xval / 1e6 &lt;= max(grid$thresNew) / 1e6), 
+               x = ~ xval / 1e6, 
+               y = ~averageRate, stroke := &quot;red&quot;, key := ~id) %&gt;%
+  add_tooltip(showAvg, &quot;hover&quot;) %&gt;%
+  # layer_lines(data = subset(data,xval/1e6&lt;=45000),x = ~ xval / 1e6, y = ~marginalRate, stroke := &quot;red&quot;) %&gt;%
+  layer_paths(data = extra1, ~ x / 1e6, ~y) %&gt;%
+  # layer_paths(data = extra2, ~ x / 1e6, ~y) %&gt;%
+  # layer_paths(data = extra3, ~ x / 1e6, ~y) %&gt;%
+  layer_paths(data = extra0, ~ x / 1e6, ~y) %&gt;%
+  layer_paths(data = extra1b, ~ x / 1e6, ~y) %&gt;%
+  # layer_paths(data = extra2b, ~ x / 1e6, ~y) %&gt;%
+  # layer_paths(data = extra3b, ~ x / 1e6, ~y) %&gt;%
+  layer_text(data = markers, ~a, ~b, text := ~c, align := &quot;center&quot;, fontWeight := &quot;bold&quot;) %&gt;%
+  add_axis(&quot;x&quot;,
+    title_offset = 80, title = &quot;Wealth ($m)&quot;, grid = F, format = &quot;,&quot;,
+    values = valuesInt, properties = 
+      axis_props(labels = list(angle = 45, align = &quot;left&quot;, baseline = &quot;middle&quot;))
+  ) %&gt;%
+  add_axis(&quot;y&quot;, title = &quot;Tax rate (%)&quot;) %&gt;%
+  scale_numeric(&quot;x&quot;, trans = &quot;log&quot;, expand = 0) %&gt;%
+  set_options(width = 800, height = 500) %&gt;%
+    layer_paths(data = extra2, ~ x / 1e6, ~y) %&gt;%
+    layer_paths(data = extra2b, ~ x / 1e6, ~y) %&gt;%
+    layer_paths(data = extra3, ~ x / 1e6, ~y) %&gt;%
+    layer_paths(data = extra3b, ~ x / 1e6, ~y)
+  plot</code></pre>
+<p><div id="plot_id321450514-container" class="ggvis-output-container">
+<div id="plot_id321450514" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id335723619_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id335723619" data-renderer="svg">SVG</a>
+<a id="plot_id321450514_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id335723619_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id335723619" data-renderer="canvas">Canvas</a>
+<a id="plot_id321450514_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id335723619_download" class="ggvis-download" data-plot-id="plot_id335723619">Download</a>
+<a id="plot_id321450514_download" class="ggvis-download" data-plot-id="plot_id321450514">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id335723619_spec = {
+var plot_id321450514_spec = {
   "data": [
     {
       "name": ".0",
@@ -3670,7 +4240,7 @@ var plot_id335723619_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id335723619").parseSpec(plot_id335723619_spec);
+ggvis.getPlot("plot_id321450514").parseSpec(plot_id321450514_spec);
 </script> <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font></p>
 <p><font size="4"> Tax revenue from wealth tax over 10 year: $2.6 trillion</font></p>
 <p><font size="4"> Percentage of US households paying the wealth tax: 0.05%</font></p>

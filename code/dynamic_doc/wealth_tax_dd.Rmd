@@ -36,7 +36,7 @@ lapply(list.of.packages, library, character.only = TRUE)
 knitr::opts_knit$set(root.dir = here())
 knitr::opts_chunk$set(echo = TRUE)
 
-print_code <- FALSE
+print_code <- TRUE
 ``` 
 
 ```{r notes}
@@ -605,7 +605,7 @@ This 10-year projection implies that revenue raised by the progressive wealth ta
 
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because Senator Warren's proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 
-```{r only-function, eval=FALSE}
+```{r only-function, eval=FALSE, echo=FALSE}
 # test to run from the beginning (only functions)
 rm(list = ls()[!(ls() %in% ls(pattern = "_f\\b"))])
 invisible( list2env(call_sources_f(), .GlobalEnv) )
