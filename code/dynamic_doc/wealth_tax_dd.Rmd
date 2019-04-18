@@ -33,6 +33,7 @@ if(length(new.packages)) install.packages(new.packages, repos= "http://cran.cnr.
 
 lapply(list.of.packages, library, character.only = TRUE)
 
+
 knitr::opts_knit$set(root.dir = here())
 knitr::opts_chunk$set(echo = TRUE)
 
