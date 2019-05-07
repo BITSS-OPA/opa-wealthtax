@@ -255,7 +255,8 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
     is_dina_public <- FALSE                        
     if(is_dina_public){
       # paste below the path to where usdina2019.dta is in your computer
-      df_dina_so <- read_dta("/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta")
+      path_to_dina <- paste0("HERE_GOES_YOUR_PATH", "/usdina2019.dta")
+      df_dina_so <- read_dta(path_to_dina)
       df_dina <- df_dina_so %>% 
       group_by(id) %>% 
       summarise("networth" = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
