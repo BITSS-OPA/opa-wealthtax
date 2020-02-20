@@ -176,8 +176,8 @@ knitr::kable(table_aux, format = "html", booktabs = T) %>%
 Seim (2017) and Jakobsen et al. (2018) obtain small avoidance/evasion responses in the case of Sweden and Denmark, two countries with systematic third party reporting of wealth: a 1% wealth tax reduces reported wealth by less than 1%. Londono-Velez and Avila (2018) show medium avoidance/evasion responses in the case of Colombia where enforcement is not as strong: a 1% wealth tax reduces reported wealth by about `r paste(ela3_1_so, "-", ela3_2_so,"%", sep="")`. The study on Switzerland by Brülhart et al. (2016) is an outlier that finds very large responses to wealth taxation in Switzerland: a 1% wealth tax lowers reported wealth by `r paste(ela4_1_so, "-", ela4_2_so,"%", sep="")`. This extremely large estimate is extrapolated from very small variations in wealth tax rates over time and across Swiss cantons and hence is not as compellingly identified as the other estimates based on large variations in the wealth tax rate. Switzerland has no systematic third party reporting of assets which can also make tax evasion responses larger than in Scandinavia. 
 
 ```{r tax-elasticity, warning=FALSE, message=FALSE, echo=print_code}   
-# input: elasticity parameters from research, main tax, adjutment factor
-# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in)  
+# input: elasticity parameters from research, main tax, adjustment factor
+# output: final elasticity (final_ela_in), evasion parameter (evasion_param_in)  
 tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so, 
                                 ela3_1_var = ela3_1_so, ela3_2_var = ela3_2_so, 
                                 ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
@@ -208,13 +208,13 @@ Three data sources were used in this analysis:
 
 #### 3.1 Data cleaning
 
-From each data set three variable were extracted: `networth` that contain information on wealth, `weights` represents the number of households that each observation represents and `data` which tracks the data of origin.
+From each data set three variables were extracted: `networth` that contains information on wealth, `weights` represents the number of households that each observation represents and `data` which tracks the data of origin.
 
 The following transformations were applied to the data:      
 
  - Each observation in DINA is aggregated into groups of 5 observations to anonymize the data.  
  - SCF was aged by inflating the number of households and wealth uniformly to match the most recent aggregate projections for population and total household wealth from the Federal Reserve Board.  After that, SCF wealth was scaled to match the total of DINA minus the wealth of Forbes (to prevent double counting of wealth).   
- - After combining (appending) all three data sources, the population weights of SCF and DINA where combined by the taking the average of the two.   
+ - After combining (appending) all three data sources, the population weights of SCF and DINA were combined by the taking the average of the two.   
 
 
 ```{r data-cleaning, eval=TRUE, warning=FALSE, message=FALSE, echo=print_code}  
@@ -269,7 +269,7 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
       
       df_dina$data <- "DINA"
       
-      # Aggregate into bins of 5 househodls info to protect confidentiality
+      # Aggregate into bins of 5 households info to protect confidentiality
       df_dina1 <- df_dina %>% 
         mutate("aux_id" = 1:dim(df_dina)[1]) %>% 
         arrange(desc(networth),aux_id) %>% 
@@ -289,7 +289,7 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
     totw_dina <- sum(df_dina1_in$networth * df_dina1_in$weight) / 1e12
     ### SCF data 
     
-    # Increase the population weigths to reflect population growth from 2016 to 1019
+    # Increase the population weights to reflect population growth from 2016 to 2019
     df_scf_var <- df_scf_var %>% 
           mutate("wgt2019" = round( wgt * (1 + hhld_gr_so)^( 2019 - 2016 )))
     totw <- sum(df_scf_var$networth * df_scf_var$wgt2019) / 1e12
@@ -309,7 +309,7 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
     # If observation is in SCF or DINA, then divide their weights in 2
     df$weight <- with(df, ifelse(data=="SCF" | data=="DINA", 
                                    round(weight/2), weight) )
-    # All obs from SCF and DINA that have wealth above the min of forbes are droped to avoid duplications
+    # All obs from SCF and DINA that have wealth above the min of forbes are dropped to avoid duplications
     df_in <- df %>% filter( !(networth > forbesmin & ( data == "SCF" | data == "DINA" ) ) )
     
     # df %>% 
@@ -459,11 +459,11 @@ In 2019, there would be around `r  target_hhlds_round` households liable for the
 
 #### 4.1 - `r paste0(main_tax_po * 100, "%")` tax on all wealth above `r paste0("$",starting_brack_po/1e6)` millions
 
-The `r target_hhlds_mo` households with assests totaling over `r paste0("$",starting_brack_po/1e6)` million would have a total taxable wealth (above the `r paste0("$",starting_brack_po/1e6, "million")`) of `r paste("$", round(tax_base_total_mo, digits = 1), sep="")` trillion,  i.e. approximately `r paste0(round(tax_base_total_mo/total_wealth_in* 100), "%")`  of the `r paste0("$", round(total_wealth_in))` trillion population-wide, total household net worth.
+The `r target_hhlds_mo` households with assets totaling over `r paste0("$",starting_brack_po/1e6)` million would have a total taxable wealth (above the `r paste0("$",starting_brack_po/1e6, "million")`) of `r paste("$", round(tax_base_total_mo, digits = 1), sep="")` trillion,  i.e. approximately `r paste0(round(tax_base_total_mo/total_wealth_in* 100), "%")`  of the `r paste0("$", round(total_wealth_in))` trillion population-wide, total household net worth.
 
 #### 4.2 - `r paste0((max_tax_po - main_tax_po) * 100, "%")` additional tax on all wealth above `r paste0("$",next_increase_po/1e9)` billion
 
-The `r target_hhlds_bn_mo` households with assests totaling over `r paste0("$",next_increase_po/1e9)` billion dollars would have a total taxable wealth (above the `r paste0("$",next_increase_po/1e9, "billion")`) of `r paste("$", round(tax_base_total_surtax_mo, digits = 1), sep="")` trillion,  i.e. approximately `r paste0(round(tax_base_total_surtax_mo/total_wealth_in* 100), "%")`  of the `r paste0("$", round(total_wealth_in))` trillion population-wide, total household net worth.
+The `r target_hhlds_bn_mo` households with assets totaling over `r paste0("$",next_increase_po/1e9)` billion dollars would have a total taxable wealth (above the `r paste0("$",next_increase_po/1e9, "billion")`) of `r paste("$", round(tax_base_total_surtax_mo, digits = 1), sep="")` trillion,  i.e. approximately `r paste0(round(tax_base_total_surtax_mo/total_wealth_in* 100), "%")`  of the `r paste0("$", round(total_wealth_in))` trillion population-wide, total household net worth.
 
 
 ### 5 - Total tax revenue in one year
@@ -504,14 +504,14 @@ get_tax_rev <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
     }
    # Compute max taxable wealth per bracket
     max_tax_per_brack <- c(diff(c(0, brackets_var)), 1e100)
-   # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
+   # Subtract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
    # then assign max taxable wealth to that given bracket
     to_tax <- ifelse( wealth_var - c(0, brackets_var) > max_tax_per_brack, 
                       max_tax_per_brack, 
                       ( wealth_var - c(0,brackets_var) ) )   
-   # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
+   # If wealth is lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
     to_tax <- ifelse( to_tax<0, 0, to_tax )
-    # Apply trax rates to each corresponding bracket and all together
+    # Apply tax rates to each corresponding bracket and all together
     total_tax <- sum( to_tax * c(0, taxrates_var) )   
     return(total_tax)
 }
@@ -536,7 +536,7 @@ total_tax_rev <- get_tax_rev_per_group(taxLevels = tax_rates_po)
 #199.7889
 
 # The following replicates stata code more closely and seems more straightforward. 
-# Howevere it differs more from the code in the app. Consider this in both (app and DD)
+# However it differs more from the code in the app. Consider this in both (app and DD)
 # in the future
 if (FALSE){
     #with avoidance
@@ -578,7 +578,7 @@ Starting with the `r paste0("$", round(tax_base_total_mo, digits = 1))` trillion
 
 ```{r ten-years, echo=print_code}  
 # - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_rev_in
-# - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
+# - outputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
                            real_growth_var = real_growth_so, total_rev_var = total_tax_rev, 
                            top_tax_base_var = top_tax_rev_in){
@@ -673,7 +673,7 @@ toPlot2$averageInt <- sapply( toPlot2$xval,
                                                         taxrates_var = taxRate/100, 
                                                         brackets_var = brackets * 1e6) )
 
-# Here is where the total tax payed by each individuals is transform into average tax rates
+# Here is where the total tax paid by each individual is transformed into average tax rates
 toPlot2$averageRate <- (toPlot2$averageInt / toPlot2$xval) * 100
 
 toPlot2$id <- 1:nrow(toPlot2)
@@ -690,7 +690,7 @@ if(FALSE) {
 #summary(toPlot2)
 #end of dataInputT
    
-# These are mini data set that ggvis needs to cre ate vertical lines
+# These are mini data set that ggvis needs to create vertical lines
 extra0 <- cbind.data.frame(x = rep(max(as.numeric(brackets[1]) * 1e6, 1e5), 2), y = c(0, taxRate[1]))
 extra1 <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[1]))
 extra1b <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[2]))
@@ -772,7 +772,7 @@ plot <- data[, -rmIdx] %>%
 ```
  <font size="4"> Tax revenue from wealth tax in first year: `r paste0("$", round(total_tax_rev))` billion </font>  
  
- <font size="4"> Tax revenue from wealth tax over 10 year: `r paste0("$", round(ten_year_revenue_pe/1e3, 1))` trillion</font>
+ <font size="4"> Tax revenue from wealth tax over 10 years: `r paste0("$", round(ten_year_revenue_pe/1e3, 1))` trillion</font>
 
  <font size="4"> Percentage of US households paying the wealth tax: `r paste0(round(target_hhlds_mo/total_hhlds_so * 100 , digits = 2), "%")`</font>
 
@@ -799,7 +799,7 @@ In contrast, the bottom 99% families have a total tax burden of 7.2% relative to
 
 **Note:** Our analysis complies with the highest levels of transparency and reproducibilty for open policy analysis proposed by the [_Berkeley Initiative for Transparency in the Social Sciences_](https://www.bitss.org/opa/). We invite contributors and critics of this analysis to follow similar standards. 
 
-[^1]: The authors would like to particularly acknowledge the excellent research assitanship of Katie Donnelly Moran and Clancy Green. 
+[^1]: The authors would like to particularly acknowledge the excellent research assistantship of Katie Donnelly Moran and Clancy Green. 
 
 [^2]: This dynamic document is part of an Open Policy Analysis which follows the guidelines of the [Berkeley Initiative for Transparency in the Social Sciences](https://www.bitss.org/opa/)
 

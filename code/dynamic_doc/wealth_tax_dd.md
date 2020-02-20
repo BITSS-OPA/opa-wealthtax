@@ -4,7 +4,7 @@ author:
 - 'Policy Analysis: Emmanuel Saez  & Gabriel Zucman[^1]'
 - 'Dynamic Document: Fernando Hoces de la Guardia[^2]'
 - '[List of all contributors](https://github.com/fhoces/opa-wealthtax/blob/master/credits.md) to the entire Open Policy Analysis'
-date: "03 April, 2019"
+date: "20 February, 2020"
 output:
   html_document:
     code_folding: hide
@@ -231,8 +231,8 @@ Seim (2017) and Jakobsen et al. (2018) obtain small avoidance/evasion responses 
 
 
 ```r
-# input: elasticity parameters from research, main tax, adjutment factor
-# ouptut: final elasticity (final_ela_in), evasion parameter (evasion_param_in)  
+# input: elasticity parameters from research, main tax, adjustment factor
+# output: final elasticity (final_ela_in), evasion parameter (evasion_param_in)  
 tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so, 
                                 ela3_1_var = ela3_1_so, ela3_2_var = ela3_2_so, 
                                 ela4_1_var = ela4_1_so, ela4_2_var = ela4_2_so,
@@ -252,7 +252,7 @@ tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so,
 invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) ) 
 ```
 
-The final 16% tax avoidance/evasion response to a 2% wealth tax was computed as and average across these four studies (2%*(0.5+0.5+2.5+28.5)/4).
+The final 16% tax avoidance/evasion response to a 2% wealth tax was computed as an average across these four studies (2%*(0.5+0.5+2.5+28.5)/4).
 
 ### 3 - Data sources
 Three data sources were used in this analysis:   
@@ -263,13 +263,13 @@ Three data sources were used in this analysis:
 
 #### 3.1 Data cleaning
 
-From each data set three variable were extracted: `networth` that contain information on wealth, `weights` represents the number of households that each observation represents and `data` which tracks the data of origin.
+From each data set three variables were extracted: `networth` that contains information on wealth, `weights` represents the number of households that each observation represents and `data` which tracks the data of origin.
 
 The following transformations were applied to the data:      
 
  - Each observation in DINA is aggregated into groups of 5 observations to anonymize the data.  
  - SCF was aged by inflating the number of households and wealth uniformly to match the most recent aggregate projections for population and total household wealth from the Federal Reserve Board.  After that, SCF wealth was scaled to match the total of DINA minus the wealth of Forbes (to prevent double counting of wealth).   
- - After combining (appending) all three data sources, the population weights of SCF and DINA where combined by the taking the average of the two.   
+ - After combining (appending) all three data sources, the population weights of SCF and DINA were combined by the taking the average of the two.   
 
 
 
@@ -311,7 +311,8 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
     is_dina_public <- FALSE                        
     if(is_dina_public){
       # paste below the path to where usdina2019.dta is in your computer
-      df_dina_so <- read_dta("/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta")
+      path_to_dina <- paste0("HERE_GOES_YOUR_PATH", "/usdina2019.dta")
+      df_dina_so <- read_dta(path_to_dina)
       df_dina <- df_dina_so %>% 
       group_by(id) %>% 
       summarise("networth" = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
@@ -324,7 +325,7 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
       
       df_dina$data <- "DINA"
       
-      # Aggregate into bins of 5 househodls info to protect confidentiality
+      # Aggregate into bins of 5 households info to protect confidentiality
       df_dina1 <- df_dina %>% 
         mutate("aux_id" = 1:dim(df_dina)[1]) %>% 
         arrange(desc(networth),aux_id) %>% 
@@ -344,7 +345,7 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
     totw_dina <- sum(df_dina1_in$networth * df_dina1_in$weight) / 1e12
     ### SCF data 
     
-    # Increase the population weigths to reflect population growth from 2016 to 1019
+    # Increase the population weights to reflect population growth from 2016 to 2019
     df_scf_var <- df_scf_var %>% 
           mutate("wgt2019" = round( wgt * (1 + hhld_gr_so)^( 2019 - 2016 )))
     totw <- sum(df_scf_var$networth * df_scf_var$wgt2019) / 1e12
@@ -364,7 +365,7 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
     # If observation is in SCF or DINA, then divide their weights in 2
     df$weight <- with(df, ifelse(data=="SCF" | data=="DINA", 
                                    round(weight/2), weight) )
-    # All obs from SCF and DINA that have wealth above the min of forbes are droped to avoid duplications
+    # All obs from SCF and DINA that have wealth above the min of forbes are dropped to avoid duplications
     df_in <- df %>% filter( !(networth > forbesmin & ( data == "SCF" | data == "DINA" ) ) )
     
     # df %>% 
@@ -516,11 +517,11 @@ In 2019, there would be around 63000 households liable for the wealth tax (78000
 
 #### 4.1 - 2% tax on all wealth above $50 millions
 
-The 62598 households with assests totaling over $50 million would have a total taxable wealth (above the $50million) of $8.9 trillion,  i.e. approximately 9%  of the $94 trillion population-wide, total household net worth.
+The 62598 households with assets totaling over $50 million would have a total taxable wealth (above the $50million) of $8.9 trillion,  i.e. approximately 9%  of the $94 trillion population-wide, total household net worth.
 
 #### 4.2 - 1% additional tax on all wealth above $1 billion
 
-The 961 households with assests totaling over $1 billion dollars would have a total taxable wealth (above the $1billion) of $2.2 trillion,  i.e. approximately 2%  of the $94 trillion population-wide, total household net worth.
+The 961 households with assets totaling over $1 billion dollars would have a total taxable wealth (above the $1billion) of $2.2 trillion,  i.e. approximately 2%  of the $94 trillion population-wide, total household net worth.
 
 
 ### 5 - Total tax revenue in one year
@@ -562,14 +563,14 @@ get_tax_rev <- function(wealth_var = wealth_aux, taxrates_var = tax_rates_po,
     }
    # Compute max taxable wealth per bracket
     max_tax_per_brack <- c(diff(c(0, brackets_var)), 1e100)
-   # Substract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
+   # Subtract wealth minus tax bracket. If wealth above a given bracket (difference is larger than max taxable wealth), 
    # then assign max taxable wealth to that given bracket
     to_tax <- ifelse( wealth_var - c(0, brackets_var) > max_tax_per_brack, 
                       max_tax_per_brack, 
                       ( wealth_var - c(0,brackets_var) ) )   
-   # If wealth if lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
+   # If wealth is lower than a given bracket (difference between wealth and bracket is negative), then assign zero to that bracket  
     to_tax <- ifelse( to_tax<0, 0, to_tax )
-    # Apply trax rates to each corresponding bracket and all together
+    # Apply tax rates to each corresponding bracket and all together
     total_tax <- sum( to_tax * c(0, taxrates_var) )   
     return(total_tax)
 }
@@ -594,7 +595,7 @@ total_tax_rev <- get_tax_rev_per_group(taxLevels = tax_rates_po)
 #199.7889
 
 # The following replicates stata code more closely and seems more straightforward. 
-# Howevere it differs more from the code in the app. Consider this in both (app and DD)
+# However it differs more from the code in the app. Consider this in both (app and DD)
 # in the future
 if (FALSE){
     #with avoidance
@@ -623,7 +624,14 @@ getPeoplePerBracket=function(grid, brackets){
 }
 
 numberTaxpayers <- getPeoplePerBracket(brackets = brackets_po, grid = grid)
+```
 
+```
+## Warning: Factor `group` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+```
+
+```r
 #Revenue
 #From here on: keep
 target_hhlds_mo <- sum( numberTaxpayers$totalPeople[brackets_po>=starting_brack_po] )
@@ -636,7 +644,7 @@ Starting with the $8.9 trillion tax base of wealth above $50 million ($11.3 with
 
 ```r
 # - inputs: inflation_so, population_gr_so, real_growth_so, total_rev_pe, top_tax_rev_in
-# - ouputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
+# - outputs: discount_rate_mo, ten_year_factor_mo, ten_year_revenue_pe, ten_year_top_tax_pe
 ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = population_gr_so,
                            real_growth_var = real_growth_so, total_rev_var = total_tax_rev, 
                            top_tax_base_var = top_tax_rev_in){
@@ -666,17 +674,6 @@ This 10-year projection implies that revenue raised by the progressive wealth ta
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because Senator Warren's proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 
 
-```r
-# test to run from the beginning (only functions)
-rm(list = ls()[!(ls() %in% ls(pattern = "_f\\b"))])
-invisible( list2env(call_sources_f(), .GlobalEnv) )
-invisible( list2env(policy_f(), .GlobalEnv) )
-invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
-invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) ) #replace
-invisible( list2env(total_rev_mo_f(), .GlobalEnv) )  #replace
-invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
-sapply(ls(pattern = "_pe\\b"), get)
-```
 
 
 
@@ -733,7 +730,7 @@ toPlot2$averageInt <- sapply( toPlot2$xval,
                                                         taxrates_var = taxRate/100, 
                                                         brackets_var = brackets * 1e6) )
 
-# Here is where the total tax payed by each individuals is transform into average tax rates
+# Here is where the total tax paid by each individual is transformed into average tax rates
 toPlot2$averageRate <- (toPlot2$averageInt / toPlot2$xval) * 100
 
 toPlot2$id <- 1:nrow(toPlot2)
@@ -749,7 +746,7 @@ if(FALSE) {
 #summary(toPlot2)
 #end of dataInputT
    
-# These are mini data set that ggvis needs to cre ate vertical lines
+# These are mini data set that ggvis needs to create vertical lines
 extra0 <- cbind.data.frame(x = rep(max(as.numeric(brackets[1]) * 1e6, 1e5), 2), y = c(0, taxRate[1]))
 extra1 <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[1]))
 extra1b <- cbind.data.frame(x = rep(as.numeric(brackets[2]) * 1e6, 2), y = c(0, taxRate[2]))
@@ -830,27 +827,27 @@ plot <- data[, -rmIdx] %>%
   plot
 ```
 
-<!--html_preserve--><div id="plot_id321450514-container" class="ggvis-output-container">
-<div id="plot_id321450514" class="ggvis-output"></div>
+<!--html_preserve--><div id="plot_id274322034-container" class="ggvis-output-container">
+<div id="plot_id274322034" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id321450514_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="svg">SVG</a>
+<a id="plot_id274322034_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id274322034" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id321450514_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="canvas">Canvas</a>
+<a id="plot_id274322034_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id274322034" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id321450514_download" class="ggvis-download" data-plot-id="plot_id321450514">Download</a>
+<a id="plot_id274322034_download" class="ggvis-download" data-plot-id="plot_id274322034">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id321450514_spec = {
+var plot_id274322034_spec = {
   "data": [
     {
       "name": ".0",
@@ -1338,11 +1335,11 @@ var plot_id321450514_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id321450514").parseSpec(plot_id321450514_spec);
+ggvis.getPlot("plot_id274322034").parseSpec(plot_id274322034_spec);
 </script><!--/html_preserve-->
  <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font>  
  
- <font size="4"> Tax revenue from wealth tax over 10 year: $2.6 trillion</font>
+ <font size="4"> Tax revenue from wealth tax over 10 years: $2.6 trillion</font>
 
  <font size="4"> Percentage of US households paying the wealth tax: 0.05%</font>
 
@@ -1369,7 +1366,7 @@ In contrast, the bottom 99% families have a total tax burden of 7.2% relative to
 
 **Note:** Our analysis complies with the highest levels of transparency and reproducibilty for open policy analysis proposed by the [_Berkeley Initiative for Transparency in the Social Sciences_](https://www.bitss.org/opa/). We invite contributors and critics of this analysis to follow similar standards. 
 
-[^1]: The authors would like to particularly acknowledge the excellent research assitanship of Katie Donnelly Moran and Clancy Green. 
+[^1]: The authors would like to particularly acknowledge the excellent research assistantship of Katie Donnelly Moran and Clancy Green. 
 
 [^2]: This dynamic document is part of an Open Policy Analysis which follows the guidelines of the [Berkeley Initiative for Transparency in the Social Sciences](https://www.bitss.org/opa/)
 
