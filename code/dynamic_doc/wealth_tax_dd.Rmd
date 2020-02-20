@@ -197,7 +197,7 @@ tax_elasticity_in_f <- function(ela1_var = ela1_so, ela2_var = ela2_so,
 invisible( list2env(tax_elasticity_in_f(),.GlobalEnv) ) 
 ```
 
-The final `r paste0(evasion_param_in * 100,"%")` tax avoidance/evasion response to a `r paste0(main_tax_po * 100, "%")` wealth tax was computed as and average across these four studies (`r paste0(main_tax_po * 100, "%", "*(", ela1_so, "+", ela2_so, "+" ,(ela3_1_so+ela3_2_so)/2, "+", (ela4_1_so+ela4_2_so)/2, ")/4")`).
+The final `r paste0(evasion_param_in * 100,"%")` tax avoidance/evasion response to a `r paste0(main_tax_po * 100, "%")` wealth tax was computed as an average across these four studies (`r paste0(main_tax_po * 100, "%", "*(", ela1_so, "+", ela2_so, "+" ,(ela3_1_so+ela3_2_so)/2, "+", (ela4_1_so+ela4_2_so)/2, ")/4")`).
 
 ### 3 - Data sources
 Three data sources were used in this analysis:   
