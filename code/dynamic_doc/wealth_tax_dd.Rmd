@@ -468,7 +468,7 @@ The `r target_hhlds_bn_mo` households with assets totaling over `r paste0("$",ne
 
 ### 5 - Total tax revenue in one year
 
-```{r new-tax-rev, eval=TRUE, echo=print_code} 
+```{r new-tax-rev, eval=TRUE, echo=print_code, warning = FALSE} 
 # DESCRIBE FUNCTIONS STRUCTURE
 # - inputs: list
 # - outputs: list

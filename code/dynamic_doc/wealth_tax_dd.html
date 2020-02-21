@@ -972,10 +972,9 @@ getPeoplePerBracket=function(grid, brackets){
   return(toReturn)
 }
 
-numberTaxpayers &lt;- getPeoplePerBracket(brackets = brackets_po, grid = grid)</code></pre>
-<pre><code>## Warning: Factor `group` contains implicit NA, consider using
-## `forcats::fct_explicit_na`</code></pre>
-<pre class="r"><code>#Revenue
+numberTaxpayers &lt;- getPeoplePerBracket(brackets = brackets_po, grid = grid)
+
+#Revenue
 #From here on: keep
 target_hhlds_mo &lt;- sum( numberTaxpayers$totalPeople[brackets_po&gt;=starting_brack_po] )</code></pre>
 <p>Starting with the $8.9 trillion tax base of wealth above $50 million ($11.3 with no avoidance), a 2% tax would raise $177 billion in 2019. The billionaire surtax is estimated to apply to a base of $2.2 trillion ($2.8 with no avoidance) from about 1000 billionaire families (1300 with no avoidance). Thus the billionaire surtax would raise $22 billion in 2019. The combination of the 2% tax above $50 million and the billionaire surtax would raise 177.2 + 21.6 = 198.8 billion in 2019.</p>
@@ -1153,27 +1152,27 @@ plot &lt;- data[, -rmIdx] %&gt;%
     layer_paths(data = extra3, ~ x / 1e6, ~y) %&gt;%
     layer_paths(data = extra3b, ~ x / 1e6, ~y)
   plot</code></pre>
-<p><div id="plot_id274322034-container" class="ggvis-output-container">
-<div id="plot_id274322034" class="ggvis-output"></div>
+<p><div id="plot_id500493144-container" class="ggvis-output-container">
+<div id="plot_id500493144" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id274322034_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id274322034" data-renderer="svg">SVG</a>
+<a id="plot_id500493144_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id500493144" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id274322034_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id274322034" data-renderer="canvas">Canvas</a>
+<a id="plot_id500493144_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id500493144" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id274322034_download" class="ggvis-download" data-plot-id="plot_id274322034">Download</a>
+<a id="plot_id500493144_download" class="ggvis-download" data-plot-id="plot_id500493144">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id274322034_spec = {
+var plot_id500493144_spec = {
   "data": [
     {
       "name": ".0",
@@ -1661,7 +1660,7 @@ var plot_id274322034_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id274322034").parseSpec(plot_id274322034_spec);
+ggvis.getPlot("plot_id500493144").parseSpec(plot_id500493144_spec);
 </script> <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font></p>
 <p><font size="4"> Tax revenue from wealth tax over 10 years: $2.6 trillion</font></p>
 <p><font size="4"> Percentage of US households paying the wealth tax: 0.05%</font></p>

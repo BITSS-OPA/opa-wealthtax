@@ -624,14 +624,7 @@ getPeoplePerBracket=function(grid, brackets){
 }
 
 numberTaxpayers <- getPeoplePerBracket(brackets = brackets_po, grid = grid)
-```
 
-```
-## Warning: Factor `group` contains implicit NA, consider using
-## `forcats::fct_explicit_na`
-```
-
-```r
 #Revenue
 #From here on: keep
 target_hhlds_mo <- sum( numberTaxpayers$totalPeople[brackets_po>=starting_brack_po] )
@@ -827,27 +820,27 @@ plot <- data[, -rmIdx] %>%
   plot
 ```
 
-<!--html_preserve--><div id="plot_id274322034-container" class="ggvis-output-container">
-<div id="plot_id274322034" class="ggvis-output"></div>
+<!--html_preserve--><div id="plot_id500493144-container" class="ggvis-output-container">
+<div id="plot_id500493144" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id274322034_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id274322034" data-renderer="svg">SVG</a>
+<a id="plot_id500493144_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id500493144" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id274322034_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id274322034" data-renderer="canvas">Canvas</a>
+<a id="plot_id500493144_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id500493144" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id274322034_download" class="ggvis-download" data-plot-id="plot_id274322034">Download</a>
+<a id="plot_id500493144_download" class="ggvis-download" data-plot-id="plot_id500493144">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id274322034_spec = {
+var plot_id500493144_spec = {
   "data": [
     {
       "name": ".0",
@@ -1335,7 +1328,7 @@ var plot_id274322034_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id274322034").parseSpec(plot_id274322034_spec);
+ggvis.getPlot("plot_id500493144").parseSpec(plot_id500493144_spec);
 </script><!--/html_preserve-->
  <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font>  
  
