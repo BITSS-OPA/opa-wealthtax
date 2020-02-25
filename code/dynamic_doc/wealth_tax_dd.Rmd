@@ -152,7 +152,7 @@ knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,
   kable_styling()  
 ```  
 
-Household net worth above `r paste0("$", starting_brack_po/1e6)` million would be taxed at `r paste(main_tax_po * 100, "%", sep = "")`. Any wealth over `r paste0("$", next_increase_po/1e9)` billion would be taxed an additional 1% (a billionaire surtax).
+Household net worth above `r paste0("$", starting_brack_po/1e7)` million would be taxed at `r paste(main_tax_po * 100, "%", sep = "")`. Any wealth over `r paste0("$", next_increase_po/1e9)` billion would be taxed an additional 1% (a billionaire surtax).
 
 ### 2 -  Compute tax avoidance elasticity
 

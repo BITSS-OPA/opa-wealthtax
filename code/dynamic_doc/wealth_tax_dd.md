@@ -4,7 +4,7 @@ author:
 - 'Policy Analysis: Emmanuel Saez  & Gabriel Zucman[^1]'
 - 'Dynamic Document: Fernando Hoces de la Guardia[^2]'
 - '[List of all contributors](https://github.com/fhoces/opa-wealthtax/blob/master/credits.md) to the entire Open Policy Analysis'
-date: "03 April, 2019"
+date: "24 February, 2020"
 output:
   html_document:
     code_folding: hide
@@ -179,7 +179,7 @@ knitr::kable(cbind("Bracket (millions of $)" = brackets_po/1e6,
 </tbody>
 </table>
 
-Household net worth above $50 million would be taxed at 2%. Any wealth over $1 billion would be taxed an additional 1% (a billionaire surtax).
+Household net worth above $5 million would be taxed at 2%. Any wealth over $1 billion would be taxed an additional 1% (a billionaire surtax).
 
 ### 2 -  Compute tax avoidance elasticity
 
@@ -311,7 +311,8 @@ clean_data_f <- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina1_s
     is_dina_public <- FALSE                        
     if(is_dina_public){
       # paste below the path to where usdina2019.dta is in your computer
-      df_dina_so <- read_dta("/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta")
+      path_to_dina <- paste0("HERE_GOES_YOUR_PATH", "/usdina2019.dta")
+      df_dina_so <- read_dta(path_to_dina)
       df_dina <- df_dina_so %>% 
       group_by(id) %>% 
       summarise("networth" = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
@@ -623,7 +624,14 @@ getPeoplePerBracket=function(grid, brackets){
 }
 
 numberTaxpayers <- getPeoplePerBracket(brackets = brackets_po, grid = grid)
+```
 
+```
+## Warning: Factor `group` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+```
+
+```r
 #Revenue
 #From here on: keep
 target_hhlds_mo <- sum( numberTaxpayers$totalPeople[brackets_po>=starting_brack_po] )
@@ -666,17 +674,6 @@ This 10-year projection implies that revenue raised by the progressive wealth ta
 It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because Senator Warren's proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.
 
 
-```r
-# test to run from the beginning (only functions)
-rm(list = ls()[!(ls() %in% ls(pattern = "_f\\b"))])
-invisible( list2env(call_sources_f(), .GlobalEnv) )
-invisible( list2env(policy_f(), .GlobalEnv) )
-invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
-invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) ) #replace
-invisible( list2env(total_rev_mo_f(), .GlobalEnv) )  #replace
-invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
-sapply(ls(pattern = "_pe\\b"), get)
-```
 
 
 
@@ -830,27 +827,27 @@ plot <- data[, -rmIdx] %>%
   plot
 ```
 
-<!--html_preserve--><div id="plot_id321450514-container" class="ggvis-output-container">
-<div id="plot_id321450514" class="ggvis-output"></div>
+<!--html_preserve--><div id="plot_id154134207-container" class="ggvis-output-container">
+<div id="plot_id154134207" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id321450514_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="svg">SVG</a>
+<a id="plot_id154134207_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id154134207" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id321450514_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="canvas">Canvas</a>
+<a id="plot_id154134207_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id154134207" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id321450514_download" class="ggvis-download" data-plot-id="plot_id321450514">Download</a>
+<a id="plot_id154134207_download" class="ggvis-download" data-plot-id="plot_id154134207">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id321450514_spec = {
+var plot_id154134207_spec = {
   "data": [
     {
       "name": ".0",
@@ -1338,7 +1335,7 @@ var plot_id321450514_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id321450514").parseSpec(plot_id321450514_spec);
+ggvis.getPlot("plot_id154134207").parseSpec(plot_id154134207_spec);
 </script><!--/html_preserve-->
  <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font>  
  

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Policy Analysis: Emmanuel Saez &amp; Gabriel Zucman" />
@@ -70,8 +70,6 @@ overflow: auto;
 margin-left: 2%;
 position: fixed;
 border: 1px solid #ccc;
-webkit-border-radius: 6px;
-moz-border-radius: 6px;
 border-radius: 6px;
 }
 
@@ -99,9 +97,14 @@ font-size: 12px;
 .tocify-subheader .tocify-subheader {
 text-indent: 30px;
 }
-
 .tocify-subheader .tocify-subheader .tocify-subheader {
 text-indent: 40px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 50px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 60px;
 }
 
 .tocify .tocify-item > a, .tocify .nav-list .nav-header {
@@ -505,13 +508,13 @@ float: none;
 
           item.append($("<a/>", {
 
-            "text": self.text()
+            "html": self.html()
 
           }));
 
         } else {
 
-          item.text(self.text());
+          item.html(self.html());
 
         }
 
@@ -1281,12 +1284,12 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
-    if (show)
+    if (show || $(this)[0].classList.contains('fold-show'))
       div.addClass('in');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
@@ -2727,9 +2730,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -2743,7 +2744,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -2754,58 +2754,76 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
 
-
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -2819,6 +2837,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -2854,8 +2878,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -2864,6 +2886,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -2890,10 +2922,10 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Dynamic Documentation for Senator Warren’s Wealth Tax Policy Analysis</h1>
-<h4 class="author"><em>Policy Analysis: Emmanuel Saez &amp; Gabriel Zucman<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></em></h4>
-<h4 class="author"><em>Dynamic Document: Fernando Hoces de la Guardia<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></em></h4>
-<h4 class="author"><em><a href="https://github.com/fhoces/opa-wealthtax/blob/master/credits.md">List of all contributors</a> to the entire Open Policy Analysis</em></h4>
-<h4 class="date"><em>03 April, 2019</em></h4>
+<h4 class="author">Policy Analysis: Emmanuel Saez &amp; Gabriel Zucman<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></h4>
+<h4 class="author">Dynamic Document: Fernando Hoces de la Guardia<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></h4>
+<h4 class="author"><a href="https://github.com/fhoces/opa-wealthtax/blob/master/credits.md">List of all contributors</a> to the entire Open Policy Analysis</h4>
+<h4 class="date">24 February, 2020</h4>
 
 </div>
 
@@ -3069,7 +3101,7 @@ Marginal Tax Rate (%)
 </tr>
 </tbody>
 </table>
-<p>Household net worth above $50 million would be taxed at 2%. Any wealth over $1 billion would be taxed an additional 1% (a billionaire surtax).</p>
+<p>Household net worth above $5 million would be taxed at 2%. Any wealth over $1 billion would be taxed an additional 1% (a billionaire surtax).</p>
 </div>
 <div id="compute-tax-avoidance-elasticity" class="section level3">
 <h3>2 - Compute tax avoidance elasticity</h3>
@@ -3245,7 +3277,8 @@ clean_data_f &lt;- function(df_forbes_var = df_forbes_so, df_dina1_var = df_dina
     is_dina_public &lt;- FALSE                        
     if(is_dina_public){
       # paste below the path to where usdina2019.dta is in your computer
-      df_dina_so &lt;- read_dta(&quot;/Users/fhoces/Desktop/opa-wealthtax_test/rawdata/materials/usdina2019.dta&quot;)
+      path_to_dina &lt;- paste0(&quot;HERE_GOES_YOUR_PATH&quot;, &quot;/usdina2019.dta&quot;)
+      df_dina_so &lt;- read_dta(path_to_dina)
       df_dina &lt;- df_dina_so %&gt;% 
       group_by(id) %&gt;% 
       summarise(&quot;networth&quot; = round(sum(hweal)),  # rounding of networth is to make it compatible with Stata
@@ -3543,9 +3576,10 @@ getPeoplePerBracket=function(grid, brackets){
   return(toReturn)
 }
 
-numberTaxpayers &lt;- getPeoplePerBracket(brackets = brackets_po, grid = grid)
-
-#Revenue
+numberTaxpayers &lt;- getPeoplePerBracket(brackets = brackets_po, grid = grid)</code></pre>
+<pre><code>## Warning: Factor `group` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
+<pre class="r"><code>#Revenue
 #From here on: keep
 target_hhlds_mo &lt;- sum( numberTaxpayers$totalPeople[brackets_po&gt;=starting_brack_po] )</code></pre>
 <p>Starting with the $8.9 trillion tax base of wealth above $50 million ($11.3 with no avoidance), a 2% tax would raise $177 billion in 2019. The billionaire surtax is estimated to apply to a base of $2.2 trillion ($2.8 with no avoidance) from about 1000 billionaire families (1300 with no avoidance). Thus the billionaire surtax would raise $22 billion in 2019. The combination of the 2% tax above $50 million and the billionaire surtax would raise 177.2 + 21.6 = 198.8 billion in 2019.</p>
@@ -3577,15 +3611,6 @@ invisible( list2env(ten_years_mo_f(),.GlobalEnv) )</code></pre>
 <p>To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, or 5.5% per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over 10 years 2019-2028 is about 12.9 times the revenue raised in 2019<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is likely that top wealth would continue to grow at least as fast as the average.</p>
 <p>This 10-year projection implies that revenue raised by the progressive wealth tax would be 12.9 * 198.8 = $2560 billion, rounded to $2.6 trillion. Out of this $2.6 trillion, the billionaire surtax would raise 21.6 * 12.9 = $278.7 billion, rounded to $0.3 trillion.</p>
 <p>It is important to emphasize that our computations assume that the wealth tax base is comprehensive with no major asset classes exempt from wealth taxation. Introducing exemptions for specific asset classes would reduce the revenue estimates both mechanically and dynamically as wealthy individuals would shift their wealth into tax exempt assets. Because Senator Warren’s proposal does not include any large exemptions, we do not believe our revenue estimate needs to be adjusted.</p>
-<pre class="r"><code># test to run from the beginning (only functions)
-rm(list = ls()[!(ls() %in% ls(pattern = &quot;_f\\b&quot;))])
-invisible( list2env(call_sources_f(), .GlobalEnv) )
-invisible( list2env(policy_f(), .GlobalEnv) )
-invisible( list2env(tax_elasticity_in_f(), .GlobalEnv) )
-invisible( list2env(tax_revenue_mo_f(), .GlobalEnv) ) #replace
-invisible( list2env(total_rev_mo_f(), .GlobalEnv) )  #replace
-invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
-sapply(ls(pattern = &quot;_pe\\b&quot;), get)</code></pre>
 </div>
 <div id="visualization" class="section level3">
 <h3>7 - Visualization</h3>
@@ -3732,27 +3757,27 @@ plot &lt;- data[, -rmIdx] %&gt;%
     layer_paths(data = extra3, ~ x / 1e6, ~y) %&gt;%
     layer_paths(data = extra3b, ~ x / 1e6, ~y)
   plot</code></pre>
-<p><div id="plot_id321450514-container" class="ggvis-output-container">
-<div id="plot_id321450514" class="ggvis-output"></div>
+<p><div id="plot_id154134207-container" class="ggvis-output-container">
+<div id="plot_id154134207" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id321450514_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="svg">SVG</a>
+<a id="plot_id154134207_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id154134207" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id321450514_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id321450514" data-renderer="canvas">Canvas</a>
+<a id="plot_id154134207_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id154134207" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id321450514_download" class="ggvis-download" data-plot-id="plot_id321450514">Download</a>
+<a id="plot_id154134207_download" class="ggvis-download" data-plot-id="plot_id154134207">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id321450514_spec = {
+var plot_id154134207_spec = {
   "data": [
     {
       "name": ".0",
@@ -4240,7 +4265,7 @@ var plot_id321450514_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id321450514").parseSpec(plot_id321450514_spec);
+ggvis.getPlot("plot_id154134207").parseSpec(plot_id154134207_spec);
 </script> <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font></p>
 <p><font size="4"> Tax revenue from wealth tax over 10 year: $2.6 trillion</font></p>
 <p><font size="4"> Percentage of US households paying the wealth tax: 0.05%</font></p>
@@ -4287,6 +4312,54 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
