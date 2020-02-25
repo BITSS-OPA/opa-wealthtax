@@ -4,7 +4,7 @@ author:
 - 'Policy Analysis: Emmanuel Saez  & Gabriel Zucman[^1]'
 - 'Dynamic Document: Fernando Hoces de la Guardia[^2]'
 - '[List of all contributors](https://github.com/fhoces/opa-wealthtax/blob/master/credits.md) to the entire Open Policy Analysis'
-date: "20 February, 2020"
+date: "24 February, 2020"
 output:
   html_document:
     code_folding: hide
@@ -660,7 +660,7 @@ ten_years_mo_f <- function(inflation_var = inflation_so, population_gr_var = pop
 invisible( list2env(ten_years_mo_f(),.GlobalEnv) )
 ```
 
-To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, or 5.5% per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over 10 years 2019-2028 is about 12.9 times the revenue raised in 2019[^4]. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman[^5] show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is likely that top wealth would continue to grow at least as fast as the average.  
+To project tax revenues over a 10-year horizon, we assume that nominal taxable wealth would grow at the same pace as the economy, or 5.5% per year as in standard projections of the Congressional Budget Office or the Joint Committee on Taxation. This growth is decomposed into 2.5% price, 1% population growth, and 2% of real growth per capita. This implies that tax revenue over 10 years 2019-2028 is about 12.9 times the revenue raised in 2019[^3]. This uniform growth assumption is conservative as the wealth of the rich has grown substantially faster than average in recent decades. The estimates by Saez and Zucman[^4] show that, from 1980 to 2016, real wealth of the top 0.1% has grown at 5.3% per year on average, which is 2.8 points above the average real wealth growth of 2.5% per year. Average real wealth of the Forbes 400 has grown even faster at 7% per year, 4.5 points above the average. The historical gap in growth rates of top wealth vs. average wealth is larger than the proposed wealth tax. Therefore, even with the wealth tax, it is likely that top wealth would continue to grow at least as fast as the average.  
 
 This 10-year projection implies that revenue raised by the progressive wealth tax would be 12.9 * 198.8 = $2560 billion, rounded to $2.6 trillion. Out of this $2.6 trillion, the billionaire surtax would raise 21.6 * 12.9 = $278.7 billion, rounded to $0.3 trillion.  
 
@@ -820,27 +820,27 @@ plot <- data[, -rmIdx] %>%
   plot
 ```
 
-<!--html_preserve--><div id="plot_id500493144-container" class="ggvis-output-container">
-<div id="plot_id500493144" class="ggvis-output"></div>
+<!--html_preserve--><div id="plot_id632501514-container" class="ggvis-output-container">
+<div id="plot_id632501514" class="ggvis-output"></div>
 <div class="plot-gear-icon">
 <nav class="ggvis-control">
 <a class="ggvis-dropdown-toggle" title="Controls" onclick="return false;"></a>
 <ul class="ggvis-dropdown">
 <li>
 Renderer: 
-<a id="plot_id500493144_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id500493144" data-renderer="svg">SVG</a>
+<a id="plot_id632501514_renderer_svg" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id632501514" data-renderer="svg">SVG</a>
  | 
-<a id="plot_id500493144_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id500493144" data-renderer="canvas">Canvas</a>
+<a id="plot_id632501514_renderer_canvas" class="ggvis-renderer-button" onclick="return false;" data-plot-id="plot_id632501514" data-renderer="canvas">Canvas</a>
 </li>
 <li>
-<a id="plot_id500493144_download" class="ggvis-download" data-plot-id="plot_id500493144">Download</a>
+<a id="plot_id632501514_download" class="ggvis-download" data-plot-id="plot_id632501514">Download</a>
 </li>
 </ul>
 </nav>
 </div>
 </div>
 <script type="text/javascript">
-var plot_id500493144_spec = {
+var plot_id632501514_spec = {
   "data": [
     {
       "name": ".0",
@@ -1328,7 +1328,7 @@ var plot_id500493144_spec = {
   },
   "handlers": null
 };
-ggvis.getPlot("plot_id500493144").parseSpec(plot_id500493144_spec);
+ggvis.getPlot("plot_id632501514").parseSpec(plot_id632501514_spec);
 </script><!--/html_preserve-->
  <font size="4"> Tax revenue from wealth tax in first year: $199 billion </font>  
  
@@ -1363,6 +1363,6 @@ In contrast, the bottom 99% families have a total tax burden of 7.2% relative to
 
 [^2]: This dynamic document is part of an Open Policy Analysis which follows the guidelines of the [Berkeley Initiative for Transparency in the Social Sciences](https://www.bitss.org/opa/)
 
-[^4]: With r=5.5%, we have [1+(1+r)+..+(1+r)^9]=[(1+r)^10-1]/r=12.9, or approximately 13.
+[^3]: With r=5.5%, we have [1+(1+r)+..+(1+r)^9]=[(1+r)^10-1]/r=12.9, or approximately 13.
 
-[^5]: Saez, Emmanuel and Gabriel Zucman, "Wealth Inequality in the United States since 1913: Evidence from Capitalized Income Tax Data", Quarterly Journal of Economics 131(2), 2016, 519-578, updated series available at http://gabriel-zucman.eu/usdina/
+[^4]: Saez, Emmanuel and Gabriel Zucman, "Wealth Inequality in the United States since 1913: Evidence from Capitalized Income Tax Data", Quarterly Journal of Economics 131(2), 2016, 519-578, updated series available at http://gabriel-zucman.eu/usdina/
